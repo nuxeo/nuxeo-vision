@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<component name="org.nuxeo.labs.core.test.mock.blobholder">
+
+  <extension target="org.nuxeo.ecm.core.api.blobholder.BlobHolderAdapterComponent" point="BlobHolderFactory">
+    <blobHolderFactory name="picture" facet="Picture" class="org.nuxeo.labs.core.test.mock.MockPictureBlobHolderFactory" />
+  </extension>
+
+</component>

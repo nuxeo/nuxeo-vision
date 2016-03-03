@@ -1,0 +1,9 @@
+node_modules
+dist
+bower_components
+.tmp
+.publish/
+.idea
+target
+*.iml
+nuxeo-labs-google-vision-core/src/test/resources/files/credential.json
