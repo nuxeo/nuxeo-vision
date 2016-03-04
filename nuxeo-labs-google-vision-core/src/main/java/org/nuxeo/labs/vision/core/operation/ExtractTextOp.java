@@ -1,5 +1,6 @@
 package org.nuxeo.labs.vision.core.operation;
 
+import com.google.common.collect.ImmutableList;
 import org.nuxeo.ecm.automation.core.Constants;
 import org.nuxeo.ecm.automation.core.annotations.Context;
 import org.nuxeo.ecm.automation.core.annotations.Operation;
@@ -11,7 +12,11 @@ import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.blobholder.BlobHolder;
 import org.nuxeo.ecm.platform.picture.api.adapters.PictureBlobHolder;
+import org.nuxeo.labs.vision.core.FeatureType;
 import org.nuxeo.labs.vision.core.service.GoogleVision;
+
+import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -40,8 +45,11 @@ public class ExtractTextOp {
         if (!doc.hasFacet("Picture")) return doc;
         PictureBlobHolder holder = (PictureBlobHolder)doc.getAdapter(BlobHolder.class);
         Blob picture = holder.getBlob(conversion);
-        String text = googleVision.getText(picture);
-        if (text!=null && text.length()>0) doc.setPropertyValue("dc:description",text);
+        Map<String,Object> results = googleVision.execute(
+                picture, ImmutableList.of(FeatureType.TEXT_DETECTION));
+        List<String> texts = (List<String>) results.get(FeatureType.TEXT_DETECTION);
+        if (texts==null) return doc;
+        if (texts.get(0)!=null && texts.get(0).length()>0) doc.setPropertyValue("dc:description",texts.get(0));
         if (save) {
             doc = session.saveDocument(doc);
         }
