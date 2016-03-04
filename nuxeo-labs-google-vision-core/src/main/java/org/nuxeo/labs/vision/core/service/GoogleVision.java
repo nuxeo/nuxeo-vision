@@ -1,22 +1,19 @@
 package org.nuxeo.labs.vision.core.service;
 
 import org.nuxeo.ecm.core.api.Blob;
+import org.nuxeo.labs.vision.core.FeatureType;
 
 import java.util.List;
+import java.util.Map;
 
 public interface GoogleVision {
 
     /**
      *
      * @param blob the image blob
-     * @return the list of labels returned by the API
+     * @param features the feature to request from the api
+     * @return a map of results returned by the API where the key is the feature name
      */
-    List<String> getLabels(Blob blob);
+    Map<String,Object> execute(Blob blob, List<FeatureType> features);
 
-    /**
-     *
-     * @param blob the image blob
-     * @return the text extracted by the API
-     */
-    String getText(Blob blob);
 }

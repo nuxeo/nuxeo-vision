@@ -11,6 +11,7 @@ import com.google.common.collect.ImmutableList;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.nuxeo.ecm.core.api.Blob;
+import org.nuxeo.labs.vision.core.FeatureType;
 import org.nuxeo.runtime.api.Framework;
 import org.nuxeo.runtime.model.ComponentContext;
 import org.nuxeo.runtime.model.ComponentInstance;
@@ -21,7 +22,9 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class GoogleVisionImpl extends DefaultComponent implements GoogleVision {
 
@@ -95,118 +98,92 @@ public class GoogleVisionImpl extends DefaultComponent implements GoogleVision {
         return googleVision;
     }
 
+
     @Override
-    public List<String> getLabels(Blob blob) {
+    public Map<String,Object> execute(Blob blob, List<FeatureType> features) {
 
         byte[] data;
         try {
             data = blob.getByteArray();
         } catch (IOException e) {
             log.error(e);
-            return new ArrayList<>();
+            return new HashMap<>();
+        }
+
+        //build request
+        List<Feature> requestFeatures = new ArrayList<>();
+        for (FeatureType feature: features) {
+            requestFeatures.add(new Feature().setType(feature.toString()));
         }
 
         AnnotateImageRequest request =
                 new AnnotateImageRequest()
                         .setImage(new Image().encodeContent(data))
-                        .setFeatures(ImmutableList.of(
-                                new Feature()
-                                        .setType("LABEL_DETECTION")
-                                        .setMaxResults(5)));
+                        .setFeatures(requestFeatures);
 
         Vision vision;
         try {
             vision = getVisionService();
         } catch (IOException | GeneralSecurityException | IllegalStateException e) {
             log.error(e);
-            return new ArrayList<>();
+            return new HashMap<>();
         }
 
         Vision.Images.Annotate annotate;
         try {
-            annotate = vision.images()
-                    .annotate(new BatchAnnotateImagesRequest().setRequests(ImmutableList.of(request)));
+            annotate = vision.images().annotate(
+                    new BatchAnnotateImagesRequest().setRequests(ImmutableList.of(request)));
         } catch (IOException e) {
             log.error(e);
-            return new ArrayList<>();
+            return new HashMap<>();
         }
 
         // Due to a bug: requests to Vision API containing large images fail when GZipped.
         annotate.setDisableGZipContent(true);
 
-
+        // execute request
         BatchAnnotateImagesResponse batchResponse;
         try {
             batchResponse = annotate.execute();
         } catch (IOException e) {
             log.error(e);
-            return new ArrayList<>();
+            return new HashMap<>();
+        }
+
+        //check response is not empty
+        if (batchResponse.getResponses()==null || batchResponse.getResponses().size()==0) {
+            log.debug("Google Vision returned an empty response for "+blob.getFilename());
+            return new HashMap<>();
         }
 
         AnnotateImageResponse response = batchResponse.getResponses().get(0);
-        if (response.getLabelAnnotations() == null) {
-            return new ArrayList<>();
+        return convertResponse(response);
+
+    }
+
+
+    protected Map<String,Object> convertResponse(AnnotateImageResponse response) {
+        HashMap<String,Object> results = new HashMap<>();
+
+        //get labels
+        if (response.getLabelAnnotations()!=null) {
+            List<String> labels = new ArrayList<>();
+            for(EntityAnnotation annotation : response.getLabelAnnotations()) {
+                labels.add(annotation.getDescription());
+            }
+            results.put(FeatureType.LABEL_DETECTION.toString(),labels);
         }
-        List<EntityAnnotation> annotations = response.getLabelAnnotations();
 
-        List<String> results = new ArrayList<>();
-
-        for(EntityAnnotation annotation : annotations) {
-            results.add(annotation.getDescription());
+        //get OCR Text
+        if (response.getTextAnnotations()!=null) {
+            List<String> texts = new ArrayList<>();
+            for(EntityAnnotation annotation : response.getTextAnnotations()) {
+                texts.add(annotation.getDescription());
+            }
+            results.put(FeatureType.TEXT_DETECTION.toString(),texts);
         }
 
         return results;
-    }
-
-    @Override
-    public String getText(Blob blob) {
-        byte[] data;
-        try {
-            data = blob.getByteArray();
-        } catch (IOException e) {
-            log.error(e);
-            return "";
-        }
-
-        AnnotateImageRequest request =
-                new AnnotateImageRequest()
-                        .setImage(new Image().encodeContent(data))
-                        .setFeatures(ImmutableList.of(
-                                new Feature()
-                                        .setType("TEXT_DETECTION")
-                                        .setMaxResults(5)));
-
-        Vision vision;
-        try {
-            vision = getVisionService();
-        } catch (IOException | GeneralSecurityException | IllegalStateException e) {
-            log.error(e);
-            return "";
-        }
-
-        Vision.Images.Annotate annotate = null;
-        try {
-            annotate = vision.images()
-                    .annotate(new BatchAnnotateImagesRequest().setRequests(ImmutableList.of(request)));
-        } catch (IOException e) {
-            log.error(e);
-            return "";
-        }
-
-        // Due to a bug: requests to Vision API containing large images fail when GZipped.
-        annotate.setDisableGZipContent(true);
-
-
-        BatchAnnotateImagesResponse batchResponse;
-        try {
-            batchResponse = annotate.execute();
-        } catch (IOException e) {
-            log.error(e);
-            return "";
-        }
-
-        return batchResponse.getResponses().get(0).getTextAnnotations().get(0).getDescription();
-
     }
 
 }

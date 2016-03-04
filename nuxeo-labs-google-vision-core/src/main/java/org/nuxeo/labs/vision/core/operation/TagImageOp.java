@@ -1,5 +1,6 @@
 package org.nuxeo.labs.vision.core.operation;
 
+import com.google.common.collect.ImmutableList;
 import org.nuxeo.ecm.automation.core.Constants;
 import org.nuxeo.ecm.automation.core.annotations.Context;
 import org.nuxeo.ecm.automation.core.annotations.Operation;
@@ -12,9 +13,11 @@ import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.blobholder.BlobHolder;
 import org.nuxeo.ecm.platform.picture.api.adapters.PictureBlobHolder;
 import org.nuxeo.ecm.platform.tag.TagService;
+import org.nuxeo.labs.vision.core.FeatureType;
 import org.nuxeo.labs.vision.core.service.GoogleVision;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -42,11 +45,18 @@ public class TagImageOp {
     @OperationMethod(collector=DocumentModelCollector.class)
     public DocumentModel run(DocumentModel doc) {
         if (!doc.hasFacet("Picture")) return doc;
+
         PictureBlobHolder holder = (PictureBlobHolder)doc.getAdapter(BlobHolder.class);
         Blob picture = holder.getBlob(conversion);
-        List<String> tags = googleVision.getLabels(picture);
-        for (String tag: tags) {
-            tagService.tag(session,doc.getId(),tag,session.getPrincipal().getName());
+
+        Map<String,Object> results = googleVision.execute(
+                picture, ImmutableList.of(FeatureType.LABEL_DETECTION));
+        List<String> labels = (List<String>) results.get(FeatureType.LABEL_DETECTION);
+
+        if (labels==null) return doc;
+
+        for (String label: labels) {
+            tagService.tag(session,doc.getId(),label,session.getPrincipal().getName());
         }
 
         if (save) {
