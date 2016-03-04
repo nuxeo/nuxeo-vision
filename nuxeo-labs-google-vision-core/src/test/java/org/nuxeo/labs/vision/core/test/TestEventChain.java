@@ -1,4 +1,4 @@
-package org.nuxeo.labs.core.test;
+package org.nuxeo.labs.vision.core.test;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -17,7 +17,6 @@ import org.nuxeo.ecm.core.test.annotations.Granularity;
 import org.nuxeo.ecm.core.test.annotations.RepositoryConfig;
 import org.nuxeo.ecm.platform.tag.Tag;
 import org.nuxeo.ecm.platform.tag.TagService;
-import org.nuxeo.labs.core.operation.TagImageOp;
 import org.nuxeo.runtime.api.Framework;
 import org.nuxeo.runtime.test.runner.Deploy;
 import org.nuxeo.runtime.test.runner.Features;
@@ -39,7 +38,7 @@ import java.util.List;
         "org.nuxeo.ecm.platform.tag"
 })
 @LocalDeploy({"org.nuxeo.labs.nuxeo-labs-google-vision-core:OSGI-INF/mock-picture-blobholder-contrib.xml"})
-public class TestTagImageOp {
+public class TestEventChain {
 
     @Inject
     CoreSession session;
@@ -68,8 +67,8 @@ public class TestTagImageOp {
         OperationContext ctx = new OperationContext();
         ctx.setInput(picture);
         ctx.setCoreSession(session);
-        OperationChain chain = new OperationChain("TestTagPictureOp");
-        chain.add(TagImageOp.ID).set("conversion","Medium").set("save",true);
+        OperationChain chain = new OperationChain("TestTagChain");
+        chain.add("TagImageChain");
         picture = (DocumentModel) as.run(ctx, chain);
 
         List<Tag> tags =

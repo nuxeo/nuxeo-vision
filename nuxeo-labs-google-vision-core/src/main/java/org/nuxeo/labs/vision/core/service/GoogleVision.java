@@ -1,4 +1,4 @@
-package org.nuxeo.labs.core.service;
+package org.nuxeo.labs.vision.core.service;
 
 import org.nuxeo.ecm.core.api.Blob;
 

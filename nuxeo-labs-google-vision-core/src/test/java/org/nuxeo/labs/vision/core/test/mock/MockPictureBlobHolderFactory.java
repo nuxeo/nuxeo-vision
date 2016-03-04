@@ -19,22 +19,24 @@
  * $Id$
  */
 
-package org.nuxeo.labs.core.test.mock;
+package org.nuxeo.labs.vision.core.test.mock;
 
-import org.nuxeo.ecm.core.api.Blob;
 import org.nuxeo.ecm.core.api.DocumentModel;
-import org.nuxeo.ecm.platform.picture.api.adapters.PictureBlobHolder;
+import org.nuxeo.ecm.core.api.blobholder.BlobHolder;
+import org.nuxeo.ecm.core.api.blobholder.BlobHolderFactory;
 
-public class MockPictureBlobHolder extends PictureBlobHolder {
-
-    public MockPictureBlobHolder(DocumentModel doc, String path) {
-        super(doc, path);
-    }
+public class MockPictureBlobHolderFactory implements BlobHolderFactory {
 
     @Override
-    public Blob getBlob(String title) {
-        return (Blob) getDocument().getPropertyValue("file:content");
-    }
+    public BlobHolder getBlobHolder(DocumentModel doc) {
+        BlobHolder blobHolder;
 
+        if (doc.hasFacet("Picture")) {
+            blobHolder = new MockPictureBlobHolder(doc, "file:content");
+        } else {
+            blobHolder = null;
+        }
+        return blobHolder;
+    }
 
 }

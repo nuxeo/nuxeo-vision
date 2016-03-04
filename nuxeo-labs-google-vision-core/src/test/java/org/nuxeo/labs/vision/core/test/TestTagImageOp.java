@@ -1,4 +1,4 @@
-package org.nuxeo.labs.core.test;
+package org.nuxeo.labs.vision.core.test;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -15,7 +15,9 @@ import org.nuxeo.ecm.core.api.impl.blob.FileBlob;
 import org.nuxeo.ecm.core.test.DefaultRepositoryInit;
 import org.nuxeo.ecm.core.test.annotations.Granularity;
 import org.nuxeo.ecm.core.test.annotations.RepositoryConfig;
-import org.nuxeo.labs.core.operation.ExtractTextOp;
+import org.nuxeo.ecm.platform.tag.Tag;
+import org.nuxeo.ecm.platform.tag.TagService;
+import org.nuxeo.labs.vision.core.operation.TagImageOp;
 import org.nuxeo.runtime.api.Framework;
 import org.nuxeo.runtime.test.runner.Deploy;
 import org.nuxeo.runtime.test.runner.Features;
@@ -26,6 +28,7 @@ import javax.inject.Inject;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.List;
 
 @RunWith(FeaturesRunner.class)
 @Features(AutomationFeature.class)
@@ -36,37 +39,44 @@ import java.io.Serializable;
         "org.nuxeo.ecm.platform.tag"
 })
 @LocalDeploy({"org.nuxeo.labs.nuxeo-labs-google-vision-core:OSGI-INF/mock-picture-blobholder-contrib.xml"})
-public class TestExtractTextOp {
+public class TestTagImageOp {
 
     @Inject
     CoreSession session;
 
+    @Inject
+    protected TagService tagService;
+
     @Test
     public void shouldCallTheOperation() throws IOException, OperationException {
-        Framework.getProperties().put(
-                "org.nuxeo.labs.google.enable","true");
+
         Framework.getProperties().put(
                 "org.nuxeo.labs.google.credential",
                 getClass().getResource("/files/credential.json").getPath());
+        Framework.getProperties().put(
+                "org.nuxeo.labs.google.enable","true");
 
-        //create template
+
         DocumentModel picture = session.createDocumentModel("/", "Picture", "Picture");
-        File file = new File(getClass().getResource("/files/text.png").getPath());
+        File file = new File(getClass().getResource("/files/plane.jpg").getPath());
         Blob blob = new FileBlob(file);
         picture.setPropertyValue("file:content", (Serializable) blob);
         picture = session.createDocument(picture);
 
-        //render template
+
         AutomationService as = Framework.getService(AutomationService.class);
         OperationContext ctx = new OperationContext();
         ctx.setInput(picture);
         ctx.setCoreSession(session);
-        OperationChain chain = new OperationChain("TestExtractTextOp");
-        chain.add(ExtractTextOp.ID).set("conversion","Medium").set("save",true);
+        OperationChain chain = new OperationChain("TestTagPictureOp");
+        chain.add(TagImageOp.ID).set("conversion","Medium").set("save",true);
         picture = (DocumentModel) as.run(ctx, chain);
 
-        String description = (String) picture.getPropertyValue("dc:description");
-        Assert.assertTrue(description!=null && description.length()>0);
+        List<Tag> tags =
+                tagService.getDocumentTags(session,picture.getId(),session.getPrincipal().getName());
+
+        Assert.assertTrue(tags.size()>0);
     }
+
 
 }

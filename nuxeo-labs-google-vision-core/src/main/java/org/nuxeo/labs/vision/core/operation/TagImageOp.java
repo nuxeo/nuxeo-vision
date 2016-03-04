@@ -1,4 +1,4 @@
-package org.nuxeo.labs.core.operation;
+package org.nuxeo.labs.vision.core.operation;
 
 import org.nuxeo.ecm.automation.core.Constants;
 import org.nuxeo.ecm.automation.core.annotations.Context;
@@ -12,7 +12,7 @@ import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.blobholder.BlobHolder;
 import org.nuxeo.ecm.platform.picture.api.adapters.PictureBlobHolder;
 import org.nuxeo.ecm.platform.tag.TagService;
-import org.nuxeo.labs.core.service.GoogleVision;
+import org.nuxeo.labs.vision.core.service.GoogleVision;
 
 import java.util.List;
 

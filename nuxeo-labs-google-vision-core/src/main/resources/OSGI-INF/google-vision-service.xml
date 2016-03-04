@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
-<component name="org.nuxeo.labs.core.service.google-vision" version="1.0">
+<component name="org.nuxeo.labs.vision.core.service.service" version="1.0">
 
-  <implementation class="org.nuxeo.labs.core.service.GoogleVisionImpl" />
+  <implementation class="org.nuxeo.labs.vision.core.service.GoogleVisionImpl" />
 
   <service>
-    <provide interface="org.nuxeo.labs.core.service.GoogleVision" />
+    <provide interface="org.nuxeo.labs.vision.core.service.GoogleVision" />
   </service>
 </component>

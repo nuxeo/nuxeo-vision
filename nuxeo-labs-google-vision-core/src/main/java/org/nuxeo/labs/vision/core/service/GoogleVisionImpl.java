@@ -1,4 +1,4 @@
-package org.nuxeo.labs.core.service;
+package org.nuxeo.labs.vision.core.service;
 
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;

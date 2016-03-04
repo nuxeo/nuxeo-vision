@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<component name="org.nuxeo.labs.vision.core.chains">
+    <extension target="org.nuxeo.ecm.core.operation.OperationServiceComponent" point="chains">
+        <chain id="TagImageChain">
+            <operation id="Context.FetchDocument"/>
+            <operation id="Document.TagImageOp">
+                <param type="string" name="conversion">Medium</param>
+                <param type="boolean" name="save">true</param>
+            </operation>
+        </chain>
+    </extension>
+</component>

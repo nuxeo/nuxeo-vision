@@ -1,4 +1,4 @@
-package org.nuxeo.labs.core.test;
+package org.nuxeo.labs.vision.core.test;
 
 import com.google.inject.Inject;
 import org.junit.Test;
@@ -6,7 +6,7 @@ import org.junit.runner.RunWith;
 import org.nuxeo.ecm.core.api.Blob;
 import org.nuxeo.ecm.core.api.impl.blob.FileBlob;
 import org.nuxeo.ecm.platform.test.PlatformFeature;
-import org.nuxeo.labs.core.service.GoogleVision;
+import org.nuxeo.labs.vision.core.service.GoogleVision;
 import org.nuxeo.runtime.api.Framework;
 import org.nuxeo.runtime.test.runner.Deploy;
 import org.nuxeo.runtime.test.runner.Features;
@@ -38,6 +38,7 @@ public class TestGoogleVision {
         Blob blob = new FileBlob(file);
         List<String> labels = googleVision.getLabels(blob);
         assertTrue(labels.size()>0);
+        System.out.print(labels);
 
     }
 
@@ -55,6 +56,7 @@ public class TestGoogleVision {
         assertTrue(text.length()>0);
         assertTrue(text.startsWith("Getting Started"));
         assertTrue(text.endsWith("sponsored by Amazon.\n"));
+        System.out.print(text);
 
     }
 

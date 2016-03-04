@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<component name="org.nuxeo.labs.vision.core.listener">
+    <extension target="org.nuxeo.ecm.core.operation.OperationServiceComponent" point="event-handlers">
+        <handler chainId="TagImageChain" postCommit="true">
+            <event>pictureViewsGenerationDone</event>
+            <filters>
+                <facet>Picture</facet>
+                <attribute>Regular Document</attribute>
+            </filters>
+        </handler>
+    </extension>
+</component>

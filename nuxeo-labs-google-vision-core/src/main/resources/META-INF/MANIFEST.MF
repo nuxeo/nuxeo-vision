@@ -6,6 +6,7 @@ Bundle-Version: 1.0.0
 Bundle-Name: nuxeo-labs-google-vision-core
 Bundle-ManifestVersion: 2
 Bundle-SymbolicName: org.nuxeo.labs.nuxeo-labs-google-vision-core;singleton=true
-Nuxeo-Component: OSGI-INF\google-vision-service.xml,
- OSGI-INF\extract-text-op-operation-contrib.xml,
- OSGI-INF\tag-image-op-operation-contrib.xml
+Nuxeo-Component: OSGI-INF/google-vision-service.xml,
+ OSGI-INF/listener-contrib.xml,
+ OSGI-INF/operation-contrib.xml,
+ OSGI-INF/chain-contrib.xml
