@@ -22,10 +22,14 @@ import java.util.Map;
 /**
  *
  */
-@Operation(id=TagImageOp.ID, category=Constants.CAT_DOCUMENT, label="Tag Image", description="Tag Image Using the Google Vision API")
-public class TagImageOp {
+@Operation(
+        id= OcrAndTagImageOp.ID,
+        category=Constants.CAT_DOCUMENT,
+        label="Tag & OCR Image",
+        description="Tag Image Using the Google Vision API")
+public class OcrAndTagImageOp {
 
-    public static final String ID = "Document.TagImageOp";
+    public static final String ID = "Document.OcrAndTagImageOp";
 
     @Context
     protected CoreSession session;
@@ -50,15 +54,25 @@ public class TagImageOp {
         Blob picture = holder.getBlob(conversion);
 
         Map<String,Object> results = googleVision.execute(
-                picture, ImmutableList.of(FeatureType.LABEL_DETECTION));
-        List<String> labels = (List<String>) results.get(FeatureType.LABEL_DETECTION);
+                picture, ImmutableList.of(FeatureType.LABEL_DETECTION,FeatureType.TEXT_DETECTION));
 
+        // Tag documents
+        List<String> labels = (List<String>) results.get(FeatureType.LABEL_DETECTION.toString());
         if (labels==null) return doc;
-
         for (String label: labels) {
             tagService.tag(session,doc.getId(),label,session.getPrincipal().getName());
         }
 
+        // Get OCR text
+        List<String> textItems = (List<String>) results.get(FeatureType.TEXT_DETECTION.toString());
+        if (textItems==null || textItems.size()==0) return doc;
+        StringBuilder text = new StringBuilder();
+        for (String textItem: textItems) {
+            text.append(textItem).append("\n");
+        }
+        doc.setPropertyValue("dc:description",text.toString());
+
+        // Save documents
         if (save) {
             doc = session.saveDocument(doc);
         }
