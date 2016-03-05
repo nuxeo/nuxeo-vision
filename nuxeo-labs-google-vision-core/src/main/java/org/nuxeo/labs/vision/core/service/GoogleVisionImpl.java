@@ -11,6 +11,7 @@ import com.google.common.collect.ImmutableList;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.nuxeo.ecm.core.api.Blob;
+import org.nuxeo.ecm.core.api.NuxeoException;
 import org.nuxeo.labs.vision.core.FeatureType;
 import org.nuxeo.runtime.api.Framework;
 import org.nuxeo.runtime.model.ComponentContext;
@@ -30,7 +31,7 @@ public class GoogleVisionImpl extends DefaultComponent implements GoogleVision {
 
     private static final Log log = LogFactory.getLog(GoogleVisionImpl.class);
 
-    private Vision googleVision=null;
+    private volatile Vision visionClient;
 
     /**
      * Component activated notification.
@@ -67,7 +68,6 @@ public class GoogleVisionImpl extends DefaultComponent implements GoogleVision {
      */
     @Override
     public void applicationStarted(ComponentContext context) {
-        // do nothing by default. You can remove this method if not used.
     }
 
     @Override
@@ -81,84 +81,100 @@ public class GoogleVisionImpl extends DefaultComponent implements GoogleVision {
     }
 
 
-    private Vision getVisionService() throws IOException, GeneralSecurityException {
-        boolean active = "true".equals(Framework.getProperty("org.nuxeo.labs.google.enable"));
-        if (!active) throw new IllegalStateException("Google Vision Service is deactivated");
-
-        if (googleVision!=null) return googleVision;
-
-        String credentialPath = Framework.getProperty("org.nuxeo.labs.google.credential");
-        File file = new File(credentialPath);
-        GoogleCredential credential =
-                GoogleCredential.fromStream(new FileInputStream(file)).createScoped(VisionScopes.all());
-        JsonFactory jsonFactory = JacksonFactory.getDefaultInstance();
-        googleVision = new Vision.Builder(GoogleNetHttpTransport.newTrustedTransport(), jsonFactory, credential)
-                .setApplicationName("test")
-                .build();
-        return googleVision;
+    private Vision getVisionService() throws IOException, GeneralSecurityException{
+        Vision result = visionClient;
+        if (result == null) {
+            synchronized(this) {
+                result = visionClient;
+                if (result == null) {
+                    String credentialPath = Framework.getProperty("org.nuxeo.labs.google.credential");
+                    File file = new File(credentialPath);
+                    GoogleCredential credential =
+                            GoogleCredential.fromStream(
+                                    new FileInputStream(file)).createScoped(VisionScopes.all());
+                    JsonFactory jsonFactory = JacksonFactory.getDefaultInstance();
+                    result = visionClient = new Vision.Builder(
+                            GoogleNetHttpTransport.newTrustedTransport(), jsonFactory, credential)
+                            .setApplicationName("test")
+                            .build();
+                }
+            }
+        }
+        return result;
     }
 
 
     @Override
-    public Map<String,Object> execute(Blob blob, List<FeatureType> features) {
+    public Map<String,Object> execute(Blob blob, List<FeatureType> features,int maxResults)
+            throws IOException, GeneralSecurityException, IllegalStateException {
 
-        byte[] data;
-        try {
-            data = blob.getByteArray();
-        } catch (IOException e) {
-            log.error(e);
-            return new HashMap<>();
+        List<Map<String,Object>> results = execute(ImmutableList.of(blob),features,maxResults);
+        if (results.size()>0) {
+            return results.get(0);
+        } else {
+            throw new NuxeoException("Google vision returned empty results for "+blob.getFilename());
         }
+    }
 
-        //build request
-        List<Feature> requestFeatures = new ArrayList<>();
-        for (FeatureType feature: features) {
-            requestFeatures.add(new Feature().setType(feature.toString()));
-        }
 
-        AnnotateImageRequest request =
-                new AnnotateImageRequest()
-                        .setImage(new Image().encodeContent(data))
-                        .setFeatures(requestFeatures);
+    @Override
+    public List<Map<String,Object>> execute(List<Blob> blobs, List<FeatureType> features,int maxResults)
+            throws IOException, GeneralSecurityException, IllegalStateException {
 
-        Vision vision;
-        try {
-            vision = getVisionService();
-        } catch (IOException | GeneralSecurityException | IllegalStateException e) {
-            log.error(e);
-            return new HashMap<>();
-        }
+        //build list of requested features
+        List<Feature> requestFeatures = buildFeatureList(features,maxResults);
+
+        //build list of request
+        List<AnnotateImageRequest> requests = buildRequestList(blobs,requestFeatures);
 
         Vision.Images.Annotate annotate;
-        try {
-            annotate = vision.images().annotate(
-                    new BatchAnnotateImagesRequest().setRequests(ImmutableList.of(request)));
-        } catch (IOException e) {
-            log.error(e);
-            return new HashMap<>();
-        }
+        annotate = getVisionService().images().annotate(
+                new BatchAnnotateImagesRequest().setRequests(requests));
 
         // Due to a bug: requests to Vision API containing large images fail when GZipped.
         annotate.setDisableGZipContent(true);
 
         // execute request
         BatchAnnotateImagesResponse batchResponse;
-        try {
-            batchResponse = annotate.execute();
-        } catch (IOException e) {
-            log.error(e);
-            return new HashMap<>();
-        }
+        batchResponse = annotate.execute();
+
+        List<Map<String,Object>> results = new ArrayList<>();
 
         //check response is not empty
-        if (batchResponse.getResponses()==null || batchResponse.getResponses().size()==0) {
-            log.debug("Google Vision returned an empty response for "+blob.getFilename());
-            return new HashMap<>();
+        if (batchResponse.getResponses()==null) {
+            throw new IllegalStateException("Google Vision returned an empty response");
         }
 
-        AnnotateImageResponse response = batchResponse.getResponses().get(0);
-        return convertResponse(response);
+        for (AnnotateImageResponse response : batchResponse.getResponses()) {
+            results.add(convertResponse(response));
+        }
 
+        return results;
+    }
+
+
+    protected List<Feature> buildFeatureList(List<FeatureType> features,int maxResults) {
+
+        List<Feature> requestFeatures = new ArrayList<>();
+        for (FeatureType feature: features) {
+            requestFeatures.add(new Feature().setType(feature.toString()).setMaxResults(maxResults));
+        }
+        return requestFeatures;
+    }
+
+
+    protected List<AnnotateImageRequest> buildRequestList(List<Blob> blobs, List<Feature> features)
+            throws IOException{
+
+        List<AnnotateImageRequest> requests = new ArrayList<>();
+        for (Blob blob: blobs) {
+            AnnotateImageRequest request =
+                    new AnnotateImageRequest()
+                            .setImage(new Image().encodeContent(blob.getByteArray()))
+                            .setFeatures(features);
+            requests.add(request);
+        }
+        return requests;
     }
 
 

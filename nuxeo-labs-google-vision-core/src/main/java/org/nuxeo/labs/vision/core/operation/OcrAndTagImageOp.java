@@ -1,6 +1,8 @@
 package org.nuxeo.labs.vision.core.operation;
 
 import com.google.common.collect.ImmutableList;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.nuxeo.ecm.automation.core.Constants;
 import org.nuxeo.ecm.automation.core.annotations.Context;
 import org.nuxeo.ecm.automation.core.annotations.Operation;
@@ -16,6 +18,8 @@ import org.nuxeo.ecm.platform.tag.TagService;
 import org.nuxeo.labs.vision.core.FeatureType;
 import org.nuxeo.labs.vision.core.service.GoogleVision;
 
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.util.List;
 import java.util.Map;
 
@@ -30,6 +34,8 @@ import java.util.Map;
 public class OcrAndTagImageOp {
 
     public static final String ID = "Document.OcrAndTagImageOp";
+
+    private static final Log log = LogFactory.getLog(OcrAndTagImageOp.class);
 
     @Context
     protected CoreSession session;
@@ -53,8 +59,14 @@ public class OcrAndTagImageOp {
         PictureBlobHolder holder = (PictureBlobHolder)doc.getAdapter(BlobHolder.class);
         Blob picture = holder.getBlob(conversion);
 
-        Map<String,Object> results = googleVision.execute(
-                picture, ImmutableList.of(FeatureType.LABEL_DETECTION,FeatureType.TEXT_DETECTION));
+        Map<String,Object> results;
+        try {
+            results = googleVision.execute(
+                    picture, ImmutableList.of(FeatureType.LABEL_DETECTION,FeatureType.TEXT_DETECTION),5);
+        } catch (IOException | GeneralSecurityException e) {
+            log.warn("Call to google vision API failed",e);
+            return doc;
+        }
 
         // Tag documents
         List<String> labels = (List<String>) results.get(FeatureType.LABEL_DETECTION.toString());
@@ -72,7 +84,7 @@ public class OcrAndTagImageOp {
         }
         doc.setPropertyValue("dc:description",text.toString());
 
-        // Save documents
+        // Save document
         if (save) {
             doc = session.saveDocument(doc);
         }

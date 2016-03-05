@@ -37,7 +37,10 @@ import java.util.List;
         "org.nuxeo.ecm.platform.picture.core",
         "org.nuxeo.ecm.platform.tag"
 })
-@LocalDeploy({"org.nuxeo.labs.nuxeo-labs-google-vision-core:OSGI-INF/mock-picture-blobholder-contrib.xml"})
+@LocalDeploy({
+        "org.nuxeo.labs.nuxeo-labs-google-vision-core:OSGI-INF/mock-picture-blobholder-contrib.xml",
+        "org.nuxeo.labs.nuxeo-labs-google-vision-core:OSGI-INF/disabled-listener-contrib.xml"
+})
 public class TestEventChain {
 
     @Inject

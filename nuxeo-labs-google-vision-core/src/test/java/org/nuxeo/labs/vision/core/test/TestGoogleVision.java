@@ -15,6 +15,9 @@ import org.nuxeo.runtime.test.runner.Features;
 import org.nuxeo.runtime.test.runner.FeaturesRunner;
 
 import java.io.File;
+import java.io.IOException;
+import java.security.GeneralSecurityException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -30,17 +33,15 @@ public class TestGoogleVision {
     protected GoogleVision googleVision;
 
     @Test
-    public void testLabelService() {
+    public void testLabelFeature() throws IOException, GeneralSecurityException {
         assertNotNull(googleVision);
         Framework.getProperties().put(
                 "org.nuxeo.labs.google.credential",
                 getClass().getResource("/files/credential.json").getPath());
-        Framework.getProperties().put(
-                "org.nuxeo.labs.google.enable","true");
         File file = new File(getClass().getResource("/files/plane.jpg").getPath());
         Blob blob = new FileBlob(file);
         Map<String,Object> results =
-                googleVision.execute(blob, ImmutableList.of(FeatureType.LABEL_DETECTION));
+                googleVision.execute(blob, ImmutableList.of(FeatureType.LABEL_DETECTION),5);
         assertTrue(results.size()>0);
         List<String> labels = (List<String>) results.get(FeatureType.LABEL_DETECTION.toString());
         assertNotNull(labels);
@@ -49,17 +50,15 @@ public class TestGoogleVision {
     }
 
     @Test
-    public void testTextService() {
+    public void testTextFeature() throws IOException, GeneralSecurityException {
         assertNotNull(googleVision);
         Framework.getProperties().put(
                 "org.nuxeo.labs.google.credential",
                 getClass().getResource("/files/credential.json").getPath());
-        Framework.getProperties().put(
-                "org.nuxeo.labs.google.enable","true");
         File file = new File(getClass().getResource("/files/text.png").getPath());
         Blob blob = new FileBlob(file);
         Map<String,Object> results =
-                googleVision.execute(blob, ImmutableList.of(FeatureType.TEXT_DETECTION));
+                googleVision.execute(blob, ImmutableList.of(FeatureType.TEXT_DETECTION),5);
         assertTrue(results.size()>0);
         List<String> texts = (List<String>) results.get(FeatureType.TEXT_DETECTION.toString());
         assertNotNull(texts);
@@ -68,17 +67,15 @@ public class TestGoogleVision {
     }
 
     @Test
-    public void testTextAndLabelService() {
+    public void testMultipleFeatures() throws IOException, GeneralSecurityException {
         assertNotNull(googleVision);
         Framework.getProperties().put(
                 "org.nuxeo.labs.google.credential",
                 getClass().getResource("/files/credential.json").getPath());
-        Framework.getProperties().put(
-                "org.nuxeo.labs.google.enable","true");
         File file = new File(getClass().getResource("/files/plane.jpg").getPath());
         Blob blob = new FileBlob(file);
         Map<String,Object> results =
-                googleVision.execute(blob, ImmutableList.of(FeatureType.TEXT_DETECTION,FeatureType.LABEL_DETECTION));
+                googleVision.execute(blob, ImmutableList.of(FeatureType.TEXT_DETECTION,FeatureType.LABEL_DETECTION),5);
         assertTrue(results.size()>0);
         List<String> labels = (List<String>) results.get(FeatureType.LABEL_DETECTION.toString());
         assertNotNull(labels);
@@ -87,24 +84,21 @@ public class TestGoogleVision {
         assertNotNull(texts);
         assertTrue(texts.size()>0);
         System.out.print(texts.get(0));
-
     }
 
-
-
     @Test
-    public void testDeactivatedService() {
+    public void testMultipleBlobs() throws IOException, GeneralSecurityException {
         assertNotNull(googleVision);
         Framework.getProperties().put(
                 "org.nuxeo.labs.google.credential",
                 getClass().getResource("/files/credential.json").getPath());
-        Framework.getProperties().put(
-                "org.nuxeo.labs.google.enable","false");
-        File file = new File(getClass().getResource("/files/plane.jpg").getPath());
-        Blob blob = new FileBlob(file);
-        Map<String,Object> results =
-                googleVision.execute(blob,ImmutableList.of(FeatureType.LABEL_DETECTION));
-        assertTrue(results.size()==0);
+        List<Blob> blobs = new ArrayList<>();
+        blobs.add(new FileBlob(new File(getClass().getResource("/files/plane.jpg").getPath())));
+        blobs.add(new FileBlob(new File(getClass().getResource("/files/text.png").getPath())));
 
+        List<Map<String, Object>> results = googleVision.execute(
+                blobs, ImmutableList.of(FeatureType.TEXT_DETECTION, FeatureType.LABEL_DETECTION), 5);
+        assertTrue(results.size() == 2);
     }
+
 }
