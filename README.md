@@ -18,7 +18,7 @@ Building requires the following software:
  
 - Enable the Vision API from the google developer console
 - As of march 2nd 2016, billing must be activated in your google account in order to use the Vision API
-- Configure a [service account](https://developers.google.com/identity/protocols/OAuth2ServiceAccount) and put the JSON key file in nuxeo-labs-google-vision-core/src/test/resources/files and rename it credential.json
+- Configure a [service account](https://developers.google.com/identity/protocols/OAuth2ServiceAccount) and set the JSON file path in nuxeo-labs-google-vision-core/src/test/resources/OSGI-INF/google-vision-service.xml
  
 ```
 git clone https://github.com/nuxeo-sandbox/nuxeo-labs-google-vision
@@ -32,7 +32,6 @@ mvn clean install
 - Edit nuxeo.conf 
 
 ```
-org.nuxeo.labs.google.enable=true
 org.nuxeo.labs.google.credential=PATH_TO_JSON_CREDENTIAL_File
 ```
 
