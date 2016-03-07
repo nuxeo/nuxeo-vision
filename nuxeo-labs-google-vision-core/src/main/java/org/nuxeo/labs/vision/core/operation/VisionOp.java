@@ -11,7 +11,6 @@ import org.nuxeo.ecm.automation.core.annotations.Param;
 import org.nuxeo.ecm.automation.core.util.BlobList;
 import org.nuxeo.ecm.automation.core.util.StringList;
 import org.nuxeo.ecm.core.api.Blob;
-import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.labs.vision.core.service.GoogleVision;
 
 import java.io.IOException;
@@ -33,8 +32,6 @@ public class VisionOp {
 
     private static final Log log = LogFactory.getLog(VisionOp.class);
 
-    @Context
-    protected CoreSession session;
 
     @Context
     protected OperationContext ctx;
@@ -48,10 +45,16 @@ public class VisionOp {
             required = true)
     protected StringList features;
 
-    @Param(name = "outputVariable", required = true)
+    @Param(
+            name = "outputVariable",
+            description= "The key of the context output variable. The output variable is a list of map",
+            required = true)
     protected String outputVariable;
 
-    @Param(name = "maxResults", required = true)
+    @Param(
+            name = "maxResults",
+            description= "The maximum number of results per feature",
+            required = true)
     protected int maxResults;
 
     @OperationMethod
