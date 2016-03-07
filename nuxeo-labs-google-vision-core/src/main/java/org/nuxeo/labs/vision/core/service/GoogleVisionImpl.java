@@ -82,6 +82,8 @@ public class GoogleVisionImpl extends DefaultComponent implements GoogleVision {
 
 
     private Vision getVisionService() throws IOException, GeneralSecurityException{
+        // thread safe lazy initialization of the google vision client
+        // see https://en.wikipedia.org/wiki/Double-checked_locking
         Vision result = visionClient;
         if (result == null) {
             synchronized(this) {
@@ -95,7 +97,7 @@ public class GoogleVisionImpl extends DefaultComponent implements GoogleVision {
                     JsonFactory jsonFactory = JacksonFactory.getDefaultInstance();
                     result = visionClient = new Vision.Builder(
                             GoogleNetHttpTransport.newTrustedTransport(), jsonFactory, credential)
-                            .setApplicationName("test")
+                            .setApplicationName("Nuxeo")
                             .build();
                 }
             }
@@ -105,7 +107,7 @@ public class GoogleVisionImpl extends DefaultComponent implements GoogleVision {
 
 
     @Override
-    public Map<String,Object> execute(Blob blob, List<FeatureType> features,int maxResults)
+    public Map<String,Object> execute(Blob blob, List<String> features,int maxResults)
             throws IOException, GeneralSecurityException, IllegalStateException {
 
         List<Map<String,Object>> results = execute(ImmutableList.of(blob),features,maxResults);
@@ -118,7 +120,7 @@ public class GoogleVisionImpl extends DefaultComponent implements GoogleVision {
 
 
     @Override
-    public List<Map<String,Object>> execute(List<Blob> blobs, List<FeatureType> features,int maxResults)
+    public List<Map<String,Object>> execute(List<Blob> blobs, List<String> features,int maxResults)
             throws IOException, GeneralSecurityException, IllegalStateException {
 
         //build list of requested features
@@ -153,11 +155,11 @@ public class GoogleVisionImpl extends DefaultComponent implements GoogleVision {
     }
 
 
-    protected List<Feature> buildFeatureList(List<FeatureType> features,int maxResults) {
+    protected List<Feature> buildFeatureList(List<String> features,int maxResults) {
 
         List<Feature> requestFeatures = new ArrayList<>();
-        for (FeatureType feature: features) {
-            requestFeatures.add(new Feature().setType(feature.toString()).setMaxResults(maxResults));
+        for (String feature: features) {
+            requestFeatures.add(new Feature().setType(feature).setMaxResults(maxResults));
         }
         return requestFeatures;
     }

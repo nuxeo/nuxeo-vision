@@ -3,7 +3,7 @@
     <extension target="org.nuxeo.ecm.core.operation.OperationServiceComponent" point="chains">
         <chain id="TagImageChain">
             <operation id="Context.FetchDocument"/>
-            <operation id="Document.OcrAndTagImageOp">
+            <operation id="Document.OcrAndTagPictureOp">
                 <param type="string" name="conversion">Medium</param>
                 <param type="boolean" name="save">true</param>
             </operation>

@@ -50,7 +50,7 @@ public class TestEventChain {
     protected TagService tagService;
 
     @Test
-    public void shouldCallTheOperation() throws IOException, OperationException {
+    public void shouldCallTheChain() throws IOException, OperationException {
 
         Framework.getProperties().put(
                 "org.nuxeo.labs.google.credential",

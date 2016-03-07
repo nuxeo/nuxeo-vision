@@ -17,7 +17,7 @@ import org.nuxeo.ecm.core.test.annotations.Granularity;
 import org.nuxeo.ecm.core.test.annotations.RepositoryConfig;
 import org.nuxeo.ecm.platform.tag.Tag;
 import org.nuxeo.ecm.platform.tag.TagService;
-import org.nuxeo.labs.vision.core.operation.OcrAndTagImageOp;
+import org.nuxeo.labs.vision.core.operation.OcrAndTagPictureOp;
 import org.nuxeo.runtime.api.Framework;
 import org.nuxeo.runtime.test.runner.Deploy;
 import org.nuxeo.runtime.test.runner.Features;
@@ -72,7 +72,7 @@ public class TestTagImageOp {
         ctx.setInput(picture);
         ctx.setCoreSession(session);
         OperationChain chain = new OperationChain("TestTextTagPictureOp");
-        chain.add(OcrAndTagImageOp.ID).set("conversion","Medium").set("save",true);
+        chain.add(OcrAndTagPictureOp.ID).set("conversion","Medium").set("save",true);
         picture = (DocumentModel) as.run(ctx, chain);
 
         List<Tag> tags =

@@ -27,15 +27,15 @@ import java.util.Map;
  *
  */
 @Operation(
-        id= OcrAndTagImageOp.ID,
+        id= OcrAndTagPictureOp.ID,
         category=Constants.CAT_DOCUMENT,
-        label="Tag & OCR Image",
-        description="Tag Image Using the Google Vision API")
-public class OcrAndTagImageOp {
+        label="Tag & OCR Picture",
+        description="Tag Picture Using the Google Vision API")
+public class OcrAndTagPictureOp {
 
-    public static final String ID = "Document.OcrAndTagImageOp";
+    public static final String ID = "Document.OcrAndTagPictureOp";
 
-    private static final Log log = LogFactory.getLog(OcrAndTagImageOp.class);
+    private static final Log log = LogFactory.getLog(OcrAndTagPictureOp.class);
 
     @Context
     protected CoreSession session;
@@ -62,7 +62,8 @@ public class OcrAndTagImageOp {
         Map<String,Object> results;
         try {
             results = googleVision.execute(
-                    picture, ImmutableList.of(FeatureType.LABEL_DETECTION,FeatureType.TEXT_DETECTION),5);
+                    picture, ImmutableList.of(FeatureType.LABEL_DETECTION.toString(),
+                            FeatureType.TEXT_DETECTION.toString()),5);
         } catch (IOException | GeneralSecurityException e) {
             log.warn("Call to google vision API failed",e);
             return doc;
@@ -72,7 +73,10 @@ public class OcrAndTagImageOp {
         List<String> labels = (List<String>) results.get(FeatureType.LABEL_DETECTION.toString());
         if (labels==null) return doc;
         for (String label: labels) {
-            tagService.tag(session,doc.getId(),label,session.getPrincipal().getName());
+            tagService.tag(
+                    session,doc.getId(),
+                    label.replaceAll(" ","+"),
+                    session.getPrincipal().getName());
         }
 
         // Get OCR text
