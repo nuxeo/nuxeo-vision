@@ -1,5 +1,7 @@
 package org.nuxeo.labs.vision.core.test;
 
+import com.google.api.services.vision.v1.model.AnnotateImageResponse;
+import com.google.api.services.vision.v1.model.EntityAnnotation;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,7 +29,6 @@ import javax.inject.Inject;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 
 @RunWith(FeaturesRunner.class)
 @Features(AutomationFeature.class)
@@ -60,11 +61,11 @@ public class TestVisionOp {
                 set("maxResults",5);
         blob = (Blob) as.run(ctx, chain);
 
-        List<Map<String, Object>> resultList = (List<Map<String, Object>>) ctx.get("testTags");
+        List<AnnotateImageResponse> resultList = (List<AnnotateImageResponse>) ctx.get("testTags");
         Assert.assertNotNull(resultList);
         Assert.assertEquals(1,resultList.size());
-        Map<String,Object> result = resultList.get(0);
-        List<String> labels = (List<String>) result.get(FeatureType.LABEL_DETECTION.toString());
+        AnnotateImageResponse result = resultList.get(0);
+        List<EntityAnnotation> labels = result.getLabelAnnotations();
         Assert.assertNotNull(labels);
         Assert.assertTrue(labels.size()>0);
         System.out.print(labels);
@@ -91,7 +92,7 @@ public class TestVisionOp {
                 set("maxResults",5);
         blobs = (BlobList) as.run(ctx, chain);
 
-        List<Map<String, Object>> resultList = (List<Map<String, Object>>) ctx.get("testTags");
+        List<AnnotateImageResponse> resultList = (List<AnnotateImageResponse>) ctx.get("testTags");
         Assert.assertNotNull(resultList);
         Assert.assertEquals(2,resultList.size());
     }

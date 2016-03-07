@@ -1,5 +1,7 @@
 package org.nuxeo.labs.vision.core.test;
 
+import com.google.api.services.vision.v1.model.AnnotateImageResponse;
+import com.google.api.services.vision.v1.model.EntityAnnotation;
 import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
 import org.junit.Test;
@@ -19,7 +21,6 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -42,10 +43,10 @@ public class TestGoogleVision {
         assertNotNull(googleVision);
         File file = new File(getClass().getResource("/files/plane.jpg").getPath());
         Blob blob = new FileBlob(file);
-        Map<String,Object> results =
+        AnnotateImageResponse results =
                 googleVision.execute(blob, ImmutableList.of(FeatureType.LABEL_DETECTION.toString()),5);
         assertTrue(results.size()>0);
-        List<String> labels = (List<String>) results.get(FeatureType.LABEL_DETECTION.toString());
+        List<EntityAnnotation> labels = results.getLabelAnnotations();
         assertNotNull(labels);
         assertTrue(labels.size()>0);
         System.out.print(labels);
@@ -56,10 +57,10 @@ public class TestGoogleVision {
         assertNotNull(googleVision);
         File file = new File(getClass().getResource("/files/text.png").getPath());
         Blob blob = new FileBlob(file);
-        Map<String,Object> results =
+        AnnotateImageResponse results =
                 googleVision.execute(blob, ImmutableList.of(FeatureType.TEXT_DETECTION.toString()),5);
         assertTrue(results.size()>0);
-        List<String> texts = (List<String>) results.get(FeatureType.TEXT_DETECTION.toString());
+        List<EntityAnnotation> texts = results.getTextAnnotations();
         assertNotNull(texts);
         assertTrue(texts.size()>0);
         System.out.print(texts.get(0));
@@ -70,14 +71,14 @@ public class TestGoogleVision {
         assertNotNull(googleVision);
         File file = new File(getClass().getResource("/files/plane.jpg").getPath());
         Blob blob = new FileBlob(file);
-        Map<String,Object> results = googleVision.execute(
+        AnnotateImageResponse results = googleVision.execute(
                 blob, ImmutableList.of(FeatureType.TEXT_DETECTION.toString(),
                         FeatureType.LABEL_DETECTION.toString()),5);
         assertTrue(results.size()>0);
-        List<String> labels = (List<String>) results.get(FeatureType.LABEL_DETECTION.toString());
+        List<EntityAnnotation> labels = results.getLabelAnnotations();
         assertNotNull(labels);
         assertTrue(labels.size()>0);
-        List<String> texts = (List<String>) results.get(FeatureType.TEXT_DETECTION.toString());
+        List<EntityAnnotation> texts = results.getTextAnnotations();
         assertNotNull(texts);
         assertTrue(texts.size()>0);
         System.out.print(texts.get(0));
@@ -90,7 +91,7 @@ public class TestGoogleVision {
         blobs.add(new FileBlob(new File(getClass().getResource("/files/plane.jpg").getPath())));
         blobs.add(new FileBlob(new File(getClass().getResource("/files/text.png").getPath())));
 
-        List<Map<String, Object>> results = googleVision.execute(
+        List<AnnotateImageResponse> results = googleVision.execute(
                 blobs, ImmutableList.of(FeatureType.TEXT_DETECTION.toString(),
                         FeatureType.LABEL_DETECTION.toString()), 5);
         assertTrue(results.size() == 2);

@@ -1,11 +1,11 @@
 package org.nuxeo.labs.vision.core.service;
 
+import com.google.api.services.vision.v1.model.AnnotateImageResponse;
 import org.nuxeo.ecm.core.api.Blob;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.List;
-import java.util.Map;
 
 public interface GoogleVision {
 
@@ -16,7 +16,7 @@ public interface GoogleVision {
      * @param maxResults the maximum number of results per feature
      * @return a map of results returned by the API where the key is the feature name
      */
-    Map<String,Object> execute(Blob blob, List<String> features, int maxResults)
+    AnnotateImageResponse execute(Blob blob, List<String> features, int maxResults)
             throws IOException, GeneralSecurityException;
 
     /**
@@ -26,7 +26,7 @@ public interface GoogleVision {
      * @param maxResults the maximum number of results per feature
      * @return a list of maps of results returned by the API where the key is the feature name
      */
-    List<Map<String,Object>> execute(List<Blob> blobs, List<String> features,int maxResults)
+    List<AnnotateImageResponse> execute(List<Blob> blobs, List<String> features,int maxResults)
             throws IOException, GeneralSecurityException;
 
 }

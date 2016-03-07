@@ -1,5 +1,7 @@
 package org.nuxeo.labs.vision.core.operation;
 
+import com.google.api.services.vision.v1.model.AnnotateImageResponse;
+import com.google.api.services.vision.v1.model.EntityAnnotation;
 import com.google.common.collect.ImmutableList;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -21,7 +23,6 @@ import org.nuxeo.labs.vision.core.service.GoogleVision;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.List;
-import java.util.Map;
 
 /**
  *
@@ -59,9 +60,9 @@ public class OcrAndTagPictureOp {
         PictureBlobHolder holder = (PictureBlobHolder)doc.getAdapter(BlobHolder.class);
         Blob picture = holder.getBlob(conversion);
 
-        Map<String,Object> results;
+        AnnotateImageResponse result;
         try {
-            results = googleVision.execute(
+            result = googleVision.execute(
                     picture, ImmutableList.of(FeatureType.LABEL_DETECTION.toString(),
                             FeatureType.TEXT_DETECTION.toString()),5);
         } catch (IOException | GeneralSecurityException e) {
@@ -70,21 +71,21 @@ public class OcrAndTagPictureOp {
         }
 
         // Tag documents
-        List<String> labels = (List<String>) results.get(FeatureType.LABEL_DETECTION.toString());
+        List<EntityAnnotation> labels = result.getLabelAnnotations();
         if (labels==null) return doc;
-        for (String label: labels) {
+        for (EntityAnnotation label: labels) {
             tagService.tag(
                     session,doc.getId(),
-                    label.replaceAll(" ","+"),
+                    label.getDescription().replaceAll(" ","+"),
                     session.getPrincipal().getName());
         }
 
         // Get OCR text
-        List<String> textItems = (List<String>) results.get(FeatureType.TEXT_DETECTION.toString());
+        List<EntityAnnotation> textItems = result.getTextAnnotations();
         if (textItems==null || textItems.size()==0) return doc;
         StringBuilder text = new StringBuilder();
-        for (String textItem: textItems) {
-            text.append(textItem).append("\n");
+        for (EntityAnnotation textItem: textItems) {
+            text.append(textItem.getDescription()).append("\n");
         }
         doc.setPropertyValue("dc:description",text.toString());
 

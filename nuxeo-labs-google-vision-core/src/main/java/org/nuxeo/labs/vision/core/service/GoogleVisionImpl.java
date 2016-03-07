@@ -12,7 +12,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.nuxeo.ecm.core.api.Blob;
 import org.nuxeo.ecm.core.api.NuxeoException;
-import org.nuxeo.labs.vision.core.FeatureType;
 import org.nuxeo.runtime.model.ComponentContext;
 import org.nuxeo.runtime.model.ComponentInstance;
 import org.nuxeo.runtime.model.DefaultComponent;
@@ -22,9 +21,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class GoogleVisionImpl extends DefaultComponent implements GoogleVision {
 
@@ -111,10 +108,10 @@ public class GoogleVisionImpl extends DefaultComponent implements GoogleVision {
 
 
     @Override
-    public Map<String,Object> execute(Blob blob, List<String> features,int maxResults)
+    public AnnotateImageResponse execute(Blob blob, List<String> features,int maxResults)
             throws IOException, GeneralSecurityException, IllegalStateException {
 
-        List<Map<String,Object>> results = execute(ImmutableList.of(blob),features,maxResults);
+        List<AnnotateImageResponse> results = execute(ImmutableList.of(blob),features,maxResults);
         if (results.size()>0) {
             return results.get(0);
         } else {
@@ -124,7 +121,7 @@ public class GoogleVisionImpl extends DefaultComponent implements GoogleVision {
 
 
     @Override
-    public List<Map<String,Object>> execute(List<Blob> blobs, List<String> features,int maxResults)
+    public List<AnnotateImageResponse> execute(List<Blob> blobs, List<String> features,int maxResults)
             throws IOException, GeneralSecurityException, IllegalStateException {
 
         //build list of requested features
@@ -144,18 +141,12 @@ public class GoogleVisionImpl extends DefaultComponent implements GoogleVision {
         BatchAnnotateImagesResponse batchResponse;
         batchResponse = annotate.execute();
 
-        List<Map<String,Object>> results = new ArrayList<>();
-
         //check response is not empty
         if (batchResponse.getResponses()==null) {
             throw new IllegalStateException("Google Vision returned an empty response");
         }
 
-        for (AnnotateImageResponse response : batchResponse.getResponses()) {
-            results.add(convertResponse(response));
-        }
-
-        return results;
+        return batchResponse.getResponses();
     }
 
 
@@ -181,31 +172,6 @@ public class GoogleVisionImpl extends DefaultComponent implements GoogleVision {
             requests.add(request);
         }
         return requests;
-    }
-
-
-    protected Map<String,Object> convertResponse(AnnotateImageResponse response) {
-        HashMap<String,Object> results = new HashMap<>();
-
-        //get labels
-        if (response.getLabelAnnotations()!=null) {
-            List<String> labels = new ArrayList<>();
-            for(EntityAnnotation annotation : response.getLabelAnnotations()) {
-                labels.add(annotation.getDescription());
-            }
-            results.put(FeatureType.LABEL_DETECTION.toString(),labels);
-        }
-
-        //get OCR Text
-        if (response.getTextAnnotations()!=null) {
-            List<String> texts = new ArrayList<>();
-            for(EntityAnnotation annotation : response.getTextAnnotations()) {
-                texts.add(annotation.getDescription());
-            }
-            results.put(FeatureType.TEXT_DETECTION.toString(),texts);
-        }
-
-        return results;
     }
 
 }

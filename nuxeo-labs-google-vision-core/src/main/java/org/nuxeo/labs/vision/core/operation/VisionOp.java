@@ -1,5 +1,6 @@
 package org.nuxeo.labs.vision.core.operation;
 
+import com.google.api.services.vision.v1.model.AnnotateImageResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.nuxeo.ecm.automation.OperationContext;
@@ -16,7 +17,6 @@ import org.nuxeo.labs.vision.core.service.GoogleVision;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.List;
-import java.util.Map;
 
 /**
  *
@@ -41,13 +41,13 @@ public class VisionOp {
 
     @Param(
             name = "features",
-            description= "A StringList of features to request from the API. Available Features are ",
+            description= "A StringList of features to request from the API. Available Features are described at https://cloud.google.com/vision/reference/rest/v1/images/annotate#Feature",
             required = true)
     protected StringList features;
 
     @Param(
             name = "outputVariable",
-            description= "The key of the context output variable. The output variable is a list of map",
+            description= "The key of the context output variable. The output variable is a list of AnnotateImageResponse objects. See https://cloud.google.com/vision/reference/rest/v1/images/annotate#AnnotateImageResponse",
             required = true)
     protected String outputVariable;
 
@@ -67,7 +67,7 @@ public class VisionOp {
 
     @OperationMethod
     public BlobList run(BlobList blobs) {
-        List<Map<String,Object>> results;
+        List<AnnotateImageResponse> results;
         try {
             results = googleVision.execute(blobs, features, maxResults);
             ctx.put(outputVariable,results);
