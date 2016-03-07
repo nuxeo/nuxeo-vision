@@ -1,6 +1,10 @@
 <?xml version="1.0"?>
 <component name="org.nuxeo.labs.vision.core.service" version="1.0">
 
+  <documentation>
+    A service to call the Google Vision API
+  </documentation>
+
   <implementation class="org.nuxeo.labs.vision.core.service.GoogleVisionImpl" />
 
   <service>
@@ -8,7 +12,7 @@
   </service>
 
   <extension-point name="configuration">
-    <documentation></documentation>
+    <documentation>Used to configure the application name to send to the Google API as well as the path of the JSON credential file</documentation>
     <object class="org.nuxeo.labs.vision.core.service.GoogleVisionDescriptor" />
   </extension-point>
 

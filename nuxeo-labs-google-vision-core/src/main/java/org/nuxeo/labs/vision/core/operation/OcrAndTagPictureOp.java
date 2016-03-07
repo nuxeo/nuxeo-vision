@@ -50,7 +50,8 @@ import java.util.List;
         id= OcrAndTagPictureOp.ID,
         category=Constants.CAT_DOCUMENT,
         label="Tag & OCR Picture",
-        description="Tag Picture Using the Google Vision API")
+        description="Tag and OCR the input Picture document using the Google Vision API." +
+                " Tags are stored using the Tag Service and OCR text is put in dc:description")
 public class OcrAndTagPictureOp {
 
     public static final String ID = "Document.OcrAndTagPictureOp";
@@ -66,10 +67,16 @@ public class OcrAndTagPictureOp {
     @Context
     protected TagService tagService;
 
-    @Param(name = "conversion", required = true)
+    @Param(
+            name = "conversion",
+            description = "The picture conversion to use. Default to Medium",
+            required = false)
     protected String conversion;
 
-    @Param(name = "save", required = true)
+    @Param(
+            name = "save",
+            description = "Set to true to save the modification made to the document within this Operation",
+            required = true)
     protected boolean save;
 
     @OperationMethod(collector=DocumentModelCollector.class)
