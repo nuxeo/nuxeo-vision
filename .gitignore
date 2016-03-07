@@ -6,4 +6,3 @@ bower_components
 .idea
 target
 *.iml
-nuxeo-labs-google-vision-core/src/test/resources/files/credential.json

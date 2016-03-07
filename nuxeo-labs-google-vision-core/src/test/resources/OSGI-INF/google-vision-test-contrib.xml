@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<component name="org.nuxeo.labs.vision.core.test" version="1.0">
+
+  <extension target="org.nuxeo.labs.vision.core.service" point="configuration">
+    <configuration>
+      <appName>Nuxeo</appName>
+      <credentialFilePath>C:\Users\Michaël\Downloads\credential.json</credentialFilePath>
+    </configuration>
+  </extension>
+
+</component>

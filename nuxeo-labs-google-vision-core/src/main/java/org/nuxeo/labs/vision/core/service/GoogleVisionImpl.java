@@ -13,7 +13,6 @@ import org.apache.commons.logging.LogFactory;
 import org.nuxeo.ecm.core.api.Blob;
 import org.nuxeo.ecm.core.api.NuxeoException;
 import org.nuxeo.labs.vision.core.FeatureType;
-import org.nuxeo.runtime.api.Framework;
 import org.nuxeo.runtime.model.ComponentContext;
 import org.nuxeo.runtime.model.ComponentInstance;
 import org.nuxeo.runtime.model.DefaultComponent;
@@ -32,6 +31,10 @@ public class GoogleVisionImpl extends DefaultComponent implements GoogleVision {
     private static final Log log = LogFactory.getLog(GoogleVisionImpl.class);
 
     private volatile Vision visionClient;
+
+    protected static final String EXT_POINT = "configuration";
+
+    protected GoogleVisionDescriptor config = null;
 
     /**
      * Component activated notification.
@@ -72,7 +75,9 @@ public class GoogleVisionImpl extends DefaultComponent implements GoogleVision {
 
     @Override
     public void registerContribution(Object contribution, String extensionPoint, ComponentInstance contributor) {
-        // Add some logic here to handle contributions
+        if (EXT_POINT.equals(extensionPoint)) {
+            config = (GoogleVisionDescriptor) contribution;
+        }
     }
 
     @Override
@@ -89,15 +94,14 @@ public class GoogleVisionImpl extends DefaultComponent implements GoogleVision {
             synchronized(this) {
                 result = visionClient;
                 if (result == null) {
-                    String credentialPath = Framework.getProperty("org.nuxeo.labs.google.credential");
-                    File file = new File(credentialPath);
+                    File file = new File(config.getCredentialFilePath());
                     GoogleCredential credential =
                             GoogleCredential.fromStream(
                                     new FileInputStream(file)).createScoped(VisionScopes.all());
                     JsonFactory jsonFactory = JacksonFactory.getDefaultInstance();
                     result = visionClient = new Vision.Builder(
                             GoogleNetHttpTransport.newTrustedTransport(), jsonFactory, credential)
-                            .setApplicationName("Nuxeo")
+                            .setApplicationName(config.getAppName())
                             .build();
                 }
             }

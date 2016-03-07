@@ -40,7 +40,8 @@ import java.util.List;
 })
 @LocalDeploy({
         "org.nuxeo.labs.nuxeo-labs-google-vision-core:OSGI-INF/mock-picture-blobholder-contrib.xml",
-        "org.nuxeo.labs.nuxeo-labs-google-vision-core:OSGI-INF/disabled-listener-contrib.xml"
+        "org.nuxeo.labs.nuxeo-labs-google-vision-core:OSGI-INF/disabled-listener-contrib.xml",
+        "org.nuxeo.labs.nuxeo-labs-google-vision-core:OSGI-INF/google-vision-test-contrib.xml"
 })
 public class TestTagImageOp {
 
@@ -52,14 +53,6 @@ public class TestTagImageOp {
 
     @Test
     public void testWithTextAndTags() throws IOException, OperationException {
-
-        Framework.getProperties().put(
-                "org.nuxeo.labs.google.credential",
-                getClass().getResource("/files/credential.json").getPath());
-        Framework.getProperties().put(
-                "org.nuxeo.labs.google.enable","true");
-
-
         DocumentModel picture = session.createDocumentModel("/", "Picture", "Picture");
         File file = new File(getClass().getResource("/files/plane.jpg").getPath());
         Blob blob = new FileBlob(file);

@@ -33,7 +33,8 @@ import java.util.Map;
 @Features(AutomationFeature.class)
 @RepositoryConfig(init = DefaultRepositoryInit.class, cleanup = Granularity.METHOD)
 @Deploy({
-        "org.nuxeo.labs.nuxeo-labs-google-vision-core"
+        "org.nuxeo.labs.nuxeo-labs-google-vision-core",
+        "org.nuxeo.labs.nuxeo-labs-google-vision-core:OSGI-INF/google-vision-test-contrib.xml"
 })
 public class TestVisionOp {
 
@@ -42,11 +43,6 @@ public class TestVisionOp {
 
     @Test
     public void testOneBlobWithTags() throws IOException, OperationException {
-
-        Framework.getProperties().put(
-                "org.nuxeo.labs.google.credential",
-                getClass().getResource("/files/credential.json").getPath());
-
         File file = new File(getClass().getResource("/files/plane.jpg").getPath());
         Blob blob = new FileBlob(file);
 
@@ -77,11 +73,6 @@ public class TestVisionOp {
 
     @Test
     public void testMultipleBlobsWithTags() throws IOException, OperationException {
-
-        Framework.getProperties().put(
-                "org.nuxeo.labs.google.credential",
-                getClass().getResource("/files/credential.json").getPath());
-
         BlobList blobs = new BlobList();
         blobs.add(new FileBlob(new File(getClass().getResource("/files/plane.jpg").getPath())));
         blobs.add(new FileBlob(new File(getClass().getResource("/files/text.png").getPath())));
