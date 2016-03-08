@@ -30,8 +30,7 @@ import static org.junit.Assert.assertTrue;
 @Deploy("org.nuxeo.labs.nuxeo-labs-google-vision-core")
 @LocalDeploy({
         "org.nuxeo.labs.nuxeo-labs-google-vision-core:OSGI-INF/mock-picture-blobholder-contrib.xml",
-        "org.nuxeo.labs.nuxeo-labs-google-vision-core:OSGI-INF/disabled-listener-contrib.xml",
-        "org.nuxeo.labs.nuxeo-labs-google-vision-core:OSGI-INF/google-vision-test-contrib.xml"
+        "org.nuxeo.labs.nuxeo-labs-google-vision-core:OSGI-INF/disabled-listener-contrib.xml"
 })
 public class TestGoogleVision {
 

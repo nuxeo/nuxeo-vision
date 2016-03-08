@@ -34,8 +34,7 @@ import java.util.List;
 @Features(AutomationFeature.class)
 @RepositoryConfig(init = DefaultRepositoryInit.class, cleanup = Granularity.METHOD)
 @Deploy({
-        "org.nuxeo.labs.nuxeo-labs-google-vision-core",
-        "org.nuxeo.labs.nuxeo-labs-google-vision-core:OSGI-INF/google-vision-test-contrib.xml"
+        "org.nuxeo.labs.nuxeo-labs-google-vision-core"
 })
 public class TestVisionOp {
 

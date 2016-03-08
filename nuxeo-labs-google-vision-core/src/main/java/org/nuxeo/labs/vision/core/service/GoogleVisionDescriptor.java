@@ -21,6 +21,7 @@ package org.nuxeo.labs.vision.core.service;
 
 import org.nuxeo.common.xmap.annotation.XNode;
 import org.nuxeo.common.xmap.annotation.XObject;
+import org.nuxeo.runtime.api.Framework;
 
 /**
  * Created by Michaël on 3/7/2016.
@@ -28,6 +29,8 @@ import org.nuxeo.common.xmap.annotation.XObject;
 
 @XObject("configuration")
 public class GoogleVisionDescriptor {
+
+    public static final String ENV_VARIABLE = "NUXEO_GOOGLE_APPLICATION_CREDENTIALS";
 
     @XNode("appName")
     protected String appName = "Nuxeo";
@@ -40,6 +43,12 @@ public class GoogleVisionDescriptor {
     }
 
     public String getCredentialFilePath() {
-        return credentialFilePath;
+        if (Framework.isTestModeSet() &&
+                (credentialFilePath==null || credentialFilePath.length()==0)) {
+            // Use ENV variable if running unit tests
+            return System.getenv(ENV_VARIABLE);
+        } else {
+            return credentialFilePath;
+        }
     }
 }
