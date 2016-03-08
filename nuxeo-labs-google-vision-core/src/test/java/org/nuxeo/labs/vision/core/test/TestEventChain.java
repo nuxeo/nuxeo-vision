@@ -12,6 +12,10 @@ import org.nuxeo.ecm.core.api.Blob;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.impl.blob.FileBlob;
+import org.nuxeo.ecm.core.event.Event;
+import org.nuxeo.ecm.core.event.EventProducer;
+import org.nuxeo.ecm.core.event.impl.DocumentEventContext;
+import org.nuxeo.ecm.core.event.impl.EventContextImpl;
 import org.nuxeo.ecm.core.test.DefaultRepositoryInit;
 import org.nuxeo.ecm.core.test.annotations.Granularity;
 import org.nuxeo.ecm.core.test.annotations.RepositoryConfig;
@@ -49,8 +53,11 @@ public class TestEventChain {
     @Inject
     protected TagService tagService;
 
+    @Inject
+    protected EventProducer eventProducer;
+
     @Test
-    public void shouldCallTheChain() throws IOException, OperationException {
+    public void testChain() throws IOException, OperationException {
 
         DocumentModel picture = session.createDocumentModel("/", "Picture", "Picture");
         File file = new File(getClass().getResource("/files/plane.jpg").getPath());
@@ -63,9 +70,31 @@ public class TestEventChain {
         OperationContext ctx = new OperationContext();
         ctx.setInput(picture);
         ctx.setCoreSession(session);
-        OperationChain chain = new OperationChain("TestTagChain");
-        chain.add("TagImageChain");
+        OperationChain chain = new OperationChain("TestChain");
+        chain.add("TagAndOCR");
         picture = (DocumentModel) as.run(ctx, chain);
+
+        List<Tag> tags =
+                tagService.getDocumentTags(session,picture.getId(),session.getPrincipal().getName());
+
+        Assert.assertTrue(tags.size()>0);
+    }
+
+
+    @Test
+    public void testListener() throws IOException, OperationException {
+
+        DocumentModel picture = session.createDocumentModel("/", "Picture", "Picture");
+        File file = new File(getClass().getResource("/files/plane.jpg").getPath());
+        Blob blob = new FileBlob(file);
+        picture.setPropertyValue("file:content", (Serializable) blob);
+        picture = session.createDocument(picture);
+
+        EventContextImpl evctx = new DocumentEventContext(session, session.getPrincipal(),picture);
+        Event event = evctx.newEvent("pictureViewsGenerationDone");
+        eventProducer.fireEvent(event);
+
+        picture = session.getDocument(picture.getRef());
 
         List<Tag> tags =
                 tagService.getDocumentTags(session,picture.getId(),session.getPrincipal().getName());

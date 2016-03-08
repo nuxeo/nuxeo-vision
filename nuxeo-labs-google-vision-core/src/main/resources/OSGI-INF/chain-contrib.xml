@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <component name="org.nuxeo.labs.vision.core.chains">
     <extension target="org.nuxeo.ecm.core.operation.OperationServiceComponent" point="chains">
-        <chain id="TagImageChain">
+        <chain id="TagAndOCR">
             <operation id="Context.FetchDocument"/>
             <operation id="Document.OcrAndTagPictureOp">
                 <param type="string" name="conversion">Medium</param>
