@@ -29,17 +29,16 @@ import static org.junit.Assert.assertTrue;
 @Features({ PlatformFeature.class })
 @Deploy("org.nuxeo.labs.nuxeo-labs-google-vision-core")
 @LocalDeploy({
-        "org.nuxeo.labs.nuxeo-labs-google-vision-core:OSGI-INF/mock-picture-blobholder-contrib.xml",
+        "org.nuxeo.labs.nuxeo-labs-google-vision-core:OSGI-INF/mock-contrib.xml",
         "org.nuxeo.labs.nuxeo-labs-google-vision-core:OSGI-INF/disabled-listener-contrib.xml"
 })
-public class TestGoogleVision {
+public class TestGoogleVisionService {
 
     @Inject
     protected GoogleVision googleVision;
 
     @Test
     public void testLabelFeature() throws IOException, GeneralSecurityException {
-        assertNotNull(googleVision);
         File file = new File(getClass().getResource("/files/plane.jpg").getPath());
         Blob blob = new FileBlob(file);
         AnnotateImageResponse results =
@@ -53,7 +52,6 @@ public class TestGoogleVision {
 
     @Test
     public void testTextFeature() throws IOException, GeneralSecurityException {
-        assertNotNull(googleVision);
         File file = new File(getClass().getResource("/files/text.png").getPath());
         Blob blob = new FileBlob(file);
         AnnotateImageResponse results =
@@ -67,7 +65,6 @@ public class TestGoogleVision {
 
     @Test
     public void testMultipleFeatures() throws IOException, GeneralSecurityException {
-        assertNotNull(googleVision);
         File file = new File(getClass().getResource("/files/plane.jpg").getPath());
         Blob blob = new FileBlob(file);
         AnnotateImageResponse results = googleVision.execute(
@@ -85,7 +82,6 @@ public class TestGoogleVision {
 
     @Test
     public void testMultipleBlobs() throws IOException, GeneralSecurityException {
-        assertNotNull(googleVision);
         List<Blob> blobs = new ArrayList<>();
         blobs.add(new FileBlob(new File(getClass().getResource("/files/plane.jpg").getPath())));
         blobs.add(new FileBlob(new File(getClass().getResource("/files/text.png").getPath())));

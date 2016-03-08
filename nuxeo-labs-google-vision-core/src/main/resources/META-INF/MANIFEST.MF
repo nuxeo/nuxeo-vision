@@ -9,4 +9,4 @@ Bundle-SymbolicName: org.nuxeo.labs.nuxeo-labs-google-vision-core;singleton=true
 Nuxeo-Component: OSGI-INF/google-vision-service.xml,
  OSGI-INF/listener-contrib.xml,
  OSGI-INF/operation-contrib.xml,
- OSGI-INF/chain-contrib.xml
+ OSGI-INF/default-chain-contrib.xml

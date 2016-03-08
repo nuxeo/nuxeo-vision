@@ -60,13 +60,17 @@ public class VisionOp {
 
     @Param(
             name = "features",
-            description= "A StringList of features to request from the API. Available Features are described at https://cloud.google.com/vision/reference/rest/v1/images/annotate#Feature",
+            description= "A StringList of features to request from the API. " +
+                    "Available Features are described at" +
+                    " https://cloud.google.com/vision/reference/rest/v1/images/annotate#Feature",
             required = true)
     protected StringList features;
 
     @Param(
             name = "outputVariable",
-            description= "The key of the context output variable. The output variable is a list of AnnotateImageResponse objects. See https://cloud.google.com/vision/reference/rest/v1/images/annotate#AnnotateImageResponse",
+            description= "The key of the context output variable. " +
+                    "The output variable is a list of AnnotateImageResponse objects. " +
+                    "See https://cloud.google.com/vision/reference/rest/v1/images/annotate#AnnotateImageResponse",
             required = true)
     protected String outputVariable;
 

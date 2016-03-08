@@ -48,4 +48,12 @@ public interface GoogleVision {
     List<AnnotateImageResponse> execute(List<Blob> blobs, List<String> features,int maxResults)
             throws IOException, GeneralSecurityException;
 
+
+    /**
+     *
+     * @return The name of the automation name to use for the mapping betzeen google vision data and
+     * the nuxeo document model
+     */
+    String getMapperChainName();
+
 }

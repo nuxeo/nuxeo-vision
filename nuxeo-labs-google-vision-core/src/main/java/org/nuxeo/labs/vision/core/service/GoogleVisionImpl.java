@@ -180,6 +180,11 @@ public class GoogleVisionImpl extends DefaultComponent implements GoogleVision {
         return batchResponse.getResponses();
     }
 
+    @Override
+    public String getMapperChainName() {
+        return config.getMapperChainName();
+    }
+
 
     protected List<Feature> buildFeatureList(List<String> features,int maxResults) {
 
@@ -204,5 +209,7 @@ public class GoogleVisionImpl extends DefaultComponent implements GoogleVision {
         }
         return requests;
     }
+
+
 
 }

@@ -30,6 +30,7 @@ import org.nuxeo.ecm.core.event.Event;
 import org.nuxeo.ecm.core.event.EventContext;
 import org.nuxeo.ecm.core.event.EventListener;
 import org.nuxeo.ecm.core.event.impl.DocumentEventContext;
+import org.nuxeo.labs.vision.core.service.GoogleVision;
 import org.nuxeo.runtime.api.Framework;
 
 import static org.nuxeo.ecm.platform.picture.api.ImagingDocumentConstants.PICTURE_FACET;
@@ -49,12 +50,15 @@ public class VisionListener implements EventListener {
         DocumentModel doc = docCtx.getSourceDocument();
         if (!doc.hasFacet(PICTURE_FACET) || doc.isProxy()) return;
 
+        GoogleVision visionService = Framework.getService(GoogleVision.class);
+        String mapperChainName = visionService.getMapperChainName();
+
         AutomationService as = Framework.getService(AutomationService.class);
         OperationContext octx = new OperationContext();
         octx.setInput(doc);
         octx.setCoreSession(doc.getCoreSession());
         OperationChain chain = new OperationChain("VisionListenerChain");
-        chain.add("TagAndOCR");
+        chain.add(mapperChainName);
         try {
             as.run(octx, chain);
         } catch (OperationException e) {

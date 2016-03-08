@@ -21,6 +21,7 @@
     <configuration>
       <appName>Nuxeo</appName>
       <credentialFilePath>${org.nuxeo.labs.google.credential:=}</credentialFilePath>
+      <mapperChainName>javascript.VisionDefaultMapper</mapperChainName>
     </configuration>
   </extension>
 

@@ -39,10 +39,11 @@ import java.util.List;
 @Deploy({
         "org.nuxeo.labs.nuxeo-labs-google-vision-core",
         "org.nuxeo.ecm.platform.picture.core",
-        "org.nuxeo.ecm.platform.tag"
+        "org.nuxeo.ecm.platform.tag",
+        "org.nuxeo.ecm.automation.scripting"
 })
 @LocalDeploy({
-        "org.nuxeo.labs.nuxeo-labs-google-vision-core:OSGI-INF/mock-picture-blobholder-contrib.xml",
+        "org.nuxeo.labs.nuxeo-labs-google-vision-core:OSGI-INF/mock-contrib.xml",
         "org.nuxeo.labs.nuxeo-labs-google-vision-core:OSGI-INF/disabled-listener-contrib.xml"
 })
 public class TestEventChain {
@@ -60,24 +61,24 @@ public class TestEventChain {
     public void testChain() throws IOException, OperationException {
 
         DocumentModel picture = session.createDocumentModel("/", "Picture", "Picture");
-        File file = new File(getClass().getResource("/files/plane.jpg").getPath());
+        File file = new File(getClass().getResource("/files/plane2.jpg").getPath());
         Blob blob = new FileBlob(file);
         picture.setPropertyValue("file:content", (Serializable) blob);
         picture = session.createDocument(picture);
-
 
         AutomationService as = Framework.getService(AutomationService.class);
         OperationContext ctx = new OperationContext();
         ctx.setInput(picture);
         ctx.setCoreSession(session);
         OperationChain chain = new OperationChain("TestChain");
-        chain.add("TagAndOCR");
+        chain.add("javascript.VisionDefaultMapper");
         picture = (DocumentModel) as.run(ctx, chain);
 
         List<Tag> tags =
                 tagService.getDocumentTags(session,picture.getId(),session.getPrincipal().getName());
 
         Assert.assertTrue(tags.size()>0);
+        System.out.print(tags);
     }
 
 
@@ -100,6 +101,9 @@ public class TestEventChain {
                 tagService.getDocumentTags(session,picture.getId(),session.getPrincipal().getName());
 
         Assert.assertTrue(tags.size()>0);
+        System.out.print(tags);
+        Assert.assertNotNull(picture.getPropertyValue("dc:description"));
+        System.out.print(picture.getPropertyValue("dc:description"));
     }
 
 

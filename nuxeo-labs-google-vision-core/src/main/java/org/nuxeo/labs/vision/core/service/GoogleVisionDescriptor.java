@@ -38,6 +38,10 @@ public class GoogleVisionDescriptor {
     @XNode("credentialFilePath")
     protected String credentialFilePath;
 
+    @XNode("mapperChainName")
+    protected String mapperChainName = "javascript.VisionDefaultMapper";
+
+
     public String getAppName() {
         return appName;
     }
@@ -50,5 +54,9 @@ public class GoogleVisionDescriptor {
         } else {
             return credentialFilePath;
         }
+    }
+
+    public String getMapperChainName() {
+        return mapperChainName;
     }
 }

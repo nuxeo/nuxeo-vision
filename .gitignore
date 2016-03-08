@@ -6,3 +6,4 @@ bower_components
 .idea
 target
 *.iml
+nashorn_code_cache
