@@ -130,6 +130,12 @@ public class GoogleVisionImpl extends DefaultComponent implements GoogleVision {
     public AnnotateImageResponse execute(Blob blob, List<String> features,int maxResults)
             throws IOException, GeneralSecurityException, IllegalStateException {
 
+        if (blob==null) {
+            throw new IllegalArgumentException("Input Blob cannot be null");
+        } else if (features == null || features.size()==0) {
+            throw new IllegalArgumentException("The feature list cannot be empty or null");
+        }
+
         List<AnnotateImageResponse> results = execute(ImmutableList.of(blob),features,maxResults);
         if (results.size()>0) {
             return results.get(0);
@@ -142,6 +148,12 @@ public class GoogleVisionImpl extends DefaultComponent implements GoogleVision {
     @Override
     public List<AnnotateImageResponse> execute(List<Blob> blobs, List<String> features,int maxResults)
             throws IOException, GeneralSecurityException, IllegalStateException {
+
+        if (blobs==null || blobs.size()==0) {
+            throw new IllegalArgumentException("Input Blob list cannot be null or empty");
+        } else if (features == null || features.size()==0) {
+            throw new IllegalArgumentException("The feature list cannot be empty or null");
+        }
 
         //build list of requested features
         List<Feature> requestFeatures = buildFeatureList(features,maxResults);
