@@ -32,9 +32,11 @@ import org.nuxeo.ecm.automation.core.util.BlobList;
 import org.nuxeo.ecm.automation.core.util.StringList;
 import org.nuxeo.ecm.core.api.Blob;
 import org.nuxeo.labs.vision.core.service.ComputerVision;
+import org.nuxeo.labs.vision.core.service.ComputerVisionFeature;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -91,8 +93,15 @@ public class ComputerVisionOp {
     @OperationMethod
     public BlobList run(BlobList blobs) {
         List<AnnotateImageResponse> results;
+
+        //Convert feature string to enum
+        List<ComputerVisionFeature> featureList = new ArrayList<>();
+        for (String feature: features) {
+            featureList.add(ComputerVisionFeature.valueOf(feature));
+        }
+
         try {
-            results = computerVisionService.execute(blobs, features, maxResults);
+            results = computerVisionService.execute(blobs, featureList, maxResults);
             ctx.put(outputVariable,results);
         } catch (IOException | GeneralSecurityException e) {
             log.warn("Call to google vision API failed",e);

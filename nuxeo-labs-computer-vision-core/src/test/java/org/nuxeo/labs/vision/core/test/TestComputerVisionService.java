@@ -41,7 +41,8 @@ public class TestComputerVisionService {
         File file = new File(getClass().getResource("/files/plane.jpg").getPath());
         Blob blob = new FileBlob(file);
         AnnotateImageResponse results =
-                computerVision.execute(blob, ImmutableList.of(ComputerVisionFeature.LABEL_DETECTION.toString()),5);
+                computerVision.execute(
+                        blob, ImmutableList.of(ComputerVisionFeature.LABEL_DETECTION),5);
         assertTrue(results.size()>0);
         List<EntityAnnotation> labels = results.getLabelAnnotations();
         assertNotNull(labels);
@@ -54,7 +55,8 @@ public class TestComputerVisionService {
         File file = new File(getClass().getResource("/files/text.png").getPath());
         Blob blob = new FileBlob(file);
         AnnotateImageResponse results =
-                computerVision.execute(blob, ImmutableList.of(ComputerVisionFeature.TEXT_DETECTION.toString()),5);
+                computerVision.execute(
+                        blob, ImmutableList.of(ComputerVisionFeature.TEXT_DETECTION),5);
         assertTrue(results.size()>0);
         List<EntityAnnotation> texts = results.getTextAnnotations();
         assertNotNull(texts);
@@ -67,8 +69,8 @@ public class TestComputerVisionService {
         File file = new File(getClass().getResource("/files/plane.jpg").getPath());
         Blob blob = new FileBlob(file);
         AnnotateImageResponse results = computerVision.execute(
-                blob, ImmutableList.of(ComputerVisionFeature.TEXT_DETECTION.toString(),
-                        ComputerVisionFeature.LABEL_DETECTION.toString()),5);
+                blob, ImmutableList.of(ComputerVisionFeature.TEXT_DETECTION,
+                        ComputerVisionFeature.LABEL_DETECTION),5);
         assertTrue(results.size()>0);
         List<EntityAnnotation> labels = results.getLabelAnnotations();
         assertNotNull(labels);
@@ -86,8 +88,8 @@ public class TestComputerVisionService {
         blobs.add(new FileBlob(new File(getClass().getResource("/files/text.png").getPath())));
 
         List<AnnotateImageResponse> results = computerVision.execute(
-                blobs, ImmutableList.of(ComputerVisionFeature.TEXT_DETECTION.toString(),
-                        ComputerVisionFeature.LABEL_DETECTION.toString()), 5);
+                blobs, ImmutableList.of(ComputerVisionFeature.TEXT_DETECTION,
+                        ComputerVisionFeature.LABEL_DETECTION), 5);
         assertTrue(results.size() == 2);
     }
 

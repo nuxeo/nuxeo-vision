@@ -35,21 +35,21 @@ public interface ComputerVision {
     /**
      *
      * @param blob the image blob
-     * @param features the feature to request from the api
+     * @param features the feature to request from the service
      * @param maxResults the maximum number of results per feature
      * @return a map of results returned by the API where the key is the feature name
      */
-    AnnotateImageResponse execute(Blob blob, List<String> features, int maxResults)
+    AnnotateImageResponse execute(Blob blob, List<ComputerVisionFeature> features, int maxResults)
             throws IOException, GeneralSecurityException;
 
     /**
      *
      * @param blobs A list of image blobs
-     * @param features the feature to request from the api
+     * @param features the feature to request from the service
      * @param maxResults the maximum number of results per feature
      * @return a list of maps of results returned by the API where the key is the feature name
      */
-    List<AnnotateImageResponse> execute(List<Blob> blobs, List<String> features,
+    List<AnnotateImageResponse> execute(List<Blob> blobs, List<ComputerVisionFeature> features,
                                         int maxResults) throws IOException, GeneralSecurityException;
 
 

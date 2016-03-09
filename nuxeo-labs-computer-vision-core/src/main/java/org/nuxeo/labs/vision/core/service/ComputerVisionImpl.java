@@ -134,7 +134,7 @@ public class ComputerVisionImpl extends DefaultComponent implements ComputerVisi
 
 
     @Override
-    public AnnotateImageResponse execute(Blob blob, List<String> features,int maxResults)
+    public AnnotateImageResponse execute(Blob blob, List<ComputerVisionFeature> features,int maxResults)
             throws IOException, GeneralSecurityException, IllegalStateException {
 
         if (blob==null) {
@@ -153,7 +153,8 @@ public class ComputerVisionImpl extends DefaultComponent implements ComputerVisi
 
 
     @Override
-    public List<AnnotateImageResponse> execute(List<Blob> blobs, List<String> features,int maxResults)
+    public List<AnnotateImageResponse> execute(List<Blob> blobs, List<ComputerVisionFeature> features,
+                                               int maxResults)
             throws IOException, GeneralSecurityException, IllegalStateException {
 
         if (blobs==null || blobs.size()==0) {
@@ -193,11 +194,11 @@ public class ComputerVisionImpl extends DefaultComponent implements ComputerVisi
     }
 
 
-    protected List<Feature> buildFeatureList(List<String> features,int maxResults) {
+    protected List<Feature> buildFeatureList(List<ComputerVisionFeature> features,int maxResults) {
 
         List<Feature> requestFeatures = new ArrayList<>();
-        for (String feature: features) {
-            requestFeatures.add(new Feature().setType(feature).setMaxResults(maxResults));
+        for (ComputerVisionFeature feature: features) {
+            requestFeatures.add(new Feature().setType(feature.toString()).setMaxResults(maxResults));
         }
         return requestFeatures;
     }
