@@ -1,5 +1,5 @@
 ## Description
-This plugin provides a wrapper for the Google Vision API. It features two operations to automate image tagging and perform OCR
+This plugin provides a wrapper for Computer Vision API. Currently it supports the Google Vision API.
 
 ## Important Note
 
@@ -21,8 +21,8 @@ Building requires the following software:
 - Configure a [service account](https://developers.google.com/identity/protocols/OAuth2ServiceAccount) and set the NUXEO_GOOGLE_APPLICATION_CREDENTIALS ENV Variable with the JSON file path
  
 ```
-git clone https://github.com/nuxeo-sandbox/nuxeo-labs-google-vision
-cd nuxeo-labs-google-vision
+git clone https://github.com/nuxeo-sandbox/nuxeo-computer-google-vision
+cd nuxeo-labs-computer-vision
 mvn clean install
 ```
 
