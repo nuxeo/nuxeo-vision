@@ -54,6 +54,12 @@ public class ComputerVisionImpl extends DefaultComponent implements ComputerVisi
 
     protected static final String GOOGLE_EXT_POINT = "google";
 
+    protected static final long _4MB = 4194304;
+
+    protected static final long _8MB = 8388608;
+
+    protected static final int MAX_BLOB_PER_REQUEST = 16;
+
     protected ComputerVisionDescriptor config = null;
 
     protected GoogleVisionDescriptor googleConfig = null;
@@ -160,6 +166,8 @@ public class ComputerVisionImpl extends DefaultComponent implements ComputerVisi
 
         if (blobs==null || blobs.size()==0) {
             throw new IllegalArgumentException("Input Blob list cannot be null or empty");
+        } else if (!checkBlobs(blobs)) {
+            throw new IllegalArgumentException("Too many blobs or size exceeds the API limit");
         } else if (features == null || features.size()==0) {
             throw new IllegalArgumentException("The feature list cannot be empty or null");
         }
@@ -222,6 +230,20 @@ public class ComputerVisionImpl extends DefaultComponent implements ComputerVisi
             requests.add(request);
         }
         return requests;
+    }
+
+
+    protected boolean checkBlobs(List<Blob> blobs)throws IOException{
+        if (blobs.size()>MAX_BLOB_PER_REQUEST) return false;
+        long totalSize = 0;
+        for (Blob blob : blobs) {
+            long size = blob.getLength();
+            if (size<=0) throw new IOException("Could not read the blob size");
+            if (size>_4MB) return false;
+            totalSize+=size;
+            if (totalSize>_8MB) return false;
+        }
+        return true;
     }
 
 
