@@ -1,0 +1,63 @@
+<?xml version="1.0"?>
+<component name="org.nuxeo.labs.vision.core.chains">
+    <extension target="org.nuxeo.automation.scripting.internals.AutomationScriptingComponent" point="operation">
+        <scriptedOperation id="javascript.VisionDefaultMapper">
+            <inputType>Document</inputType>
+            <outputType>Document</outputType>
+            <category>javascript</category>
+            <description></description>
+            <script><![CDATA[function run(input, params) {
+
+              var blob = Picture.GetView(input, {'viewName': 'Medium'});
+
+              blob = ComputerVisionOp(blob, {
+                'features': ['LABEL_DETECTION','TEXT_DETECTION'],
+                'maxResults': 5,
+                'outputVariable': 'annotations'
+              });
+
+              var annotations = ctx.annotations;
+
+              if (annotations===undefined || annotations.length===0) return;
+
+              var textAndLabels = annotations[0];
+
+              // build tag list
+              var labels = textAndLabels.getLabelAnnotations();
+
+              if (labels !== undefined && labels !== null && labels.length>0) {
+                  var tags = [];
+
+                  for(var i=0;i<labels.length;i++) {
+                    tags.push(labels[i].getDescription().replace(' ','+'));
+                  }
+
+                  input = Services.TagDocument(input, {'tags': tags });
+              }
+
+
+              // build description
+              var texts = textAndLabels.getTextAnnotations();
+
+              if (texts !== undefined && texts !== null && texts.length>0) {
+                  var description = "";
+
+                  for(var j=0;j<texts.length;j++) {
+                    description+= texts[j].getDescription()+"\n";
+                  }
+
+                  input = Document.SetProperty(input, {
+                    'xpath': 'dc:description',
+                    'save': 'false',
+                    'value': description
+                  });
+              }
+
+              input = Document.Save(input, {});
+
+              return input;
+
+        }]]></script>
+        </scriptedOperation>
+    </extension>
+</component>

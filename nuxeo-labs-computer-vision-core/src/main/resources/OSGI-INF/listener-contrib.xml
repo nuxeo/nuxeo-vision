@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<component name="org.nuxeo.labs.vision.core.listener">
+    <extension target="org.nuxeo.ecm.core.event.EventServiceComponent" point="listener">
+
+        <listener name="visionListener" async="true" postCommit="false"
+                  class="org.nuxeo.labs.vision.core.listener.ComputerVisionListener" priority="20">
+            <event>pictureViewsGenerationDone</event>
+        </listener>
+
+    </extension>
+</component>
