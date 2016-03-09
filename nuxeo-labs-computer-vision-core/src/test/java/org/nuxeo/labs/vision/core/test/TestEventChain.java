@@ -13,14 +13,16 @@ import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.impl.blob.FileBlob;
 import org.nuxeo.ecm.core.event.Event;
-import org.nuxeo.ecm.core.event.EventProducer;
+import org.nuxeo.ecm.core.event.EventBundle;
 import org.nuxeo.ecm.core.event.impl.DocumentEventContext;
+import org.nuxeo.ecm.core.event.impl.EventBundleImpl;
 import org.nuxeo.ecm.core.event.impl.EventContextImpl;
 import org.nuxeo.ecm.core.test.DefaultRepositoryInit;
 import org.nuxeo.ecm.core.test.annotations.Granularity;
 import org.nuxeo.ecm.core.test.annotations.RepositoryConfig;
 import org.nuxeo.ecm.platform.tag.Tag;
 import org.nuxeo.ecm.platform.tag.TagService;
+import org.nuxeo.labs.vision.core.listener.ComputerVisionListener;
 import org.nuxeo.runtime.api.Framework;
 import org.nuxeo.runtime.test.runner.Deploy;
 import org.nuxeo.runtime.test.runner.Features;
@@ -54,8 +56,6 @@ public class TestEventChain {
     @Inject
     protected TagService tagService;
 
-    @Inject
-    protected EventProducer eventProducer;
 
     @Test
     public void testChain() throws IOException, OperationException {
@@ -93,7 +93,11 @@ public class TestEventChain {
 
         EventContextImpl evctx = new DocumentEventContext(session, session.getPrincipal(),picture);
         Event event = evctx.newEvent("pictureViewsGenerationDone");
-        eventProducer.fireEvent(event);
+        EventBundle bundle = new EventBundleImpl();
+        bundle.push(event);
+
+        ComputerVisionListener listener = new ComputerVisionListener();
+        listener.handleEvent(bundle);
 
         picture = session.getDocument(picture.getRef());
 

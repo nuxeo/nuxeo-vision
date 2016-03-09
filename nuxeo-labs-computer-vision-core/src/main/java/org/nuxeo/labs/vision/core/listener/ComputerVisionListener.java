@@ -27,8 +27,9 @@ import org.nuxeo.ecm.automation.OperationContext;
 import org.nuxeo.ecm.automation.OperationException;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.event.Event;
+import org.nuxeo.ecm.core.event.EventBundle;
 import org.nuxeo.ecm.core.event.EventContext;
-import org.nuxeo.ecm.core.event.EventListener;
+import org.nuxeo.ecm.core.event.PostCommitEventListener;
 import org.nuxeo.ecm.core.event.impl.DocumentEventContext;
 import org.nuxeo.labs.vision.core.service.ComputerVision;
 import org.nuxeo.runtime.api.Framework;
@@ -36,12 +37,18 @@ import org.nuxeo.runtime.api.Framework;
 import static org.nuxeo.ecm.platform.picture.api.ImagingDocumentConstants.PICTURE_FACET;
 
 
-public class ComputerVisionListener implements EventListener {
+public class ComputerVisionListener implements PostCommitEventListener {
 
     private static final Log log = LogFactory.getLog(ComputerVisionListener.class);
 
     @Override
-    public void handleEvent(Event event) {
+    public void handleEvent(EventBundle events) {
+        for (Event event : events) {
+            handleEvent(event);
+        }
+    }
+
+    protected void handleEvent(Event event) {
         EventContext ectx = event.getContext();
         if (!(ectx instanceof DocumentEventContext)) {
             return;
@@ -65,5 +72,4 @@ public class ComputerVisionListener implements EventListener {
             log.warn(e);
         }
     }
-
 }
