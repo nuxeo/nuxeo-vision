@@ -19,7 +19,6 @@
 
 package org.nuxeo.labs.vision.core.operation;
 
-import com.google.api.services.vision.v1.model.AnnotateImageResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.nuxeo.ecm.automation.OperationContext;
@@ -33,6 +32,7 @@ import org.nuxeo.ecm.automation.core.util.StringList;
 import org.nuxeo.ecm.core.api.Blob;
 import org.nuxeo.labs.vision.core.service.ComputerVision;
 import org.nuxeo.labs.vision.core.service.ComputerVisionFeature;
+import org.nuxeo.labs.vision.core.service.ComputerVisionResponse;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -92,7 +92,7 @@ public class ComputerVisionOp {
 
     @OperationMethod
     public BlobList run(BlobList blobs) {
-        List<AnnotateImageResponse> results;
+        List<ComputerVisionResponse> results;
 
         //Convert feature string to enum
         List<ComputerVisionFeature> featureList = new ArrayList<>();

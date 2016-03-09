@@ -23,13 +23,13 @@
               var textAndLabels = annotations[0];
 
               // build tag list
-              var labels = textAndLabels.getLabelAnnotations();
+              var labels = textAndLabels.getClassificationLabels();
 
               if (labels !== undefined && labels !== null && labels.length>0) {
                   var tags = [];
 
                   for(var i=0;i<labels.length;i++) {
-                    tags.push(labels[i].getDescription().replace(' ','+'));
+                    tags.push(labels[i].replace(' ','+'));
                   }
 
                   input = Services.TagDocument(input, {'tags': tags });
@@ -37,13 +37,13 @@
 
 
               // build description
-              var texts = textAndLabels.getTextAnnotations();
+              var texts = textAndLabels.getOcrText();
 
               if (texts !== undefined && texts !== null && texts.length>0) {
                   var description = "";
 
                   for(var j=0;j<texts.length;j++) {
-                    description+= texts[j].getDescription()+"\n";
+                    description+= texts[j]+"\n";
                   }
 
                   input = Document.SetProperty(input, {

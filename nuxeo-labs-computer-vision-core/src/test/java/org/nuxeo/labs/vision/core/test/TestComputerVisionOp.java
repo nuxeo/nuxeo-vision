@@ -1,7 +1,5 @@
 package org.nuxeo.labs.vision.core.test;
 
-import com.google.api.services.vision.v1.model.AnnotateImageResponse;
-import com.google.api.services.vision.v1.model.EntityAnnotation;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -20,6 +18,7 @@ import org.nuxeo.ecm.core.test.annotations.Granularity;
 import org.nuxeo.ecm.core.test.annotations.RepositoryConfig;
 import org.nuxeo.labs.vision.core.operation.ComputerVisionOp;
 import org.nuxeo.labs.vision.core.service.ComputerVisionFeature;
+import org.nuxeo.labs.vision.core.service.ComputerVisionResponse;
 import org.nuxeo.runtime.api.Framework;
 import org.nuxeo.runtime.test.runner.Deploy;
 import org.nuxeo.runtime.test.runner.FeaturesRunner;
@@ -59,11 +58,11 @@ public class TestComputerVisionOp {
                 set("maxResults",5);
         blob = (Blob) as.run(ctx, chain);
 
-        List<AnnotateImageResponse> resultList = (List<AnnotateImageResponse>) ctx.get("testTags");
+        List<ComputerVisionResponse> resultList = (List<ComputerVisionResponse>) ctx.get("testTags");
         Assert.assertNotNull(resultList);
         Assert.assertEquals(1,resultList.size());
-        AnnotateImageResponse result = resultList.get(0);
-        List<EntityAnnotation> labels = result.getLabelAnnotations();
+        ComputerVisionResponse result = resultList.get(0);
+        List<String> labels = result.getClassificationLabels();
         Assert.assertNotNull(labels);
         Assert.assertTrue(labels.size()>0);
         System.out.print(labels);
@@ -90,7 +89,7 @@ public class TestComputerVisionOp {
                 set("maxResults",5);
         blobs = (BlobList) as.run(ctx, chain);
 
-        List<AnnotateImageResponse> resultList = (List<AnnotateImageResponse>) ctx.get("testTags");
+        List<ComputerVisionResponse> resultList = (List<ComputerVisionResponse>) ctx.get("testTags");
         Assert.assertNotNull(resultList);
         Assert.assertEquals(2,resultList.size());
     }

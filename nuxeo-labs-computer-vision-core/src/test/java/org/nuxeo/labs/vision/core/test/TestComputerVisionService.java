@@ -1,7 +1,5 @@
 package org.nuxeo.labs.vision.core.test;
 
-import com.google.api.services.vision.v1.model.AnnotateImageResponse;
-import com.google.api.services.vision.v1.model.EntityAnnotation;
 import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
 import org.junit.Test;
@@ -11,6 +9,7 @@ import org.nuxeo.ecm.core.api.impl.blob.FileBlob;
 import org.nuxeo.ecm.platform.test.PlatformFeature;
 import org.nuxeo.labs.vision.core.service.ComputerVision;
 import org.nuxeo.labs.vision.core.service.ComputerVisionFeature;
+import org.nuxeo.labs.vision.core.service.ComputerVisionResponse;
 import org.nuxeo.runtime.test.runner.Deploy;
 import org.nuxeo.runtime.test.runner.FeaturesRunner;
 import org.nuxeo.runtime.test.runner.LocalDeploy;
@@ -40,11 +39,10 @@ public class TestComputerVisionService {
     public void testLabelFeature() throws IOException, GeneralSecurityException {
         File file = new File(getClass().getResource("/files/plane.jpg").getPath());
         Blob blob = new FileBlob(file);
-        AnnotateImageResponse results =
+        ComputerVisionResponse result =
                 computerVision.execute(
                         blob, ImmutableList.of(ComputerVisionFeature.LABEL_DETECTION),5);
-        assertTrue(results.size()>0);
-        List<EntityAnnotation> labels = results.getLabelAnnotations();
+        List<String> labels = result.getClassificationLabels();
         assertNotNull(labels);
         assertTrue(labels.size()>0);
         System.out.print(labels);
@@ -54,11 +52,10 @@ public class TestComputerVisionService {
     public void testTextFeature() throws IOException, GeneralSecurityException {
         File file = new File(getClass().getResource("/files/text.png").getPath());
         Blob blob = new FileBlob(file);
-        AnnotateImageResponse results =
+        ComputerVisionResponse result =
                 computerVision.execute(
                         blob, ImmutableList.of(ComputerVisionFeature.TEXT_DETECTION),5);
-        assertTrue(results.size()>0);
-        List<EntityAnnotation> texts = results.getTextAnnotations();
+        List<String> texts = result.getOcrText();
         assertNotNull(texts);
         assertTrue(texts.size()>0);
         System.out.print(texts.get(0));
@@ -68,14 +65,13 @@ public class TestComputerVisionService {
     public void testMultipleFeatures() throws IOException, GeneralSecurityException {
         File file = new File(getClass().getResource("/files/plane.jpg").getPath());
         Blob blob = new FileBlob(file);
-        AnnotateImageResponse results = computerVision.execute(
+        ComputerVisionResponse result = computerVision.execute(
                 blob, ImmutableList.of(ComputerVisionFeature.TEXT_DETECTION,
                         ComputerVisionFeature.LABEL_DETECTION),5);
-        assertTrue(results.size()>0);
-        List<EntityAnnotation> labels = results.getLabelAnnotations();
+        List<String> labels = result.getClassificationLabels();
         assertNotNull(labels);
         assertTrue(labels.size()>0);
-        List<EntityAnnotation> texts = results.getTextAnnotations();
+        List<String> texts = result.getOcrText();
         assertNotNull(texts);
         assertTrue(texts.size()>0);
         System.out.print(texts.get(0));
@@ -87,7 +83,7 @@ public class TestComputerVisionService {
         blobs.add(new FileBlob(new File(getClass().getResource("/files/plane.jpg").getPath())));
         blobs.add(new FileBlob(new File(getClass().getResource("/files/text.png").getPath())));
 
-        List<AnnotateImageResponse> results = computerVision.execute(
+        List<ComputerVisionResponse> results = computerVision.execute(
                 blobs, ImmutableList.of(ComputerVisionFeature.TEXT_DETECTION,
                         ComputerVisionFeature.LABEL_DETECTION), 5);
         assertTrue(results.size() == 2);

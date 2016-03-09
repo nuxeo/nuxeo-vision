@@ -32,6 +32,7 @@ import org.apache.commons.logging.LogFactory;
 import org.nuxeo.ecm.core.api.Blob;
 import org.nuxeo.ecm.core.api.NuxeoException;
 import org.nuxeo.labs.vision.core.google.GoogleVisionDescriptor;
+import org.nuxeo.labs.vision.core.google.GoogleVisionResponse;
 import org.nuxeo.runtime.model.ComponentContext;
 import org.nuxeo.runtime.model.ComponentInstance;
 import org.nuxeo.runtime.model.DefaultComponent;
@@ -134,7 +135,7 @@ public class ComputerVisionImpl extends DefaultComponent implements ComputerVisi
 
 
     @Override
-    public AnnotateImageResponse execute(Blob blob, List<ComputerVisionFeature> features,int maxResults)
+    public ComputerVisionResponse execute(Blob blob, List<ComputerVisionFeature> features,int maxResults)
             throws IOException, GeneralSecurityException, IllegalStateException {
 
         if (blob==null) {
@@ -143,7 +144,7 @@ public class ComputerVisionImpl extends DefaultComponent implements ComputerVisi
             throw new IllegalArgumentException("The feature list cannot be empty or null");
         }
 
-        List<AnnotateImageResponse> results = execute(ImmutableList.of(blob),features,maxResults);
+        List<ComputerVisionResponse> results = execute(ImmutableList.of(blob),features,maxResults);
         if (results.size()>0) {
             return results.get(0);
         } else {
@@ -153,7 +154,7 @@ public class ComputerVisionImpl extends DefaultComponent implements ComputerVisi
 
 
     @Override
-    public List<AnnotateImageResponse> execute(List<Blob> blobs, List<ComputerVisionFeature> features,
+    public List<ComputerVisionResponse> execute(List<Blob> blobs, List<ComputerVisionFeature> features,
                                                int maxResults)
             throws IOException, GeneralSecurityException, IllegalStateException {
 
@@ -185,7 +186,12 @@ public class ComputerVisionImpl extends DefaultComponent implements ComputerVisi
             throw new IllegalStateException("Google Vision returned an empty response");
         }
 
-        return batchResponse.getResponses();
+        List<AnnotateImageResponse> responses = batchResponse.getResponses();
+        List<ComputerVisionResponse> output = new ArrayList<>();
+        for (AnnotateImageResponse response : responses) {
+            output.add(new GoogleVisionResponse(response));
+        }
+        return output;
     }
 
     @Override
