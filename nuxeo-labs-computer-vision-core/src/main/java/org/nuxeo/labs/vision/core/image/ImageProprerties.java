@@ -17,29 +17,20 @@
  *     Michael Vachette
  */
 
-package org.nuxeo.labs.vision.core.service;
+package org.nuxeo.labs.vision.core.image;
+
+import java.util.List;
 
 
-public enum ComputerVisionFeature {
+public class ImageProprerties {
 
-    FACE_DETECTION("FACE_DETECTION"),
-    LANDMARK_DETECTION("LANDMARK_DETECTION"),
-    LOGO_DETECTION("LOGO_DETECTION"),
-    LABEL_DETECTION("LABEL_DETECTION"),
-    TEXT_DETECTION("TEXT_DETECTION"),
-    SAFE_SEARCH_DETECTION("SAFE_SEARCH_DETECTION"),
-    IMAGE_PROPERTIES("IMAGE_PROPERTIES");
+    List<ColorInfo> colors;
 
-    private final String text;
-
-
-    ComputerVisionFeature(final String text) {
-        this.text = text;
+    public ImageProprerties(List<ColorInfo> colors) {
+        this.colors = colors;
     }
 
-
-    @Override
-    public String toString() {
-        return text;
+    public List<ColorInfo> getColors() {
+        return colors;
     }
 }

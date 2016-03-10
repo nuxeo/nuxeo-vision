@@ -20,7 +20,11 @@
 package org.nuxeo.labs.vision.core.google;
 
 import com.google.api.services.vision.v1.model.AnnotateImageResponse;
+import com.google.api.services.vision.v1.model.Color;
+import com.google.api.services.vision.v1.model.DominantColorsAnnotation;
 import com.google.api.services.vision.v1.model.EntityAnnotation;
+import org.nuxeo.labs.vision.core.image.ColorInfo;
+import org.nuxeo.labs.vision.core.image.ImageProprerties;
 import org.nuxeo.labs.vision.core.service.ComputerVisionResponse;
 
 import java.util.ArrayList;
@@ -51,6 +55,29 @@ public class GoogleVisionResponse implements ComputerVisionResponse {
     }
 
     @Override
+    public ImageProprerties getImageProperties() {
+        List<ColorInfo> results = new ArrayList<>();
+        com.google.api.services.vision.v1.model.ImageProperties properties =
+                response.getImagePropertiesAnnotation();
+        if (properties==null) return new ImageProprerties(results);
+        DominantColorsAnnotation annotation = properties.getDominantColors();
+        if (annotation==null) return new ImageProprerties(results);
+        List<com.google.api.services.vision.v1.model.ColorInfo> colors = annotation.getColors();
+        if (colors==null) return new ImageProprerties(results);
+
+        for (com.google.api.services.vision.v1.model.ColorInfo colorInfo: colors) {
+            Color color = colorInfo.getColor();
+            java.awt.Color resultColor =
+                    new java.awt.Color(
+                            color.getRed()/255,color.getGreen()/255,color.getBlue()/255);
+            results.add(
+                    new ColorInfo(
+                            resultColor,colorInfo.getPixelFraction(),colorInfo.getScore()));
+        }
+        return new ImageProprerties(results);
+    }
+
+    @Override
     public Object getNativeObject() {
         return response;
     }
@@ -63,4 +90,5 @@ public class GoogleVisionResponse implements ComputerVisionResponse {
         }
         return result;
     }
+
 }

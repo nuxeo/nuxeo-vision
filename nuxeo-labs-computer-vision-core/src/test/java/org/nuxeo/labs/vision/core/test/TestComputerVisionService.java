@@ -26,6 +26,7 @@ import org.junit.runner.RunWith;
 import org.nuxeo.ecm.core.api.Blob;
 import org.nuxeo.ecm.core.api.impl.blob.FileBlob;
 import org.nuxeo.ecm.platform.test.PlatformFeature;
+import org.nuxeo.labs.vision.core.image.ColorInfo;
 import org.nuxeo.labs.vision.core.service.ComputerVision;
 import org.nuxeo.labs.vision.core.service.ComputerVisionFeature;
 import org.nuxeo.labs.vision.core.service.ComputerVisionResponse;
@@ -79,6 +80,20 @@ public class TestComputerVisionService {
         assertTrue(texts.size()>0);
         System.out.print(texts.get(0));
     }
+
+    @Test
+    public void testColorFeature() throws IOException, GeneralSecurityException {
+        File file = new File(getClass().getResource("/files/plane.jpg").getPath());
+        Blob blob = new FileBlob(file);
+        ComputerVisionResponse result =
+                computerVision.execute(
+                        blob, ImmutableList.of(ComputerVisionFeature.IMAGE_PROPERTIES),5);
+        List<ColorInfo> colors = result.getImageProperties().getColors();
+        assertNotNull(colors);
+        assertTrue(colors.size()>0);
+        System.out.print(colors.get(0));
+    }
+
 
     @Test
     public void testMultipleFeatures() throws IOException, GeneralSecurityException {

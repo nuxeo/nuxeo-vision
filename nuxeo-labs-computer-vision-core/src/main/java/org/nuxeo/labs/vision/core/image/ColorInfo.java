@@ -17,37 +17,42 @@
  *     Michael Vachette
  */
 
-package org.nuxeo.labs.vision.core.service;
+package org.nuxeo.labs.vision.core.image;
 
-import org.nuxeo.labs.vision.core.image.ImageProprerties;
+import java.awt.*;
 
-import java.util.List;
+public class ColorInfo {
 
 
-public interface ComputerVisionResponse {
-
-    /**
-     *
-     * @return a list of classification labels returned by the service
-     */
-    List<String> getClassificationLabels();
+    private Color color;
 
     /**
-     *
-     * @return a list of text string extracted by the service
+     * Stores the fraction of pixels the color occupies in the image. Value in range [0, 1].
      */
-    List<String> getOcrText();
-
+    private float pixelFraction;
 
     /**
-     *
-     * @return a list of properties
+     * Image-specific score for this color. Value in range [0, 1].
      */
-    ImageProprerties getImageProperties();
+    private float score;
 
-    /**
-     *
-     * @return the native object returned by the service provider
-     */
-    Object getNativeObject();
+
+    public ColorInfo(Color color, float pixelFraction, float score) {
+        this.color = color;
+        this.pixelFraction = pixelFraction;
+        this.score = score;
+    }
+
+    public Color getColor() {
+        return color;
+    }
+
+    public float getPixelFraction() {
+        return pixelFraction;
+    }
+
+    public float getScore() {
+        return score;
+    }
+
 }
