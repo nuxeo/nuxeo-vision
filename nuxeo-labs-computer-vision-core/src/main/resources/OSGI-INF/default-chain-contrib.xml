@@ -11,7 +11,7 @@
               var blob = Picture.GetView(input, {'viewName': 'Medium'});
 
               blob = ComputerVisionOp(blob, {
-                'features': ['LABEL_DETECTION','TEXT_DETECTION'],
+                'features': ['LABEL_DETECTION','TEXT_DETECTION','LANDMARK_DETECTION','LOGO_DETECTION','IMAGE_PROPERTIES'],
                 'maxResults': 5,
                 'outputVariable': 'annotations'
               });
