@@ -35,6 +35,7 @@ import org.nuxeo.ecm.core.api.impl.blob.FileBlob;
 import org.nuxeo.ecm.core.test.DefaultRepositoryInit;
 import org.nuxeo.ecm.core.test.annotations.Granularity;
 import org.nuxeo.ecm.core.test.annotations.RepositoryConfig;
+import org.nuxeo.labs.vision.core.image.TextEntity;
 import org.nuxeo.labs.vision.core.operation.ComputerVisionOp;
 import org.nuxeo.labs.vision.core.service.ComputerVisionFeature;
 import org.nuxeo.labs.vision.core.service.ComputerVisionResponse;
@@ -81,7 +82,7 @@ public class TestComputerVisionOp {
         Assert.assertNotNull(resultList);
         Assert.assertEquals(1,resultList.size());
         ComputerVisionResponse result = resultList.get(0);
-        List<String> labels = result.getClassificationLabels();
+        List<TextEntity> labels = result.getClassificationLabels();
         Assert.assertNotNull(labels);
         Assert.assertTrue(labels.size()>0);
         System.out.print(labels);

@@ -20,6 +20,7 @@
 package org.nuxeo.labs.vision.core.service;
 
 import org.nuxeo.labs.vision.core.image.ImageProprerties;
+import org.nuxeo.labs.vision.core.image.TextEntity;
 
 import java.util.List;
 
@@ -30,13 +31,13 @@ public interface ComputerVisionResponse {
      *
      * @return a list of classification labels returned by the service
      */
-    List<String> getClassificationLabels();
+    List<TextEntity> getClassificationLabels();
 
     /**
      *
-     * @return a list of text string extracted by the service
+     * @return a list of text strings extracted by the service
      */
-    List<String> getOcrText();
+    List<TextEntity> getOcrText();
 
 
     /**

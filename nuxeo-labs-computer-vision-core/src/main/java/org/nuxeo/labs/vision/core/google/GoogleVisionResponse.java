@@ -25,6 +25,7 @@ import com.google.api.services.vision.v1.model.DominantColorsAnnotation;
 import com.google.api.services.vision.v1.model.EntityAnnotation;
 import org.nuxeo.labs.vision.core.image.ColorInfo;
 import org.nuxeo.labs.vision.core.image.ImageProprerties;
+import org.nuxeo.labs.vision.core.image.TextEntity;
 import org.nuxeo.labs.vision.core.service.ComputerVisionResponse;
 
 import java.util.ArrayList;
@@ -40,8 +41,8 @@ public class GoogleVisionResponse implements ComputerVisionResponse {
     }
 
     @Override
-    public List<String> getClassificationLabels() {
-        List<String> results = new ArrayList<>();
+    public List<TextEntity> getClassificationLabels() {
+        List<TextEntity> results = new ArrayList<>();
         results.addAll(processEntityAnnotationList(response.getLabelAnnotations()));
         results.addAll(processEntityAnnotationList(response.getLandmarkAnnotations()));
         results.addAll(processEntityAnnotationList(response.getLogoAnnotations()));
@@ -49,7 +50,7 @@ public class GoogleVisionResponse implements ComputerVisionResponse {
     }
 
     @Override
-    public List<String> getOcrText() {
+    public List<TextEntity> getOcrText() {
         List<EntityAnnotation> labels = response.getTextAnnotations();
         return processEntityAnnotationList(labels);
     }
@@ -82,11 +83,14 @@ public class GoogleVisionResponse implements ComputerVisionResponse {
         return response;
     }
 
-    protected List<String> processEntityAnnotationList(List<EntityAnnotation> annotations) {
-        List<String> result = new ArrayList<>();
+    protected List<TextEntity> processEntityAnnotationList(List<EntityAnnotation> annotations) {
+        List<TextEntity> result = new ArrayList<>();
         if (annotations==null) return result;
         for (EntityAnnotation annotation : annotations) {
-            result.add(annotation.getDescription());
+            result.add(new TextEntity(
+                    annotation.getDescription(),
+                    annotation.getScore()!=null ? annotation.getScore():0,
+                    annotation.getLocale()));
         }
         return result;
     }

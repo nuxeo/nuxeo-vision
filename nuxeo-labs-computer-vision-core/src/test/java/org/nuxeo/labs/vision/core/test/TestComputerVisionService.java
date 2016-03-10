@@ -27,6 +27,7 @@ import org.nuxeo.ecm.core.api.Blob;
 import org.nuxeo.ecm.core.api.impl.blob.FileBlob;
 import org.nuxeo.ecm.platform.test.PlatformFeature;
 import org.nuxeo.labs.vision.core.image.ColorInfo;
+import org.nuxeo.labs.vision.core.image.TextEntity;
 import org.nuxeo.labs.vision.core.service.ComputerVision;
 import org.nuxeo.labs.vision.core.service.ComputerVisionFeature;
 import org.nuxeo.labs.vision.core.service.ComputerVisionResponse;
@@ -62,7 +63,7 @@ public class TestComputerVisionService {
         ComputerVisionResponse result =
                 computerVision.execute(
                         blob, ImmutableList.of(ComputerVisionFeature.LABEL_DETECTION),5);
-        List<String> labels = result.getClassificationLabels();
+        List<TextEntity> labels = result.getClassificationLabels();
         assertNotNull(labels);
         assertTrue(labels.size()>0);
         System.out.print(labels);
@@ -75,7 +76,7 @@ public class TestComputerVisionService {
         ComputerVisionResponse result =
                 computerVision.execute(
                         blob, ImmutableList.of(ComputerVisionFeature.TEXT_DETECTION),5);
-        List<String> texts = result.getOcrText();
+        List<TextEntity> texts = result.getOcrText();
         assertNotNull(texts);
         assertTrue(texts.size()>0);
         System.out.print(texts.get(0));
@@ -102,10 +103,10 @@ public class TestComputerVisionService {
         ComputerVisionResponse result = computerVision.execute(
                 blob, ImmutableList.of(ComputerVisionFeature.TEXT_DETECTION,
                         ComputerVisionFeature.LABEL_DETECTION),5);
-        List<String> labels = result.getClassificationLabels();
+        List<TextEntity> labels = result.getClassificationLabels();
         assertNotNull(labels);
         assertTrue(labels.size()>0);
-        List<String> texts = result.getOcrText();
+        List<TextEntity> texts = result.getOcrText();
         assertNotNull(texts);
         assertTrue(texts.size()>0);
         System.out.print(texts.get(0));

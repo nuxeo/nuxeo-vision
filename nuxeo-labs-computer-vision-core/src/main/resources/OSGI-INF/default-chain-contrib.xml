@@ -29,7 +29,7 @@
                   var tags = [];
 
                   for(var i=0;i<labels.length;i++) {
-                    tags.push(labels[i].replace(' ','+'));
+                    tags.push(labels[i].getText().replace(' ','+'));
                   }
 
                   input = Services.TagDocument(input, {'tags': tags });
@@ -43,7 +43,7 @@
                   var description = "";
 
                   for(var j=0;j<texts.length;j++) {
-                    description+= texts[j]+"\n";
+                    description+= texts[j].getText()+"\n";
                   }
 
                   input = Document.SetProperty(input, {
