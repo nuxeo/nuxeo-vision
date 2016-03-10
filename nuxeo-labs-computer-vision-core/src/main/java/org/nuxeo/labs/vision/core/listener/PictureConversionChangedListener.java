@@ -37,9 +37,9 @@ import org.nuxeo.runtime.api.Framework;
 import static org.nuxeo.ecm.platform.picture.api.ImagingDocumentConstants.PICTURE_FACET;
 
 
-public class ComputerVisionListener implements PostCommitEventListener {
+public class PictureConversionChangedListener implements PostCommitEventListener {
 
-    private static final Log log = LogFactory.getLog(ComputerVisionListener.class);
+    private static final Log log = LogFactory.getLog(PictureConversionChangedListener.class);
 
     @Override
     public void handleEvent(EventBundle events) {
@@ -64,7 +64,7 @@ public class ComputerVisionListener implements PostCommitEventListener {
         OperationContext octx = new OperationContext();
         octx.setInput(doc);
         octx.setCoreSession(doc.getCoreSession());
-        OperationChain chain = new OperationChain("VisionListenerChain");
+        OperationChain chain = new OperationChain("PictureChangedListenerChain");
         chain.add(mapperChainName);
         try {
             as.run(octx, chain);

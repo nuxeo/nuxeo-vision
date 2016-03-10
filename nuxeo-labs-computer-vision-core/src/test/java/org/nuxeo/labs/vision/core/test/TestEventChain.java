@@ -41,7 +41,7 @@ import org.nuxeo.ecm.core.test.annotations.Granularity;
 import org.nuxeo.ecm.core.test.annotations.RepositoryConfig;
 import org.nuxeo.ecm.platform.tag.Tag;
 import org.nuxeo.ecm.platform.tag.TagService;
-import org.nuxeo.labs.vision.core.listener.ComputerVisionListener;
+import org.nuxeo.labs.vision.core.listener.PictureConversionChangedListener;
 import org.nuxeo.runtime.api.Framework;
 import org.nuxeo.runtime.test.runner.Deploy;
 import org.nuxeo.runtime.test.runner.Features;
@@ -115,7 +115,7 @@ public class TestEventChain {
         EventBundle bundle = new EventBundleImpl();
         bundle.push(event);
 
-        ComputerVisionListener listener = new ComputerVisionListener();
+        PictureConversionChangedListener listener = new PictureConversionChangedListener();
         listener.handleEvent(bundle);
 
         picture = session.getDocument(picture.getRef());
