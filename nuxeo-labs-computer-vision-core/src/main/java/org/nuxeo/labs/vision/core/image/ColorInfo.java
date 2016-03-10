@@ -55,4 +55,12 @@ public class ColorInfo {
         return score;
     }
 
+    @Override
+    public String toString() {
+        return "ColorInfo{" +
+                "color=" + color +
+                ", pixelFraction=" + pixelFraction +
+                ", score=" + score +
+                '}';
+    }
 }
