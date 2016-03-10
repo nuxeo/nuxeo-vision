@@ -19,9 +19,7 @@
 
 package org.nuxeo.labs.vision.core.service;
 
-/**
- * Created by Michaël on 3/4/2016.
- */
+
 public enum ComputerVisionFeature {
 
     FACE_DETECTION("FACE_DETECTION"),

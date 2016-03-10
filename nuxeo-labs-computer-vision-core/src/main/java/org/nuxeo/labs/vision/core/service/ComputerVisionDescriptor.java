@@ -22,9 +22,6 @@ package org.nuxeo.labs.vision.core.service;
 import org.nuxeo.common.xmap.annotation.XNode;
 import org.nuxeo.common.xmap.annotation.XObject;
 
-/**
- * Created by Michaël on 3/7/2016.
- */
 
 @XObject("configuration")
 public class ComputerVisionDescriptor {
