@@ -31,6 +31,7 @@
     <configuration>
       <appName>Nuxeo</appName>
       <credentialFilePath>${org.nuxeo.labs.google.credential:=}</credentialFilePath>
+      <apiKey>${org.nuxeo.labs.google.key:=}</apiKey>
     </configuration>
   </extension>
 

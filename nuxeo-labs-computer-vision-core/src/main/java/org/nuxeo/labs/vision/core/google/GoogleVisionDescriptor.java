@@ -30,10 +30,15 @@ import org.nuxeo.runtime.api.Framework;
 @XObject("configuration")
 public class GoogleVisionDescriptor {
 
-    public static final String ENV_VARIABLE = "NUXEO_GOOGLE_APPLICATION_CREDENTIALS";
+    public static final String CRED_ENV_VARIABLE = "NUXEO_GOOGLE_APPLICATION_CREDENTIALS";
+
+    public static final String KEY_ENV_VARIABLE = "NUXEO_GOOGLE_APPLICATION_KEY";
 
     @XNode("appName")
     protected String appName = "Nuxeo";
+
+    @XNode("apiKey")
+    protected String apiKey;
 
     @XNode("credentialFilePath")
     protected String credentialFilePath;
@@ -47,9 +52,19 @@ public class GoogleVisionDescriptor {
         if (Framework.isTestModeSet() &&
                 (credentialFilePath==null || credentialFilePath.length()==0)) {
             // Use ENV variable if running unit tests
-            return System.getenv(ENV_VARIABLE);
+            return System.getenv(CRED_ENV_VARIABLE);
         } else {
             return credentialFilePath;
+        }
+    }
+
+    public String getApiKey() {
+        if (Framework.isTestModeSet() &&
+                (apiKey==null || apiKey.length()==0)) {
+            // Use ENV variable if running unit tests
+            return System.getenv(KEY_ENV_VARIABLE);
+        } else {
+            return apiKey;
         }
     }
 }

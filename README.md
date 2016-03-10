@@ -18,7 +18,7 @@ Building requires the following software:
  
 - Enable the Vision API from the google developer console
 - As of march 2nd 2016, billing must be activated in your google account in order to use the Vision API
-- Configure a [service account](https://developers.google.com/identity/protocols/OAuth2ServiceAccount) and set the NUXEO_GOOGLE_APPLICATION_CREDENTIALS ENV Variable with the JSON file path
+- Get an API key from the Google Developer Console and set the NUXEO_GOOGLE_APPLICATION_KEY Environment Variable with the key
  
 ```
 git clone https://github.com/nuxeo-sandbox/nuxeo-computer-google-vision
@@ -28,11 +28,12 @@ mvn clean install
 
 ## Deploying
 - Install the marketplace package
+- Configure a [service account](https://developers.google.com/identity/protocols/OAuth2ServiceAccount) and set the NUXEO_GOOGLE_APPLICATION_CREDENTIALS ENV Variable with the JSON file path
 - Upload the JSON key file on your instance
 - Edit nuxeo.conf 
 
 ```
-org.nuxeo.labs.google.credential=PATH_TO_JSON_CREDENTIAL_File
+org.nuxeo.labs.google.credential=PATH_TO_JSON_CREDENTIAL_FILE
 ```
 
 ## Known limitations

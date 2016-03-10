@@ -124,10 +124,12 @@ public class ComputerVisionImpl extends DefaultComponent implements ComputerVisi
             synchronized(this) {
                 result = visionClient;
                 if (result == null) {
-                    File file = new File(googleConfig.getCredentialFilePath());
-                    GoogleCredential credential =
-                            GoogleCredential.fromStream(
-                                    new FileInputStream(file)).createScoped(VisionScopes.all());
+                    GoogleCredential credential = null;
+                    if (usesServiceAccount()) {
+                        File file = new File(googleConfig.getCredentialFilePath());
+                        credential = GoogleCredential.fromStream(
+                                new FileInputStream(file)).createScoped(VisionScopes.all());
+                    }
                     JsonFactory jsonFactory = JacksonFactory.getDefaultInstance();
                     result = visionClient = new Vision.Builder(
                             GoogleNetHttpTransport.newTrustedTransport(), jsonFactory, credential)
@@ -182,6 +184,10 @@ public class ComputerVisionImpl extends DefaultComponent implements ComputerVisi
         annotate = getVisionService().images().annotate(
                 new BatchAnnotateImagesRequest().setRequests(requests));
 
+        if (!usesServiceAccount() && usesApiKey()) {
+            annotate.setKey(googleConfig.getApiKey());
+        }
+
         // Due to a bug: requests to Vision API containing large images fail when GZipped.
         annotate.setDisableGZipContent(true);
 
@@ -207,7 +213,6 @@ public class ComputerVisionImpl extends DefaultComponent implements ComputerVisi
         return config.getMapperChainName();
     }
 
-
     protected List<Feature> buildFeatureList(List<ComputerVisionFeature> features,int maxResults) {
 
         List<Feature> requestFeatures = new ArrayList<>();
@@ -216,7 +221,6 @@ public class ComputerVisionImpl extends DefaultComponent implements ComputerVisi
         }
         return requestFeatures;
     }
-
 
     protected List<AnnotateImageRequest> buildRequestList(List<Blob> blobs, List<Feature> features)
             throws IOException{
@@ -232,7 +236,6 @@ public class ComputerVisionImpl extends DefaultComponent implements ComputerVisi
         return requests;
     }
 
-
     protected boolean checkBlobs(List<Blob> blobs)throws IOException{
         if (blobs.size()>MAX_BLOB_PER_REQUEST) return false;
         long totalSize = 0;
@@ -246,6 +249,15 @@ public class ComputerVisionImpl extends DefaultComponent implements ComputerVisi
         return true;
     }
 
+    protected boolean usesServiceAccount() {
+        String path = googleConfig.getCredentialFilePath();
+        return path!=null && path.length()>0;
+    }
+
+    protected boolean usesApiKey() {
+        String key = googleConfig.getApiKey();
+        return key!=null && key.length()>0;
+    }
 
 
 }
