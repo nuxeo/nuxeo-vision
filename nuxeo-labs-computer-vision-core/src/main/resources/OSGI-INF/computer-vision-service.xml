@@ -23,7 +23,8 @@
 
   <extension target="org.nuxeo.labs.vision.core.service" point="configuration">
     <configuration>
-      <mapperChainName>javascript.VisionDefaultMapper</mapperChainName>
+      <pictureMapperChainName>javascript.PictureVisionDefaultMapper</pictureMapperChainName>
+      <videoMapperChainName>javascript.VideoVisionDefaultMapper</videoMapperChainName>
     </configuration>
   </extension>
 

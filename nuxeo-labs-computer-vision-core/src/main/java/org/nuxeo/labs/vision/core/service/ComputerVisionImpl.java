@@ -209,9 +209,15 @@ public class ComputerVisionImpl extends DefaultComponent implements ComputerVisi
     }
 
     @Override
-    public String getMapperChainName() {
-        return config.getMapperChainName();
+    public String getPictureMapperChainName() {
+        return config.getPictureMapperChainName();
     }
+
+    @Override
+    public String getVideoMapperChainName() {
+        return config.getVideoMapperChainName();
+    }
+
 
     protected List<Feature> buildFeatureList(List<ComputerVisionFeature> features,int maxResults) {
 
