@@ -69,36 +69,30 @@
               var storyboard = input['vid:storyboard'];
               var blobs = [];
               var index;
-
-              for (index=0;index<storyboard.length;index++) {
-                blobs.push(storyboard[index].content);
-              }
-
-              print('built list of blobs '+blobs.length);
-
-              ComputerVisionOp(blobs[0], {
-                'features': ['LABEL_DETECTION','LANDMARK_DETECTION','LOGO_DETECTION'],
-                'maxResults': 5,
-                'outputVariable': 'annotations'
-              });
-
-              print('called service');
-
-              var annotations = ctx.annotations;
-
-              if (annotations===undefined || annotations.length===0) return;
-
-              // build tag list
               var tags = [];
 
-              for (index=0;index<annotations.length;index++) {
-                var textAndLabels = annotations[index];
+              for (index=0;index<storyboard.length;index++) {
+
+                var blob = storyboard[index].content;
+
+                ComputerVisionOp(blob, {
+                  'features': ['LABEL_DETECTION','LANDMARK_DETECTION','LOGO_DETECTION'],
+                  'maxResults': 5,
+                  'outputVariable': 'annotations'
+                });
+
+                var annotations = ctx.annotations;
+
+                if (annotations===undefined || annotations.length===0) return;
+
+                // build tag list
+                var textAndLabels = annotations[0];
                 var labels = textAndLabels.getClassificationLabels();
 
                 if (labels === undefined || labels === null || labels===0) continue;
 
-                for(var i=0;i<labels.length;i++) {
-                  tags.push(labels[i].getText().replace(' ','+'));
+                for(var j=0;j<labels.length;j++) {
+                  tags.push(labels[j].getText().replace(' ','+'));
                 }
               }
 
