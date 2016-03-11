@@ -2,7 +2,9 @@
 <package type="addon" name="nuxeo-labs-computer-vision-package" version="@VERSION@">
   <title>Nuxeo Labs Computer Vision Package</title>
   <description>
-    <p>Put here an HTML description of your Nuxeo Package.</p>
+    <p>This plugin provides a wrapper for Computer Vision Services.
+      Currently it supports the Google Vision API.</p>
+    <p>Requires Nuxeo DAM.</p>
   </description>
   <!-- <home-page>http://doc.nuxeo.com/</home-page> -->
   <vendor>Nuxeo</vendor>
@@ -23,9 +25,9 @@
     <platform>cap-@DISTRIB_VERSION@-HF*</platform>
   </platforms>
   <!-- Dependencies on other packages -->
-  <!-- <dependencies> -->
-  <!-- <package>another-package:1.0.0:1.0.0</package> -->
-  <!-- </dependencies> -->
+  <dependencies>
+    <package>nuxeo-dam</package>
+  </dependencies>
   <!-- Conflicts with other packages -->
   <!-- <conflicts> -->
   <!-- <package>a-conflicting-package:1.0.0:1.0.0</package> -->
@@ -37,5 +39,5 @@
   <license>Apache License, Version 2.0</license>
   <license-url>http://www.apache.org/licenses/LICENSE-2.0</license-url>
   <!-- Visibility: PRIVATE | MARKETPLACE | DEV | PUBLIC -->
-  <visibility>DEV</visibility>
+  <visibility>PUBLIC</visibility>
 </package>
