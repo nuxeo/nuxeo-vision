@@ -125,8 +125,8 @@ public class TestEventChain {
 
         Assert.assertTrue(tags.size()>0);
         System.out.print(tags);
-        Assert.assertNotNull(picture.getPropertyValue("dc:description"));
-        System.out.print(picture.getPropertyValue("dc:description"));
+        Assert.assertNotNull(picture.getPropertyValue("dc:source"));
+        System.out.print(picture.getPropertyValue("dc:source"));
     }
 
 

@@ -47,7 +47,7 @@
                   }
 
                   input = Document.SetProperty(input, {
-                    'xpath': 'dc:description',
+                    'xpath': 'dc:source',
                     'save': 'false',
                     'value': description
                   });
