@@ -1,13 +1,9 @@
 ## Description
-This plugin provides a wrapper for Computer Vision API. Currently it supports the Google Vision API.
+This plugin provides a wrapper for Computer Vision Services. Currently it supports the Google Vision API.
 
-## Important Note
+## Status
 
-**These features are not part of the Nuxeo Production platform.**
-
-These solutions are provided for inspiration and we encourage customers to use them as code samples and learning resources.
-
-This is a moving project (no API maintenance, no deprecation process, etc.) If any of these solutions are found to be useful for the Nuxeo Platform in general, they will be integrated directly into platform, not maintained here.
+This is a moving project in beta stage, as Google Vision API (no API maintenance, no deprecation process, etc.).
 
 ## Requirements
 Building requires the following software:
