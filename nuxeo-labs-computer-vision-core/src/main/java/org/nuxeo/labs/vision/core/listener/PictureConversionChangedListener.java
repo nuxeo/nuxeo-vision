@@ -58,7 +58,7 @@ public class PictureConversionChangedListener implements PostCommitEventListener
         if (!doc.hasFacet(PICTURE_FACET) || doc.isProxy()) return;
 
         ComputerVision visionService = Framework.getService(ComputerVision.class);
-        String mapperChainName = visionService.getMapperChainName();
+        String mapperChainName = visionService.getPictureMapperChainName();
 
         AutomationService as = Framework.getService(AutomationService.class);
         OperationContext octx = new OperationContext();

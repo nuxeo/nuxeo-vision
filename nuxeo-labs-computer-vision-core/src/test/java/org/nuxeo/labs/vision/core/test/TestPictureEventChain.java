@@ -64,10 +64,10 @@ import java.util.List;
         "org.nuxeo.ecm.automation.scripting"
 })
 @LocalDeploy({
-        "org.nuxeo.labs.nuxeo-labs-google-vision-core:OSGI-INF/mock-contrib.xml",
+        "org.nuxeo.labs.nuxeo-labs-google-vision-core:OSGI-INF/mock-adapter-contrib.xml",
         "org.nuxeo.labs.nuxeo-labs-google-vision-core:OSGI-INF/disabled-listener-contrib.xml"
 })
-public class TestEventChain {
+public class TestPictureEventChain {
 
     @Inject
     CoreSession session;
@@ -77,7 +77,7 @@ public class TestEventChain {
 
 
     @Test
-    public void testChain() throws IOException, OperationException {
+    public void testPictureChain() throws IOException, OperationException {
 
         DocumentModel picture = session.createDocumentModel("/", "Picture", "Picture");
         File file = new File(getClass().getResource("/files/plane2.jpg").getPath());
@@ -90,7 +90,7 @@ public class TestEventChain {
         ctx.setInput(picture);
         ctx.setCoreSession(session);
         OperationChain chain = new OperationChain("TestChain");
-        chain.add("javascript.VisionDefaultMapper");
+        chain.add("javascript.PictureVisionDefaultMapper");
         picture = (DocumentModel) as.run(ctx, chain);
 
         List<Tag> tags =
@@ -100,9 +100,8 @@ public class TestEventChain {
         System.out.print(tags);
     }
 
-
     @Test
-    public void testListener() throws IOException, OperationException {
+    public void testPictureListener() throws IOException, OperationException {
 
         DocumentModel picture = session.createDocumentModel("/", "Picture", "Picture");
         File file = new File(getClass().getResource("/files/plane.jpg").getPath());
@@ -128,6 +127,5 @@ public class TestEventChain {
         Assert.assertNotNull(picture.getPropertyValue("dc:source"));
         System.out.print(picture.getPropertyValue("dc:source"));
     }
-
 
 }

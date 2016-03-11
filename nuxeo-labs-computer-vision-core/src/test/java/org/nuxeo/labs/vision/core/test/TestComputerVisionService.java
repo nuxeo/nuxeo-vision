@@ -48,7 +48,7 @@ import static org.junit.Assert.assertTrue;
 @org.nuxeo.runtime.test.runner.Features({ PlatformFeature.class })
 @Deploy("org.nuxeo.labs.nuxeo-labs-computer-vision-core")
 @LocalDeploy({
-        "org.nuxeo.labs.nuxeo-labs-computer-vision-core:OSGI-INF/mock-contrib.xml",
+        "org.nuxeo.labs.nuxeo-labs-computer-vision-core:OSGI-INF/mock-adapter-contrib.xml",
         "org.nuxeo.labs.nuxeo-labs-computer-vision-core:OSGI-INF/disabled-listener-contrib.xml"
 })
 public class TestComputerVisionService {

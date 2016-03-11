@@ -26,10 +26,18 @@ import org.nuxeo.common.xmap.annotation.XObject;
 @XObject("configuration")
 public class ComputerVisionDescriptor {
 
-    @XNode("mapperChainName")
-    protected String mapperChainName = "javascript.VisionDefaultMapper";
+    @XNode("pictureMapperChainName")
+    protected String pictureMapperChainName = "javascript.PictureVisionDefaultMapper";
 
-    public String getMapperChainName() {
-        return mapperChainName;
+
+    @XNode("videoMapperChainName")
+    protected String videoMapperChainName = "javascript.VideoVisionDefaultMapper";
+
+    public String getPictureMapperChainName() {
+        return  pictureMapperChainName;
+    }
+
+    public String getVideoMapperChainName() {
+        return videoMapperChainName;
     }
 }

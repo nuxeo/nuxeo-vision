@@ -2,9 +2,14 @@
 <component name="org.nuxeo.labs.vision.core.listener">
     <extension target="org.nuxeo.ecm.core.event.EventServiceComponent" point="listener">
 
-        <listener name="visionListener" async="true" postCommit="true"
+        <listener name="visionPictureConversionChangedListener" async="true" postCommit="true"
                   class="org.nuxeo.labs.vision.core.listener.PictureConversionChangedListener" priority="20">
             <event>pictureViewsGenerationDone</event>
+        </listener>
+
+        <listener name="visionVideoChangedListener" async="false" postCommit="false"
+                  class="org.nuxeo.labs.vision.core.listener.VideoStoryboardChangedListener" priority="20">
+            <event>beforeDocumentModification</event>
         </listener>
 
     </extension>

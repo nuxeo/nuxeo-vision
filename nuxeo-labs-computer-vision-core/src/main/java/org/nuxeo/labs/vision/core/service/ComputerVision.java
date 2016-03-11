@@ -54,9 +54,14 @@ public interface ComputerVision {
 
     /**
      *
-     * @return The name of the automation name to use for the mapping between google vision data and
-     * the nuxeo document model
+     * @return The name of the automation name to use for Pictures
      */
-    String getMapperChainName();
+    String getPictureMapperChainName();
+
+    /**
+     *
+     * @return The name of the automation name to use for Videos
+     */
+    String getVideoMapperChainName();
 
 }
