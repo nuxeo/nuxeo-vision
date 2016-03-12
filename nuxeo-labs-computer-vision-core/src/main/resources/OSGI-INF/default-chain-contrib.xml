@@ -29,7 +29,7 @@
                   var tags = [];
 
                   for(var i=0;i<labels.length;i++) {
-                    tags.push(labels[i].getText().replace(' ','+'));
+                    tags.push(labels[i].getText().replace(/\s/g,'+'));
                   }
 
                   input = Services.TagDocument(input, {'tags': tags });
@@ -92,7 +92,7 @@
                 if (labels === undefined || labels === null || labels===0) continue;
 
                 for(var j=0;j<labels.length;j++) {
-                  tags.push(labels[j].getText().replace(' ','+'));
+                  tags.push(labels[j].getText().replace(/\s/g,'+'));
                 }
               }
 
