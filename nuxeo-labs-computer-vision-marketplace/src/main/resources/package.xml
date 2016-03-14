@@ -1,5 +1,5 @@
 <!-- See documentation at http://doc.nuxeo.com/x/HgIz -->
-<package type="addon" name="nuxeo-labs-computer-vision-package" version="@VERSION@">
+<package type="addon" name="nuxeo-labs-computer-vision" version="@VERSION@">
   <title>Nuxeo Labs Computer Vision Package</title>
   <description>
     <p>This plugin provides a wrapper for Computer Vision Services.
