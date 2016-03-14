@@ -24,7 +24,7 @@ mvn clean install
 
 ## Deploying
 - Install the marketplace package
-- Configure a [service account](https://developers.google.com/identity/protocols/OAuth2ServiceAccount) and set the NUXEO_GOOGLE_APPLICATION_CREDENTIALS ENV Variable with the JSON file path
+- Configure a [service account](https://developers.google.com/identity/protocols/OAuth2ServiceAccount)
 - Upload the JSON key file on your instance
 - Edit nuxeo.conf 
 
