@@ -17,8 +17,8 @@ Building requires the following software:
 - Get an API key from the Google Developer Console and set the NUXEO_GOOGLE_APPLICATION_KEY Environment Variable with the key
  
 ```
-git clone https://github.com/nuxeo-sandbox/nuxeo-computer-google-vision
-cd nuxeo-labs-computer-vision
+git clone https://github.com/nuxeo-sandbox/nuxeo-vision
+cd nuxeo-vision
 mvn clean install
 ```
 
@@ -29,7 +29,7 @@ mvn clean install
 - Edit nuxeo.conf 
 
 ```
-org.nuxeo.labs.google.credential=PATH_TO_JSON_CREDENTIAL_FILE
+org.nuxeo.vision.google.credential=PATH_TO_JSON_CREDENTIAL_FILE
 ```
 
 ## Known limitations

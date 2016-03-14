@@ -7,16 +7,16 @@
     <version>8.1</version>
   </parent>
 
-  <groupId>org.nuxeo.labs</groupId>
-  <artifactId>nuxeo-labs-computer-vision-parent</artifactId>
+  <groupId>org.nuxeo</groupId>
+  <artifactId>nuxeo-vision-parent</artifactId>
   <version>1.0-SNAPSHOT</version>
-  <name>Nuxeo labs google vision parent</name>
+  <name>Nuxeo Vision Parent</name>
   <description/>
   <packaging>pom</packaging>
 
   <modules>
-    <module>nuxeo-labs-computer-vision-core</module>
-    <module>nuxeo-labs-computer-vision-marketplace</module>
+    <module>nuxeo-vision-core</module>
+    <module>nuxeo-vision-marketplace</module>
   </modules>
 
   <repositories>
@@ -70,15 +70,22 @@
   <dependencyManagement>
     <dependencies>
       <dependency>
-        <groupId>org.nuxeo.labs</groupId>
-        <artifactId>nuxeo-labs-computer-vision-core</artifactId>
+        <groupId>org.nuxeo</groupId>
+        <artifactId>nuxeo-vision-core</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.nuxeo.labs</groupId>
-        <artifactId>nuxeo-labs-computer-vision-marketplace</artifactId>
+        <groupId>org.nuxeo</groupId>
+        <artifactId>nuxeo-vision-marketplace</artifactId>
         <version>${project.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
+
+  <scm>
+    <connection>scm:git:git://github.com/nuxeo-sandbox/nuxeo-vision.git</connection>
+    <developerConnection>scm:git:ssh://git@github.com:nuxeo-sandbox/nuxeo-vision.git</developerConnection>
+    <url>https://github.com/nuxeo-sandbox/nuxeo-vision</url>
+  </scm>
+
 </project>
