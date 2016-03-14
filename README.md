@@ -1,9 +1,9 @@
 ## Description
-This plugin provides a wrapper for Computer Vision Services. Currently it supports the Google Vision API.
+This plugin provides a wrapper for Computer Vision Services. Currently it supports the [Google Vision API](https://cloud.google.com/vision/).
 
 ## Status
 
-This is a moving project in beta stage, as Google Vision API (no API maintenance, no deprecation process, etc.).
+The Google Vision API is currently beta.  As such this is a moving project in beta stage (no API maintenance, no deprecation process, etc.).
 
 ## Requirements
 Building requires the following software:
