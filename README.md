@@ -1,9 +1,9 @@
 ## Description
-This plugin provides a wrapper for Computer Vision Services. Currently it supports the Google Vision API.
+This plugin provides a wrapper for Computer Vision Services. Currently it supports the [Google Vision API](https://cloud.google.com/vision/).
 
 ## Status
 
-This is a moving project in beta stage, as Google Vision API (no API maintenance, no deprecation process, etc.).
+The Google Vision API is currently beta.  As such this is a moving project in beta stage (no API maintenance, no deprecation process, etc.).
 
 ## Requirements
 Building requires the following software:
@@ -24,7 +24,7 @@ mvn clean install
 
 ## Deploying
 - Install the marketplace package
-- Configure a [service account](https://developers.google.com/identity/protocols/OAuth2ServiceAccount)
+- Configure a [service account](https://developers.google.com/identity/protocols/OAuth2ServiceAccount) and set the NUXEO_GOOGLE_APPLICATION_CREDENTIALS ENV Variable with the JSON file path
 - Upload the JSON key file on your instance
 - Edit nuxeo.conf 
 
