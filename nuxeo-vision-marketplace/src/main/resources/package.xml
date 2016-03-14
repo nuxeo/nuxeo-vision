@@ -1,6 +1,6 @@
 <!-- See documentation at http://doc.nuxeo.com/x/HgIz -->
 <package type="addon" name="nuxeo-vision" version="@VERSION@">
-  <title>Nuxeo Vision Package</title>
+  <title>Nuxeo Vision</title>
   <description>
     <p>This plugin provides a wrapper for Computer Vision Services.
       Currently it supports the Google Vision API.</p>
