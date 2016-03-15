@@ -61,7 +61,7 @@ public class TestComputerVisionOp {
 
     @Test
     public void testOneBlobWithTags() throws IOException, OperationException {
-        File file = new File(getClass().getResource("/files/plane.jpg").getPath());
+        File file = new File(getClass().getResource("/files/nyc.jpg").getPath());
         Blob blob = new FileBlob(file);
 
         StringList features = new StringList();

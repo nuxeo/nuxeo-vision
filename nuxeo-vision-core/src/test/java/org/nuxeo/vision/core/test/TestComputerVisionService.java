@@ -58,7 +58,7 @@ public class TestComputerVisionService {
 
     @Test
     public void testLabelFeature() throws IOException, GeneralSecurityException {
-        File file = new File(getClass().getResource("/files/nyc.jpg").getPath());
+        File file = new File(getClass().getResource("/files/plane.jpg").getPath());
         Blob blob = new FileBlob(file);
         ComputerVisionResponse result =
                 computerVision.execute(
@@ -106,6 +106,29 @@ public class TestComputerVisionService {
         List<TextEntity> labels = result.getClassificationLabels();
         assertNotNull(labels);
         assertTrue(labels.size()>0);
+        List<TextEntity> texts = result.getOcrText();
+        assertNotNull(texts);
+        assertTrue(texts.size()>0);
+        System.out.print(texts.get(0));
+    }
+
+    @Test
+    public void testAllFeatures() throws IOException, GeneralSecurityException {
+        File file = new File(getClass().getResource("/files/nyc.jpg").getPath());
+        Blob blob = new FileBlob(file);
+        ComputerVisionResponse result = computerVision.execute(
+                blob, ImmutableList.of(
+                        ComputerVisionFeature.TEXT_DETECTION,
+                        ComputerVisionFeature.LABEL_DETECTION,
+                        ComputerVisionFeature.IMAGE_PROPERTIES,
+                        ComputerVisionFeature.FACE_DETECTION,
+                        ComputerVisionFeature.LOGO_DETECTION,
+                        ComputerVisionFeature.LANDMARK_DETECTION,
+                        ComputerVisionFeature.SAFE_SEARCH_DETECTION),5);
+        List<TextEntity> labels = result.getClassificationLabels();
+        assertNotNull(labels);
+        assertTrue(labels.size()>0);
+        System.out.print(labels);
         List<TextEntity> texts = result.getOcrText();
         assertNotNull(texts);
         assertTrue(texts.size()>0);

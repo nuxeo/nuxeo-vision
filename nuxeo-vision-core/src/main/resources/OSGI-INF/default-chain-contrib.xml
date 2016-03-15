@@ -27,9 +27,11 @@
 
               if (labels !== undefined && labels !== null && labels.length>0) {
                   var tags = [];
-
                   for(var i=0;i<labels.length;i++) {
-                    tags.push(labels[i].getText().replace(/\s/g,'+'));
+                    var label = labels[i];
+                    var tag = label.getText();
+                    if (tag ===undefined || tag ===null) continue;
+                    tags.push(tag.replace(/\s/g,'+'));
                   }
 
                   input = Services.TagDocument(input, {'tags': tags });
@@ -92,7 +94,11 @@
                 if (labels === undefined || labels === null || labels===0) continue;
 
                 for(var j=0;j<labels.length;j++) {
-                  tags.push(labels[j].getText().replace(/\s/g,'+'));
+                    var label = labels[j];
+                    var tag = label.getText();
+                    if (tag ===undefined || tag ===null) continue;
+                    tags.push(tag.replace(/\s/g,'+'));
+                    tags.push(label.getText().replace(/\s/g,'+'));
                 }
               }
 

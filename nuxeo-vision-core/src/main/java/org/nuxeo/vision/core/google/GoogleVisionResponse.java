@@ -43,9 +43,12 @@ public class GoogleVisionResponse implements ComputerVisionResponse {
     @Override
     public List<TextEntity> getClassificationLabels() {
         List<TextEntity> results = new ArrayList<>();
-        results.addAll(processEntityAnnotationList(response.getLabelAnnotations()));
-        results.addAll(processEntityAnnotationList(response.getLandmarkAnnotations()));
-        results.addAll(processEntityAnnotationList(response.getLogoAnnotations()));
+        if (response.getLabelAnnotations()!= null)
+            results.addAll(processEntityAnnotationList(response.getLabelAnnotations()));
+        if (response.getLandmarkAnnotations()!= null)
+            results.addAll(processEntityAnnotationList(response.getLandmarkAnnotations()));
+        if (response.getLogoAnnotations()!= null)
+            results.addAll(processEntityAnnotationList(response.getLogoAnnotations()));
         return results;
     }
 
