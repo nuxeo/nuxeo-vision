@@ -6,7 +6,7 @@
       Currently it supports the Google Vision API.</p>
     <p>Requires Nuxeo DAM.</p>
   </description>
-  <!-- <home-page>http://doc.nuxeo.com/</home-page> -->
+  <home-page>https://doc.nuxeo.com/x/PYHZAQ/</home-page>
   <vendor>Nuxeo</vendor>
   <installer restart="true" />
   <uninstaller restart="true" />
