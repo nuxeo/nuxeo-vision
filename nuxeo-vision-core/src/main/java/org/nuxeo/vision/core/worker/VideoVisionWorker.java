@@ -11,7 +11,7 @@ import org.nuxeo.ecm.core.api.IdRef;
 import org.nuxeo.ecm.core.work.AbstractWork;
 import org.nuxeo.runtime.api.Framework;
 import org.nuxeo.runtime.transaction.TransactionHelper;
-import org.nuxeo.vision.core.service.ComputerVision;
+import org.nuxeo.vision.core.service.Vision;
 
 /**
  * Created by Michaël on 3/10/2016.
@@ -43,7 +43,7 @@ public class VideoVisionWorker extends AbstractWork {
 
         DocumentModel doc = session.getDocument(new IdRef(docId));
 
-        ComputerVision visionService = Framework.getService(ComputerVision.class);
+        Vision visionService = Framework.getService(Vision.class);
         String mapperChainName = visionService.getVideoMapperChainName();
 
         AutomationService as = Framework.getService(AutomationService.class);

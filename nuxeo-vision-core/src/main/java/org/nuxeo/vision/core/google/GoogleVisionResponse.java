@@ -26,13 +26,13 @@ import com.google.api.services.vision.v1.model.EntityAnnotation;
 import org.nuxeo.vision.core.image.ColorInfo;
 import org.nuxeo.vision.core.image.ImageProprerties;
 import org.nuxeo.vision.core.image.TextEntity;
-import org.nuxeo.vision.core.service.ComputerVisionResponse;
+import org.nuxeo.vision.core.service.VisionResponse;
 
 import java.util.ArrayList;
 import java.util.List;
 
 
-public class GoogleVisionResponse implements ComputerVisionResponse {
+public class GoogleVisionResponse implements VisionResponse {
 
     AnnotateImageResponse response;
 

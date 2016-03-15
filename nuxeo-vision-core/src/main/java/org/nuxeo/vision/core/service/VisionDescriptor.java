@@ -24,7 +24,7 @@ import org.nuxeo.common.xmap.annotation.XObject;
 
 
 @XObject("configuration")
-public class ComputerVisionDescriptor {
+public class VisionDescriptor {
 
     @XNode("pictureMapperChainName")
     protected String pictureMapperChainName = "javascript.PictureVisionDefaultMapper";

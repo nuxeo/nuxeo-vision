@@ -30,9 +30,9 @@ import org.nuxeo.ecm.automation.core.annotations.Param;
 import org.nuxeo.ecm.automation.core.util.BlobList;
 import org.nuxeo.ecm.automation.core.util.StringList;
 import org.nuxeo.ecm.core.api.Blob;
-import org.nuxeo.vision.core.service.ComputerVision;
-import org.nuxeo.vision.core.service.ComputerVisionFeature;
-import org.nuxeo.vision.core.service.ComputerVisionResponse;
+import org.nuxeo.vision.core.service.Vision;
+import org.nuxeo.vision.core.service.VisionFeature;
+import org.nuxeo.vision.core.service.VisionResponse;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -43,22 +43,22 @@ import java.util.List;
  *
  */
 @Operation(
-        id= ComputerVisionOp.ID,
+        id= VisionOp.ID,
         category=Constants.CAT_BLOB,
         label="Call the Computer Vision Service",
         description="Call the Computer Vision Service for the input blob(s)")
-public class ComputerVisionOp {
+public class VisionOp {
 
-    public static final String ID = "ComputerVisionOp";
+    public static final String ID = "VisionOp";
 
-    private static final Log log = LogFactory.getLog(ComputerVisionOp.class);
+    private static final Log log = LogFactory.getLog(VisionOp.class);
 
 
     @Context
     protected OperationContext ctx;
 
     @Context
-    protected ComputerVision computerVisionService;
+    protected Vision visionService;
 
     @Param(
             name = "features",
@@ -92,16 +92,16 @@ public class ComputerVisionOp {
 
     @OperationMethod
     public BlobList run(BlobList blobs) {
-        List<ComputerVisionResponse> results;
+        List<VisionResponse> results;
 
         //Convert feature string to enum
-        List<ComputerVisionFeature> featureList = new ArrayList<>();
+        List<VisionFeature> featureList = new ArrayList<>();
         for (String feature: features) {
-            featureList.add(ComputerVisionFeature.valueOf(feature));
+            featureList.add(VisionFeature.valueOf(feature));
         }
 
         try {
-            results = computerVisionService.execute(blobs, featureList, maxResults);
+            results = visionService.execute(blobs, featureList, maxResults);
             ctx.put(outputVariable,results);
         } catch (IOException | GeneralSecurityException e) {
             log.warn("Call to google vision API failed",e);

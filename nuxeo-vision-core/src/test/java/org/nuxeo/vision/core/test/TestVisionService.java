@@ -31,9 +31,9 @@ import org.nuxeo.runtime.test.runner.FeaturesRunner;
 import org.nuxeo.runtime.test.runner.LocalDeploy;
 import org.nuxeo.vision.core.image.ColorInfo;
 import org.nuxeo.vision.core.image.TextEntity;
-import org.nuxeo.vision.core.service.ComputerVision;
-import org.nuxeo.vision.core.service.ComputerVisionFeature;
-import org.nuxeo.vision.core.service.ComputerVisionResponse;
+import org.nuxeo.vision.core.service.Vision;
+import org.nuxeo.vision.core.service.VisionFeature;
+import org.nuxeo.vision.core.service.VisionResponse;
 
 import java.io.File;
 import java.io.IOException;
@@ -51,18 +51,18 @@ import static org.junit.Assert.assertTrue;
         "nuxeo-vision-core:OSGI-INF/mock-adapter-contrib.xml",
         "nuxeo-vision-core:OSGI-INF/disabled-listener-contrib.xml"
 })
-public class TestComputerVisionService {
+public class TestVisionService {
 
     @Inject
-    protected ComputerVision computerVision;
+    protected Vision vision;
 
     @Test
     public void testLabelFeature() throws IOException, GeneralSecurityException {
         File file = new File(getClass().getResource("/files/plane.jpg").getPath());
         Blob blob = new FileBlob(file);
-        ComputerVisionResponse result =
-                computerVision.execute(
-                        blob, ImmutableList.of(ComputerVisionFeature.LABEL_DETECTION),5);
+        VisionResponse result =
+                vision.execute(
+                        blob, ImmutableList.of(VisionFeature.LABEL_DETECTION),5);
         List<TextEntity> labels = result.getClassificationLabels();
         assertNotNull(labels);
         assertTrue(labels.size()>0);
@@ -73,9 +73,9 @@ public class TestComputerVisionService {
     public void testTextFeature() throws IOException, GeneralSecurityException {
         File file = new File(getClass().getResource("/files/text.png").getPath());
         Blob blob = new FileBlob(file);
-        ComputerVisionResponse result =
-                computerVision.execute(
-                        blob, ImmutableList.of(ComputerVisionFeature.TEXT_DETECTION),5);
+        VisionResponse result =
+                vision.execute(
+                        blob, ImmutableList.of(VisionFeature.TEXT_DETECTION),5);
         List<TextEntity> texts = result.getOcrText();
         assertNotNull(texts);
         assertTrue(texts.size()>0);
@@ -86,9 +86,9 @@ public class TestComputerVisionService {
     public void testColorFeature() throws IOException, GeneralSecurityException {
         File file = new File(getClass().getResource("/files/plane.jpg").getPath());
         Blob blob = new FileBlob(file);
-        ComputerVisionResponse result =
-                computerVision.execute(
-                        blob, ImmutableList.of(ComputerVisionFeature.IMAGE_PROPERTIES),5);
+        VisionResponse result =
+                vision.execute(
+                        blob, ImmutableList.of(VisionFeature.IMAGE_PROPERTIES),5);
         List<ColorInfo> colors = result.getImageProperties().getColors();
         assertNotNull(colors);
         assertTrue(colors.size()>0);
@@ -100,9 +100,9 @@ public class TestComputerVisionService {
     public void testMultipleFeatures() throws IOException, GeneralSecurityException {
         File file = new File(getClass().getResource("/files/plane.jpg").getPath());
         Blob blob = new FileBlob(file);
-        ComputerVisionResponse result = computerVision.execute(
-                blob, ImmutableList.of(ComputerVisionFeature.TEXT_DETECTION,
-                        ComputerVisionFeature.LABEL_DETECTION),5);
+        VisionResponse result = vision.execute(
+                blob, ImmutableList.of(VisionFeature.TEXT_DETECTION,
+                        VisionFeature.LABEL_DETECTION),5);
         List<TextEntity> labels = result.getClassificationLabels();
         assertNotNull(labels);
         assertTrue(labels.size()>0);
@@ -116,15 +116,15 @@ public class TestComputerVisionService {
     public void testAllFeatures() throws IOException, GeneralSecurityException {
         File file = new File(getClass().getResource("/files/nyc.jpg").getPath());
         Blob blob = new FileBlob(file);
-        ComputerVisionResponse result = computerVision.execute(
+        VisionResponse result = vision.execute(
                 blob, ImmutableList.of(
-                        ComputerVisionFeature.TEXT_DETECTION,
-                        ComputerVisionFeature.LABEL_DETECTION,
-                        ComputerVisionFeature.IMAGE_PROPERTIES,
-                        ComputerVisionFeature.FACE_DETECTION,
-                        ComputerVisionFeature.LOGO_DETECTION,
-                        ComputerVisionFeature.LANDMARK_DETECTION,
-                        ComputerVisionFeature.SAFE_SEARCH_DETECTION),5);
+                        VisionFeature.TEXT_DETECTION,
+                        VisionFeature.LABEL_DETECTION,
+                        VisionFeature.IMAGE_PROPERTIES,
+                        VisionFeature.FACE_DETECTION,
+                        VisionFeature.LOGO_DETECTION,
+                        VisionFeature.LANDMARK_DETECTION,
+                        VisionFeature.SAFE_SEARCH_DETECTION),5);
         List<TextEntity> labels = result.getClassificationLabels();
         assertNotNull(labels);
         assertTrue(labels.size()>0);
@@ -141,9 +141,9 @@ public class TestComputerVisionService {
         blobs.add(new FileBlob(new File(getClass().getResource("/files/plane.jpg").getPath())));
         blobs.add(new FileBlob(new File(getClass().getResource("/files/text.png").getPath())));
 
-        List<ComputerVisionResponse> results = computerVision.execute(
-                blobs, ImmutableList.of(ComputerVisionFeature.TEXT_DETECTION,
-                        ComputerVisionFeature.LABEL_DETECTION), 5);
+        List<VisionResponse> results = vision.execute(
+                blobs, ImmutableList.of(VisionFeature.TEXT_DETECTION,
+                        VisionFeature.LABEL_DETECTION), 5);
         assertTrue(results.size() == 2);
     }
 

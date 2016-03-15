@@ -29,16 +29,16 @@ import java.util.List;
 /**
  * A service that performs Computer Vision tasks like classification, OCR, Face Detection ...
  */
-public interface ComputerVision {
+public interface Vision {
 
     /**
      *
      * @param blob the image blob
      * @param features the feature to request from the service
      * @param maxResults the maximum number of results per feature
-     * @return a {@link ComputerVisionResponse} object
+     * @return a {@link VisionResponse} object
      */
-    ComputerVisionResponse execute(Blob blob, List<ComputerVisionFeature> features, int maxResults)
+    VisionResponse execute(Blob blob, List<VisionFeature> features, int maxResults)
             throws IOException, GeneralSecurityException;
 
     /**
@@ -46,10 +46,10 @@ public interface ComputerVision {
      * @param blobs A list of image blobs
      * @param features the feature to request from the service
      * @param maxResults the maximum number of results per feature
-     * @return a list of {@link ComputerVisionResponse} object
+     * @return a list of {@link VisionResponse} object
      */
-    List<ComputerVisionResponse> execute(List<Blob> blobs, List<ComputerVisionFeature> features,
-                                        int maxResults) throws IOException, GeneralSecurityException;
+    List<VisionResponse> execute(List<Blob> blobs, List<VisionFeature> features,
+                                 int maxResults) throws IOException, GeneralSecurityException;
 
 
     /**

@@ -23,7 +23,6 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
-import com.google.api.services.vision.v1.Vision;
 import com.google.api.services.vision.v1.VisionScopes;
 import com.google.api.services.vision.v1.model.*;
 import com.google.common.collect.ImmutableList;
@@ -44,11 +43,11 @@ import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ComputerVisionImpl extends DefaultComponent implements ComputerVision {
+public class VisionImpl extends DefaultComponent implements Vision {
 
-    private static final Log log = LogFactory.getLog(ComputerVisionImpl.class);
+    private static final Log log = LogFactory.getLog(VisionImpl.class);
 
-    private volatile Vision visionClient;
+    private volatile com.google.api.services.vision.v1.Vision visionClient;
 
     protected static final String CONFIG_EXT_POINT = "configuration";
 
@@ -60,7 +59,7 @@ public class ComputerVisionImpl extends DefaultComponent implements ComputerVisi
 
     protected static final int MAX_BLOB_PER_REQUEST = 16;
 
-    protected ComputerVisionDescriptor config = null;
+    protected VisionDescriptor config = null;
 
     protected GoogleVisionDescriptor googleConfig = null;
 
@@ -104,7 +103,7 @@ public class ComputerVisionImpl extends DefaultComponent implements ComputerVisi
     @Override
     public void registerContribution(Object contribution, String extensionPoint, ComponentInstance contributor) {
         if (CONFIG_EXT_POINT.equals(extensionPoint)) {
-            config = (ComputerVisionDescriptor) contribution;
+            config = (VisionDescriptor) contribution;
         } else if (GOOGLE_EXT_POINT.equals(extensionPoint)) {
             googleConfig = (GoogleVisionDescriptor) contribution;
         }
@@ -116,10 +115,10 @@ public class ComputerVisionImpl extends DefaultComponent implements ComputerVisi
     }
 
 
-    private Vision getVisionService() throws IOException, GeneralSecurityException{
+    private com.google.api.services.vision.v1.Vision getVisionService() throws IOException, GeneralSecurityException{
         // thread safe lazy initialization of the google vision client
         // see https://en.wikipedia.org/wiki/Double-checked_locking
-        Vision result = visionClient;
+        com.google.api.services.vision.v1.Vision result = visionClient;
         if (result == null) {
             synchronized(this) {
                 result = visionClient;
@@ -131,7 +130,7 @@ public class ComputerVisionImpl extends DefaultComponent implements ComputerVisi
                                 new FileInputStream(file)).createScoped(VisionScopes.all());
                     }
                     JsonFactory jsonFactory = JacksonFactory.getDefaultInstance();
-                    result = visionClient = new Vision.Builder(
+                    result = visionClient = new com.google.api.services.vision.v1.Vision.Builder(
                             GoogleNetHttpTransport.newTrustedTransport(), jsonFactory, credential)
                             .setApplicationName(googleConfig.getAppName())
                             .build();
@@ -143,7 +142,7 @@ public class ComputerVisionImpl extends DefaultComponent implements ComputerVisi
 
 
     @Override
-    public ComputerVisionResponse execute(Blob blob, List<ComputerVisionFeature> features,int maxResults)
+    public VisionResponse execute(Blob blob, List<VisionFeature> features, int maxResults)
             throws IOException, GeneralSecurityException, IllegalStateException {
 
         if (blob==null) {
@@ -152,7 +151,7 @@ public class ComputerVisionImpl extends DefaultComponent implements ComputerVisi
             throw new IllegalArgumentException("The feature list cannot be empty or null");
         }
 
-        List<ComputerVisionResponse> results = execute(ImmutableList.of(blob),features,maxResults);
+        List<VisionResponse> results = execute(ImmutableList.of(blob),features,maxResults);
         if (results.size()>0) {
             return results.get(0);
         } else {
@@ -162,8 +161,8 @@ public class ComputerVisionImpl extends DefaultComponent implements ComputerVisi
 
 
     @Override
-    public List<ComputerVisionResponse> execute(List<Blob> blobs, List<ComputerVisionFeature> features,
-                                               int maxResults)
+    public List<VisionResponse> execute(List<Blob> blobs, List<VisionFeature> features,
+                                        int maxResults)
             throws IOException, GeneralSecurityException, IllegalStateException {
 
         if (blobs==null || blobs.size()==0) {
@@ -180,7 +179,7 @@ public class ComputerVisionImpl extends DefaultComponent implements ComputerVisi
         //build list of request
         List<AnnotateImageRequest> requests = buildRequestList(blobs,requestFeatures);
 
-        Vision.Images.Annotate annotate;
+        com.google.api.services.vision.v1.Vision.Images.Annotate annotate;
         annotate = getVisionService().images().annotate(
                 new BatchAnnotateImagesRequest().setRequests(requests));
 
@@ -201,7 +200,7 @@ public class ComputerVisionImpl extends DefaultComponent implements ComputerVisi
         }
 
         List<AnnotateImageResponse> responses = batchResponse.getResponses();
-        List<ComputerVisionResponse> output = new ArrayList<>();
+        List<VisionResponse> output = new ArrayList<>();
         for (AnnotateImageResponse response : responses) {
             output.add(new GoogleVisionResponse(response));
         }
@@ -219,10 +218,10 @@ public class ComputerVisionImpl extends DefaultComponent implements ComputerVisi
     }
 
 
-    protected List<Feature> buildFeatureList(List<ComputerVisionFeature> features,int maxResults) {
+    protected List<Feature> buildFeatureList(List<VisionFeature> features, int maxResults) {
 
         List<Feature> requestFeatures = new ArrayList<>();
-        for (ComputerVisionFeature feature: features) {
+        for (VisionFeature feature: features) {
             requestFeatures.add(new Feature().setType(feature.toString()).setMaxResults(maxResults));
         }
         return requestFeatures;

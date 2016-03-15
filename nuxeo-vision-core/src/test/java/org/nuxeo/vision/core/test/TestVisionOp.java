@@ -39,9 +39,9 @@ import org.nuxeo.runtime.api.Framework;
 import org.nuxeo.runtime.test.runner.Deploy;
 import org.nuxeo.runtime.test.runner.FeaturesRunner;
 import org.nuxeo.vision.core.image.TextEntity;
-import org.nuxeo.vision.core.operation.ComputerVisionOp;
-import org.nuxeo.vision.core.service.ComputerVisionFeature;
-import org.nuxeo.vision.core.service.ComputerVisionResponse;
+import org.nuxeo.vision.core.operation.VisionOp;
+import org.nuxeo.vision.core.service.VisionFeature;
+import org.nuxeo.vision.core.service.VisionResponse;
 
 import javax.inject.Inject;
 import java.io.File;
@@ -54,7 +54,7 @@ import java.util.List;
 @Deploy({
         "nuxeo-vision-core"
 })
-public class TestComputerVisionOp {
+public class TestVisionOp {
 
     @Inject
     CoreSession session;
@@ -65,23 +65,23 @@ public class TestComputerVisionOp {
         Blob blob = new FileBlob(file);
 
         StringList features = new StringList();
-        features.add(ComputerVisionFeature.LABEL_DETECTION.toString());
+        features.add(VisionFeature.LABEL_DETECTION.toString());
 
         AutomationService as = Framework.getService(AutomationService.class);
         OperationContext ctx = new OperationContext();
         ctx.setInput(blob);
         ctx.setCoreSession(session);
         OperationChain chain = new OperationChain("TestTextTagBlobOp");
-        chain.add(ComputerVisionOp.ID).
+        chain.add(VisionOp.ID).
                 set("features",features).
                 set("outputVariable","testTags").
                 set("maxResults",5);
         blob = (Blob) as.run(ctx, chain);
 
-        List<ComputerVisionResponse> resultList = (List<ComputerVisionResponse>) ctx.get("testTags");
+        List<VisionResponse> resultList = (List<VisionResponse>) ctx.get("testTags");
         Assert.assertNotNull(resultList);
         Assert.assertEquals(1,resultList.size());
-        ComputerVisionResponse result = resultList.get(0);
+        VisionResponse result = resultList.get(0);
         List<TextEntity> labels = result.getClassificationLabels();
         Assert.assertNotNull(labels);
         Assert.assertTrue(labels.size()>0);
@@ -96,20 +96,20 @@ public class TestComputerVisionOp {
         blobs.add(new FileBlob(new File(getClass().getResource("/files/text.png").getPath())));
 
         StringList features = new StringList();
-        features.add(ComputerVisionFeature.LABEL_DETECTION.toString());
+        features.add(VisionFeature.LABEL_DETECTION.toString());
 
         AutomationService as = Framework.getService(AutomationService.class);
         OperationContext ctx = new OperationContext();
         ctx.setInput(blobs);
         ctx.setCoreSession(session);
         OperationChain chain = new OperationChain("TestTextTagBlobOp");
-        chain.add(ComputerVisionOp.ID).
+        chain.add(VisionOp.ID).
                 set("features",features).
                 set("outputVariable","testTags").
                 set("maxResults",5);
         blobs = (BlobList) as.run(ctx, chain);
 
-        List<ComputerVisionResponse> resultList = (List<ComputerVisionResponse>) ctx.get("testTags");
+        List<VisionResponse> resultList = (List<VisionResponse>) ctx.get("testTags");
         Assert.assertNotNull(resultList);
         Assert.assertEquals(2,resultList.size());
     }

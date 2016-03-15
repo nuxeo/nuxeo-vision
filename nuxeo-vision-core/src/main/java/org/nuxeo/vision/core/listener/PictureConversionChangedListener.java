@@ -32,7 +32,7 @@ import org.nuxeo.ecm.core.event.EventContext;
 import org.nuxeo.ecm.core.event.PostCommitEventListener;
 import org.nuxeo.ecm.core.event.impl.DocumentEventContext;
 import org.nuxeo.runtime.api.Framework;
-import org.nuxeo.vision.core.service.ComputerVision;
+import org.nuxeo.vision.core.service.Vision;
 
 import static org.nuxeo.ecm.platform.picture.api.ImagingDocumentConstants.PICTURE_FACET;
 
@@ -57,7 +57,7 @@ public class PictureConversionChangedListener implements PostCommitEventListener
         DocumentModel doc = docCtx.getSourceDocument();
         if (!doc.hasFacet(PICTURE_FACET) || doc.isProxy()) return;
 
-        ComputerVision visionService = Framework.getService(ComputerVision.class);
+        Vision visionService = Framework.getService(Vision.class);
         String mapperChainName = visionService.getPictureMapperChainName();
 
         AutomationService as = Framework.getService(AutomationService.class);

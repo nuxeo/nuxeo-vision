@@ -25,7 +25,7 @@ import org.nuxeo.vision.core.image.TextEntity;
 import java.util.List;
 
 
-public interface ComputerVisionResponse {
+public interface VisionResponse {
 
     /**
      *

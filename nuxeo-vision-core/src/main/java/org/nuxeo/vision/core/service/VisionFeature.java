@@ -20,7 +20,7 @@
 package org.nuxeo.vision.core.service;
 
 
-public enum ComputerVisionFeature {
+public enum VisionFeature {
 
     FACE_DETECTION("FACE_DETECTION"),
     LANDMARK_DETECTION("LANDMARK_DETECTION"),
@@ -33,7 +33,7 @@ public enum ComputerVisionFeature {
     private final String text;
 
 
-    ComputerVisionFeature(final String text) {
+    VisionFeature(final String text) {
         this.text = text;
     }
 

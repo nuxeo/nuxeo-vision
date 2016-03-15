@@ -5,15 +5,15 @@
     A service that performs Computer Vision tasks like classification, OCR, Face Detection ...
   </documentation>
 
-  <implementation class="org.nuxeo.vision.core.service.ComputerVisionImpl" />
+  <implementation class="org.nuxeo.vision.core.service.VisionImpl" />
 
   <service>
-    <provide interface="org.nuxeo.vision.core.service.ComputerVision" />
+    <provide interface="org.nuxeo.vision.core.service.Vision" />
   </service>
 
   <extension-point name="configuration">
     <documentation>Used to the default behavior of the service</documentation>
-    <object class="org.nuxeo.vision.core.service.ComputerVisionDescriptor" />
+    <object class="org.nuxeo.vision.core.service.VisionDescriptor" />
   </extension-point>
 
   <extension-point name="google">
