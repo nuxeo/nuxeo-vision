@@ -58,7 +58,7 @@ public class TestComputerVisionService {
 
     @Test
     public void testLabelFeature() throws IOException, GeneralSecurityException {
-        File file = new File(getClass().getResource("/files/plane.jpg").getPath());
+        File file = new File(getClass().getResource("/files/nyc.jpg").getPath());
         Blob blob = new FileBlob(file);
         ComputerVisionResponse result =
                 computerVision.execute(
