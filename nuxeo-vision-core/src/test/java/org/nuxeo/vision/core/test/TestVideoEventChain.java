@@ -20,6 +20,7 @@
 package org.nuxeo.vision.core.test;
 
 import org.junit.Assert;
+import org.junit.Assume;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.nuxeo.ecm.automation.AutomationService;
@@ -47,6 +48,7 @@ import org.nuxeo.vision.core.test.mock.MockWorkManager;
 import org.nuxeo.vision.core.worker.VideoVisionWorker;
 
 import javax.inject.Inject;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
@@ -78,6 +80,8 @@ public class TestVideoEventChain {
 
     @Test
     public void testVideoChain() throws IOException, OperationException {
+        
+        Assume.assumeTrue("Test credential file not set", CheckCredentials.ok());
 
         DocumentModel video = session.createDocumentModel("/", "Video", "Video");
         File file = new File(getClass().getResource("/files/plane2.jpg").getPath());
@@ -108,6 +112,8 @@ public class TestVideoEventChain {
 
     @Test
     public void testVideoWorker() throws IOException, OperationException {
+        
+        Assume.assumeTrue("Test credential file not set", CheckCredentials.ok());
 
         DocumentModel video = session.createDocumentModel("/", "Video", "Video");
         video = session.createDocument(video);
@@ -135,6 +141,8 @@ public class TestVideoEventChain {
 
     @Test
     public void testVideoListener() throws IOException, OperationException {
+        
+        Assume.assumeTrue("Test credential file not set", CheckCredentials.ok());
 
         DocumentModel video = session.createDocumentModel("/", "Video", "Video");
         video = session.createDocument(video);

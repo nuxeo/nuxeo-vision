@@ -21,6 +21,8 @@ package org.nuxeo.vision.core.test;
 
 import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
+
+import org.junit.Assume;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.nuxeo.ecm.core.api.Blob;
@@ -47,10 +49,8 @@ import static org.junit.Assert.assertTrue;
 @RunWith(FeaturesRunner.class)
 @org.nuxeo.runtime.test.runner.Features({ PlatformFeature.class })
 @Deploy("nuxeo-vision-core")
-@LocalDeploy({
-        "nuxeo-vision-core:OSGI-INF/mock-adapter-contrib.xml",
-        "nuxeo-vision-core:OSGI-INF/disabled-listener-contrib.xml"
-})
+@LocalDeploy({ "nuxeo-vision-core:OSGI-INF/mock-adapter-contrib.xml",
+        "nuxeo-vision-core:OSGI-INF/disabled-listener-contrib.xml" })
 public class TestVisionService {
 
     @Inject
@@ -58,92 +58,95 @@ public class TestVisionService {
 
     @Test
     public void testLabelFeature() throws IOException, GeneralSecurityException {
+        
+        Assume.assumeTrue("Test credential file not set", CheckCredentials.ok());
+        
         File file = new File(getClass().getResource("/files/plane.jpg").getPath());
         Blob blob = new FileBlob(file);
-        VisionResponse result =
-                vision.execute(
-                        blob, ImmutableList.of(VisionFeature.LABEL_DETECTION),5);
+        VisionResponse result = vision.execute(blob, ImmutableList.of(VisionFeature.LABEL_DETECTION), 5);
         List<TextEntity> labels = result.getClassificationLabels();
         assertNotNull(labels);
-        assertTrue(labels.size()>0);
+        assertTrue(labels.size() > 0);
         System.out.print(labels);
     }
 
     @Test
     public void testTextFeature() throws IOException, GeneralSecurityException {
+        
+        Assume.assumeTrue("Test credential file not set", CheckCredentials.ok());
+        
         File file = new File(getClass().getResource("/files/text.png").getPath());
         Blob blob = new FileBlob(file);
-        VisionResponse result =
-                vision.execute(
-                        blob, ImmutableList.of(VisionFeature.TEXT_DETECTION),5);
+        VisionResponse result = vision.execute(blob, ImmutableList.of(VisionFeature.TEXT_DETECTION), 5);
         List<TextEntity> texts = result.getOcrText();
         assertNotNull(texts);
-        assertTrue(texts.size()>0);
+        assertTrue(texts.size() > 0);
         System.out.print(texts.get(0));
     }
 
     @Test
     public void testColorFeature() throws IOException, GeneralSecurityException {
+        
+        Assume.assumeTrue("Test credential file not set", CheckCredentials.ok());
+        
         File file = new File(getClass().getResource("/files/plane.jpg").getPath());
         Blob blob = new FileBlob(file);
-        VisionResponse result =
-                vision.execute(
-                        blob, ImmutableList.of(VisionFeature.IMAGE_PROPERTIES),5);
+        VisionResponse result = vision.execute(blob, ImmutableList.of(VisionFeature.IMAGE_PROPERTIES), 5);
         List<ColorInfo> colors = result.getImageProperties().getColors();
         assertNotNull(colors);
-        assertTrue(colors.size()>0);
+        assertTrue(colors.size() > 0);
         System.out.print(colors.get(0));
     }
 
-
     @Test
     public void testMultipleFeatures() throws IOException, GeneralSecurityException {
+        
+        Assume.assumeTrue("Test credential file not set", CheckCredentials.ok());
+        
         File file = new File(getClass().getResource("/files/plane.jpg").getPath());
         Blob blob = new FileBlob(file);
-        VisionResponse result = vision.execute(
-                blob, ImmutableList.of(VisionFeature.TEXT_DETECTION,
-                        VisionFeature.LABEL_DETECTION),5);
+        VisionResponse result = vision.execute(blob,
+                ImmutableList.of(VisionFeature.TEXT_DETECTION, VisionFeature.LABEL_DETECTION), 5);
         List<TextEntity> labels = result.getClassificationLabels();
         assertNotNull(labels);
-        assertTrue(labels.size()>0);
+        assertTrue(labels.size() > 0);
         List<TextEntity> texts = result.getOcrText();
         assertNotNull(texts);
-        assertTrue(texts.size()>0);
+        assertTrue(texts.size() > 0);
         System.out.print(texts.get(0));
     }
 
     @Test
     public void testAllFeatures() throws IOException, GeneralSecurityException {
+        
+        Assume.assumeTrue("Test credential file not set", CheckCredentials.ok());
+        
         File file = new File(getClass().getResource("/files/nyc.jpg").getPath());
         Blob blob = new FileBlob(file);
-        VisionResponse result = vision.execute(
-                blob, ImmutableList.of(
-                        VisionFeature.TEXT_DETECTION,
-                        VisionFeature.LABEL_DETECTION,
-                        VisionFeature.IMAGE_PROPERTIES,
-                        VisionFeature.FACE_DETECTION,
-                        VisionFeature.LOGO_DETECTION,
-                        VisionFeature.LANDMARK_DETECTION,
-                        VisionFeature.SAFE_SEARCH_DETECTION),5);
+        VisionResponse result = vision.execute(blob, ImmutableList.of(VisionFeature.TEXT_DETECTION,
+                VisionFeature.LABEL_DETECTION, VisionFeature.IMAGE_PROPERTIES, VisionFeature.FACE_DETECTION,
+                VisionFeature.LOGO_DETECTION, VisionFeature.LANDMARK_DETECTION, VisionFeature.SAFE_SEARCH_DETECTION), 5);
         List<TextEntity> labels = result.getClassificationLabels();
         assertNotNull(labels);
-        assertTrue(labels.size()>0);
+        assertTrue(labels.size() > 0);
         System.out.print(labels);
         List<TextEntity> texts = result.getOcrText();
         assertNotNull(texts);
-        assertTrue(texts.size()>0);
+        assertTrue(texts.size() > 0);
         System.out.print(texts.get(0));
     }
 
     @Test
     public void testMultipleBlobs() throws IOException, GeneralSecurityException {
+        
+        Assume.assumeTrue("Test credential file not set", CheckCredentials.ok());
+        
         List<Blob> blobs = new ArrayList<>();
         blobs.add(new FileBlob(new File(getClass().getResource("/files/plane.jpg").getPath())));
         blobs.add(new FileBlob(new File(getClass().getResource("/files/text.png").getPath())));
 
-        List<VisionResponse> results = vision.execute(
-                blobs, ImmutableList.of(VisionFeature.TEXT_DETECTION,
-                        VisionFeature.LABEL_DETECTION), 5);
+        List<VisionResponse> results = vision.execute(blobs,
+                ImmutableList.of(VisionFeature.TEXT_DETECTION, VisionFeature.LABEL_DETECTION), 5);
         assertTrue(results.size() == 2);
     }
 

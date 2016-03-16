@@ -20,6 +20,7 @@
 package org.nuxeo.vision.core.test;
 
 import org.junit.Assert;
+import org.junit.Assume;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.nuxeo.ecm.automation.AutomationService;
@@ -49,6 +50,7 @@ import org.nuxeo.runtime.test.runner.LocalDeploy;
 import org.nuxeo.vision.core.listener.PictureConversionChangedListener;
 
 import javax.inject.Inject;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
@@ -78,6 +80,8 @@ public class TestPictureEventChain {
 
     @Test
     public void testPictureChain() throws IOException, OperationException {
+        
+        Assume.assumeTrue("Test credential file not set", CheckCredentials.ok());
 
         DocumentModel picture = session.createDocumentModel("/", "Picture", "Picture");
         File file = new File(getClass().getResource("/files/nyc.jpg").getPath());
@@ -102,6 +106,8 @@ public class TestPictureEventChain {
 
     @Test
     public void testPictureListener() throws IOException, OperationException {
+        
+        Assume.assumeTrue("Test credential file not set", CheckCredentials.ok());
 
         DocumentModel picture = session.createDocumentModel("/", "Picture", "Picture");
         File file = new File(getClass().getResource("/files/plane.jpg").getPath());

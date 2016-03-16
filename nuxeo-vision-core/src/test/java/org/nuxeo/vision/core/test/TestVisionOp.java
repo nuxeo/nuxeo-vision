@@ -20,6 +20,7 @@
 package org.nuxeo.vision.core.test;
 
 import org.junit.Assert;
+import org.junit.Assume;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.nuxeo.ecm.automation.AutomationService;
@@ -44,6 +45,7 @@ import org.nuxeo.vision.core.service.VisionFeature;
 import org.nuxeo.vision.core.service.VisionResponse;
 
 import javax.inject.Inject;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
@@ -61,6 +63,9 @@ public class TestVisionOp {
 
     @Test
     public void testOneBlobWithTags() throws IOException, OperationException {
+        
+        Assume.assumeTrue("Test credential file not set", CheckCredentials.ok());
+        
         File file = new File(getClass().getResource("/files/nyc.jpg").getPath());
         Blob blob = new FileBlob(file);
 
@@ -91,6 +96,9 @@ public class TestVisionOp {
 
     @Test
     public void testMultipleBlobsWithTags() throws IOException, OperationException {
+        
+        Assume.assumeTrue("Test credential file not set", CheckCredentials.ok());
+        
         BlobList blobs = new BlobList();
         blobs.add(new FileBlob(new File(getClass().getResource("/files/plane.jpg").getPath())));
         blobs.add(new FileBlob(new File(getClass().getResource("/files/text.png").getPath())));
