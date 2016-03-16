@@ -35,7 +35,7 @@ public class VideoVisionWorker extends AbstractWork {
             startTransaction();
         }
 
-        openSystemSession();
+        initSession();
         if (!session.exists(new IdRef(docId))) {
             setStatus("Nothing to process");
             return;
