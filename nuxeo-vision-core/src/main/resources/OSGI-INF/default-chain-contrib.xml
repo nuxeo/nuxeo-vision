@@ -31,7 +31,7 @@
                     var label = labels[i];
                     var tag = label.getText();
                     if (tag ===undefined || tag ===null) continue;
-                    tags.push(tag.replace(/\s/g,'+'));
+                    tags.push(tag.replace(/[^A-Z0-9]+/ig,'+'));
                   }
 
                   input = Services.TagDocument(input, {'tags': tags });
@@ -97,7 +97,7 @@
                     var label = labels[j];
                     var tag = label.getText();
                     if (tag ===undefined || tag ===null) continue;
-                    tags.push(tag.replace(/\s/g,'+'));
+                    tags.push(tag.replace(/[^A-Z0-9]+/ig,'+'));
                     tags.push(label.getText().replace(/\s/g,'+'));
                 }
               }

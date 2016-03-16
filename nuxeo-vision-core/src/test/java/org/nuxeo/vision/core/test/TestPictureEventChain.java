@@ -80,7 +80,7 @@ public class TestPictureEventChain {
     public void testPictureChain() throws IOException, OperationException {
 
         DocumentModel picture = session.createDocumentModel("/", "Picture", "Picture");
-        File file = new File(getClass().getResource("/files/plane2.jpg").getPath());
+        File file = new File(getClass().getResource("/files/nyc.jpg").getPath());
         Blob blob = new FileBlob(file);
         picture.setPropertyValue("file:content", (Serializable) blob);
         picture = session.createDocument(picture);
