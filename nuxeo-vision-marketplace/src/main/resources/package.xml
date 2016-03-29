@@ -3,7 +3,8 @@
   <title>Nuxeo Vision</title>
   <description>
     <p>This plugin provides a wrapper for Computer Vision Services.
-      Currently it supports the Google Vision API.</p>
+      Currently it supports the Google Vision API.
+    </p>
     <p>Requires Nuxeo DAM.</p>
   </description>
   <home-page>https://doc.nuxeo.com/x/PYHZAQ/</home-page>
@@ -12,33 +13,17 @@
   <uninstaller restart="true" />
   <!-- <hotreload-support>false</hotreload-support> -->
   <!-- <require-terms-and-conditions-acceptance>false</require-terms-and-conditions-acceptance> -->
-  <nuxeo-validation>none</nuxeo-validation>
-  <!-- <nuxeo-validation>inprocess</nuxeo-validation> -->
-  <!-- <nuxeo-validation>primary_validation</nuxeo-validation> -->
-  <!-- <nuxeo-validation>nuxeo_certified</nuxeo-validation> -->
-  <!-- <production-state>proto</production-state> -->
-  <production-state>testing</production-state>
-  <!-- <production-state>production_ready</production-state> -->
-  <supported>false</supported>
+  <nuxeo-validation>nuxeo_certified</nuxeo-validation>
+  <production-state>production_ready</production-state>
+  <supported>true</supported>
   <platforms>
     <platform>cap-@DISTRIB_VERSION@</platform>
     <platform>cap-@DISTRIB_VERSION@-HF*</platform>
-    <platform>cap-8.1</platform>
   </platforms>
-  <!-- Dependencies on other packages -->
   <dependencies>
     <package>nuxeo-dam</package>
   </dependencies>
-  <!-- Conflicts with other packages -->
-  <!-- <conflicts> -->
-  <!-- <package>a-conflicting-package:1.0.0:1.0.0</package> -->
-  <!-- </conflicts> -->
-  <!-- Provides features of other packages -->
-  <!-- <provides> -->
-  <!-- <package>an-embedded-package:1.0.0:1.0.0</package> -->
-  <!-- </provides> -->
   <license>Apache License, Version 2.0</license>
   <license-url>http://www.apache.org/licenses/LICENSE-2.0</license-url>
-  <!-- Visibility: PRIVATE | MARKETPLACE | DEV | PUBLIC -->
   <visibility>MARKETPLACE</visibility>
 </package>
