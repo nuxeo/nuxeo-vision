@@ -19,8 +19,12 @@
 
 package org.nuxeo.vision.core.test;
 
+import static org.junit.Assert.*;
+
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Assume;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.nuxeo.ecm.automation.AutomationService;
@@ -37,6 +41,7 @@ import org.nuxeo.ecm.core.event.EventBundle;
 import org.nuxeo.ecm.core.event.impl.DocumentEventContext;
 import org.nuxeo.ecm.core.event.impl.EventBundleImpl;
 import org.nuxeo.ecm.core.event.impl.EventContextImpl;
+import org.nuxeo.ecm.core.storage.sql.listeners.DummyTestListener;
 import org.nuxeo.ecm.core.test.DefaultRepositoryInit;
 import org.nuxeo.ecm.core.test.annotations.Granularity;
 import org.nuxeo.ecm.core.test.annotations.RepositoryConfig;
@@ -48,6 +53,7 @@ import org.nuxeo.runtime.test.runner.Features;
 import org.nuxeo.runtime.test.runner.FeaturesRunner;
 import org.nuxeo.runtime.test.runner.LocalDeploy;
 import org.nuxeo.vision.core.listener.PictureConversionChangedListener;
+import org.nuxeo.vision.core.service.Vision;
 
 import javax.inject.Inject;
 
@@ -67,7 +73,8 @@ import java.util.List;
 })
 @LocalDeploy({
         "nuxeo-vision-core:OSGI-INF/mock-adapter-contrib.xml",
-        "nuxeo-vision-core:OSGI-INF/disabled-listener-contrib.xml"
+        "nuxeo-vision-core:OSGI-INF/disabled-listener-contrib.xml",
+        "nuxeo-vision-core:OSGI-INF/dummy-listener-contrib.xml"
 })
 public class TestPictureEventChain {
 
@@ -76,6 +83,25 @@ public class TestPictureEventChain {
 
     @Inject
     protected TagService tagService;
+    
+    @Before
+    public void setup() {
+        Framework.getProperties().put("org.nuxeo.vision.google.credential", "/Users/thibaud/Nuxeo-Misc/google-vision-nuxeo-credentials.json");
+        String z = "";
+        if(z != null) {
+            
+        }
+    }
+    
+    @After
+    public void clearDummyTestListener() {
+        DummyTestListener.clear();
+        Framework.getProperties().remove("org.nuxeo.vision.google.credential");
+        String z = "";
+        if(z != null) {
+            
+        }
+    }
 
 
     @Test
@@ -108,6 +134,8 @@ public class TestPictureEventChain {
     public void testPictureListener() throws IOException, OperationException {
         
         Assume.assumeTrue("Test credential file not set", CheckCredentials.ok());
+        
+        DummyTestListener.clear();
 
         DocumentModel picture = session.createDocumentModel("/", "Picture", "Picture");
         File file = new File(getClass().getResource("/files/plane.jpg").getPath());
@@ -132,6 +160,11 @@ public class TestPictureEventChain {
         System.out.print(tags);
         Assert.assertNotNull(picture.getPropertyValue("dc:source"));
         System.out.print(picture.getPropertyValue("dc:source"));
+        
+        assertEquals(1, DummyTestListener.EVENTS_RECEIVED.size());
+        assertEquals(Vision.EVENT_IMAGE_HANDLED, DummyTestListener.EVENTS_RECEIVED.get(0).getName());
+        DummyTestListener.clear();
+        
     }
 
 }

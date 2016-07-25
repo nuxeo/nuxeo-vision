@@ -15,6 +15,7 @@
  *
  * Contributors:
  *     Michael Vachette
+ *     Thibaud Arguillere
  */
 
 package org.nuxeo.vision.core.listener;
@@ -25,12 +26,15 @@ import org.nuxeo.ecm.automation.AutomationService;
 import org.nuxeo.ecm.automation.OperationChain;
 import org.nuxeo.ecm.automation.OperationContext;
 import org.nuxeo.ecm.automation.OperationException;
+import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.event.Event;
 import org.nuxeo.ecm.core.event.EventBundle;
 import org.nuxeo.ecm.core.event.EventContext;
+import org.nuxeo.ecm.core.event.EventService;
 import org.nuxeo.ecm.core.event.PostCommitEventListener;
 import org.nuxeo.ecm.core.event.impl.DocumentEventContext;
+import org.nuxeo.ecm.core.event.impl.EventContextImpl;
 import org.nuxeo.runtime.api.Framework;
 import org.nuxeo.vision.core.service.Vision;
 
@@ -60,14 +64,21 @@ public class PictureConversionChangedListener implements PostCommitEventListener
         Vision visionService = Framework.getService(Vision.class);
         String mapperChainName = visionService.getPictureMapperChainName();
 
+        CoreSession session = doc.getCoreSession();
         AutomationService as = Framework.getService(AutomationService.class);
         OperationContext octx = new OperationContext();
         octx.setInput(doc);
-        octx.setCoreSession(doc.getCoreSession());
+        octx.setCoreSession(session);
         OperationChain chain = new OperationChain("PictureChangedListenerChain");
         chain.add(mapperChainName);
         try {
             as.run(octx, chain);
+            
+            EventContextImpl evctx = new DocumentEventContext(session, session.getPrincipal(), doc);
+            Event eventToSend = evctx.newEvent(Vision.EVENT_IMAGE_HANDLED);
+            EventService eventService = Framework.getLocalService(EventService.class);
+            eventService.fireEvent(eventToSend);
+            
         } catch (OperationException e) {
             log.warn(e);
         }
