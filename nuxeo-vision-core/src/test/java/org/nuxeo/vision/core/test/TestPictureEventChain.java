@@ -24,7 +24,6 @@ import static org.junit.Assert.*;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Assume;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.nuxeo.ecm.automation.AutomationService;
@@ -84,23 +83,10 @@ public class TestPictureEventChain {
     @Inject
     protected TagService tagService;
     
-    @Before
-    public void setup() {
-        Framework.getProperties().put("org.nuxeo.vision.google.credential", "/Users/thibaud/Nuxeo-Misc/google-vision-nuxeo-credentials.json");
-        String z = "";
-        if(z != null) {
-            
-        }
-    }
-    
     @After
-    public void clearDummyTestListener() {
+    public void cleanup() {
+        
         DummyTestListener.clear();
-        Framework.getProperties().remove("org.nuxeo.vision.google.credential");
-        String z = "";
-        if(z != null) {
-            
-        }
     }
 
 
