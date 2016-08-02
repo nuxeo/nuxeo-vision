@@ -16,7 +16,6 @@
  * Contributors:
  *     Michael Vachette
  */
-
 package org.nuxeo.vision.core.listener;
 
 import org.apache.commons.logging.Log;
@@ -31,7 +30,6 @@ import org.nuxeo.ecm.platform.video.VideoConstants;
 import org.nuxeo.runtime.api.Framework;
 import org.nuxeo.vision.core.worker.VideoVisionWorker;
 
-
 public class VideoStoryboardChangedListener implements EventListener {
 
     private static final Log log = LogFactory.getLog(VideoStoryboardChangedListener.class);
@@ -44,12 +42,18 @@ public class VideoStoryboardChangedListener implements EventListener {
         }
         DocumentEventContext docCtx = (DocumentEventContext) ectx;
         DocumentModel doc = docCtx.getSourceDocument();
-        if (!doc.hasFacet(VideoConstants.HAS_STORYBOARD_FACET) || doc.isProxy()) return;
+        if (!doc.hasFacet(VideoConstants.HAS_STORYBOARD_FACET) || doc.isProxy()) {
+            return;
+        }
 
-        if (!doc.getProperty(VideoConstants.STORYBOARD_PROPERTY).isDirty()) return;
+        if (!doc.getProperty(VideoConstants.STORYBOARD_PROPERTY).isDirty()) {
+            return;
+        }
 
-        VideoVisionWorker work = new VideoVisionWorker(doc.getRepositoryName(),doc.getId());
+        VideoVisionWorker work = new VideoVisionWorker(doc.getRepositoryName(),
+                doc.getId());
         WorkManager workManager = Framework.getLocalService(WorkManager.class);
-        workManager.schedule(work, WorkManager.Scheduling.IF_NOT_SCHEDULED, true);
+        workManager.schedule(work, WorkManager.Scheduling.IF_NOT_SCHEDULED,
+                true);
     }
 }

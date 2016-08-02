@@ -17,7 +17,6 @@
  *     Michael Vachette
  *     Thibaud Arguillere
  */
-
 package org.nuxeo.vision.core.listener;
 
 import org.apache.commons.logging.Log;
@@ -40,8 +39,8 @@ import org.nuxeo.vision.core.service.Vision;
 
 import static org.nuxeo.ecm.platform.picture.api.ImagingDocumentConstants.PICTURE_FACET;
 
-
-public class PictureConversionChangedListener implements PostCommitEventListener {
+public class PictureConversionChangedListener implements
+        PostCommitEventListener {
 
     private static final Log log = LogFactory.getLog(PictureConversionChangedListener.class);
 
@@ -59,7 +58,9 @@ public class PictureConversionChangedListener implements PostCommitEventListener
         }
         DocumentEventContext docCtx = (DocumentEventContext) ectx;
         DocumentModel doc = docCtx.getSourceDocument();
-        if (!doc.hasFacet(PICTURE_FACET) || doc.isProxy()) return;
+        if (!doc.hasFacet(PICTURE_FACET) || doc.isProxy()) {
+            return;
+        }
 
         Vision visionService = Framework.getService(Vision.class);
         String mapperChainName = visionService.getPictureMapperChainName();
@@ -73,12 +74,13 @@ public class PictureConversionChangedListener implements PostCommitEventListener
         chain.add(mapperChainName);
         try {
             as.run(octx, chain);
-            
-            EventContextImpl evctx = new DocumentEventContext(session, session.getPrincipal(), doc);
+
+            EventContextImpl evctx = new DocumentEventContext(session,
+                    session.getPrincipal(), doc);
             Event eventToSend = evctx.newEvent(Vision.EVENT_IMAGE_HANDLED);
             EventService eventService = Framework.getLocalService(EventService.class);
             eventService.fireEvent(eventToSend);
-            
+
         } catch (OperationException e) {
             log.warn(e);
         }

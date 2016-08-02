@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
 <component name="org.nuxeo.vision.core.chains">
-    <extension target="org.nuxeo.automation.scripting.internals.AutomationScriptingComponent" point="operation">
-        <scriptedOperation id="javascript.PictureVisionDefaultMapper">
-            <inputType>Document</inputType>
-            <outputType>Document</outputType>
-            <category>javascript</category>
-            <description></description>
-            <script><![CDATA[function run(input, params) {
+  <extension target="org.nuxeo.automation.scripting.internals.AutomationScriptingComponent" point="operation">
+    <scriptedOperation id="javascript.PictureVisionDefaultMapper">
+      <inputType>Document</inputType>
+      <outputType>Document</outputType>
+      <category>javascript</category>
+      <description></description>
+      <script><![CDATA[function run(input, params) {
 
               var blob = Picture.GetView(input, {'viewName': 'Medium'});
 
@@ -60,14 +60,14 @@
               return input;
 
         }]]></script>
-        </scriptedOperation>
+    </scriptedOperation>
 
-        <scriptedOperation id="javascript.VideoVisionDefaultMapper">
-            <inputType>Document</inputType>
-            <outputType>Document</outputType>
-            <category>javascript</category>
-            <description></description>
-            <script><![CDATA[function run(input, params) {
+    <scriptedOperation id="javascript.VideoVisionDefaultMapper">
+      <inputType>Document</inputType>
+      <outputType>Document</outputType>
+      <category>javascript</category>
+      <description></description>
+      <script><![CDATA[function run(input, params) {
               var storyboard = input['vid:storyboard'];
               var blobs = [];
               var index;
@@ -109,7 +109,7 @@
               return input;
 
             }]]></script>
-        </scriptedOperation>
+    </scriptedOperation>
 
-    </extension>
+  </extension>
 </component>

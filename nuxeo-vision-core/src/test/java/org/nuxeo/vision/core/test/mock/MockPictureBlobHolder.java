@@ -18,7 +18,6 @@
  *
  * $Id$
  */
-
 package org.nuxeo.vision.core.test.mock;
 
 import org.nuxeo.ecm.core.api.Blob;
@@ -35,6 +34,5 @@ public class MockPictureBlobHolder extends PictureBlobHolder {
     public Blob getBlob(String title) {
         return (Blob) getDocument().getPropertyValue("file:content");
     }
-
 
 }

@@ -16,18 +16,17 @@
  * Contributors:
  *     Michael Vachette
  */
-
 package org.nuxeo.vision.core.image;
 
 import java.awt.*;
 
 public class ColorInfo {
 
-
     private Color color;
 
     /**
-     * Stores the fraction of pixels the color occupies in the image. Value in range [0, 1].
+     * Stores the fraction of pixels the color occupies in the image. Value in
+     * range [0, 1].
      */
     private float pixelFraction;
 
@@ -35,7 +34,6 @@ public class ColorInfo {
      * Image-specific score for this color. Value in range [0, 1].
      */
     private float score;
-
 
     public ColorInfo(Color color, float pixelFraction, float score) {
         this.color = color;
@@ -57,10 +55,7 @@ public class ColorInfo {
 
     @Override
     public String toString() {
-        return "ColorInfo{" +
-                "color=" + color +
-                ", pixelFraction=" + pixelFraction +
-                ", score=" + score +
-                '}';
+        return "ColorInfo{" + "color=" + color + ", pixelFraction="
+                + pixelFraction + ", score=" + score + '}';
     }
 }

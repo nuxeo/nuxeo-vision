@@ -17,7 +17,6 @@
  *     Michael Vachette
  *     Thibaud Arguillere
  */
-
 package org.nuxeo.vision.core.service;
 
 import org.nuxeo.ecm.core.api.Blob;
@@ -26,13 +25,14 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.List;
 
-
 /**
- * A service that performs Computer Vision tasks like classification, OCR, Face Detection ...
+ * A service that performs Computer Vision tasks like classification, OCR, Face
+ * Detection ...
  */
 public interface Vision {
-    
+
     public static final String EVENT_IMAGE_HANDLED = "visionOnImageDone";
+
     public static final String EVENT_VIDEO_HANDLED = "visionOnVideoDone";
 
     /**
@@ -42,8 +42,8 @@ public interface Vision {
      * @param maxResults the maximum number of results per feature
      * @return a {@link VisionResponse} object
      */
-    VisionResponse execute(Blob blob, List<VisionFeature> features, int maxResults)
-            throws IOException, GeneralSecurityException;
+    VisionResponse execute(Blob blob, List<VisionFeature> features,
+            int maxResults) throws IOException, GeneralSecurityException;
 
     /**
      *
@@ -52,9 +52,9 @@ public interface Vision {
      * @param maxResults the maximum number of results per feature
      * @return a list of {@link VisionResponse} object
      */
-    List<VisionResponse> execute(List<Blob> blobs, List<VisionFeature> features,
-                                 int maxResults) throws IOException, GeneralSecurityException;
-
+    List<VisionResponse> execute(List<Blob> blobs,
+            List<VisionFeature> features, int maxResults) throws IOException,
+            GeneralSecurityException;
 
     /**
      *
