@@ -8,6 +8,10 @@ import org.nuxeo.ecm.automation.OperationContext;
 import org.nuxeo.ecm.automation.OperationException;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.IdRef;
+import org.nuxeo.ecm.core.event.Event;
+import org.nuxeo.ecm.core.event.EventService;
+import org.nuxeo.ecm.core.event.impl.DocumentEventContext;
+import org.nuxeo.ecm.core.event.impl.EventContextImpl;
 import org.nuxeo.ecm.core.work.AbstractWork;
 import org.nuxeo.runtime.api.Framework;
 import org.nuxeo.runtime.transaction.TransactionHelper;
@@ -55,6 +59,12 @@ public class VideoVisionWorker extends AbstractWork {
         try {
             doc = (DocumentModel) as.run(octx, chain);
             session.saveDocument(doc);
+            
+            EventContextImpl evctx = new DocumentEventContext(session, session.getPrincipal(), doc);
+            Event eventToSend = evctx.newEvent(Vision.EVENT_VIDEO_HANDLED);
+            EventService eventService = Framework.getLocalService(EventService.class);
+            eventService.fireEvent(eventToSend);
+            
         } catch (OperationException e) {
             log.warn(e);
         }

@@ -15,10 +15,14 @@
  *
  * Contributors:
  *     Michael Vachette
+ *     Thibaud Arguillere
  */
 
 package org.nuxeo.vision.core.test;
 
+import static org.junit.Assert.assertEquals;
+
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Assume;
 import org.junit.Test;
@@ -32,6 +36,7 @@ import org.nuxeo.ecm.core.api.Blob;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.impl.blob.FileBlob;
+import org.nuxeo.ecm.core.storage.sql.listeners.DummyTestListener;
 import org.nuxeo.ecm.core.test.DefaultRepositoryInit;
 import org.nuxeo.ecm.core.test.annotations.Granularity;
 import org.nuxeo.ecm.core.test.annotations.RepositoryConfig;
@@ -44,6 +49,7 @@ import org.nuxeo.runtime.test.runner.Deploy;
 import org.nuxeo.runtime.test.runner.Features;
 import org.nuxeo.runtime.test.runner.FeaturesRunner;
 import org.nuxeo.runtime.test.runner.LocalDeploy;
+import org.nuxeo.vision.core.service.Vision;
 import org.nuxeo.vision.core.test.mock.MockWorkManager;
 import org.nuxeo.vision.core.worker.VideoVisionWorker;
 
@@ -60,15 +66,10 @@ import java.util.Map;
 @RunWith(FeaturesRunner.class)
 @Features(AutomationFeature.class)
 @RepositoryConfig(init = DefaultRepositoryInit.class, cleanup = Granularity.METHOD)
-@Deploy({
-        "nuxeo-vision-core",
-        "org.nuxeo.ecm.platform.video.core",
-        "org.nuxeo.ecm.platform.tag",
-        "org.nuxeo.ecm.automation.scripting"
-})
-@LocalDeploy({
-        "nuxeo-vision-core:OSGI-INF/mock-work-manager-contrib.xml"
-})
+@Deploy({ "nuxeo-vision-core", "org.nuxeo.ecm.platform.video.core", "org.nuxeo.ecm.platform.tag",
+        "org.nuxeo.ecm.automation.scripting" })
+@LocalDeploy({ "nuxeo-vision-core:OSGI-INF/mock-work-manager-contrib.xml",
+        "nuxeo-vision-core:OSGI-INF/dummy-listener-contrib.xml" })
 public class TestVideoEventChain {
 
     @Inject
@@ -77,19 +78,24 @@ public class TestVideoEventChain {
     @Inject
     protected TagService tagService;
 
+    @After
+    public void cleanup() {
+
+        DummyTestListener.clear();
+    }
 
     @Test
     public void testVideoChain() throws IOException, OperationException {
-        
+
         Assume.assumeTrue("Test credential file not set", CheckCredentials.ok());
 
         DocumentModel video = session.createDocumentModel("/", "Video", "Video");
         File file = new File(getClass().getResource("/files/plane2.jpg").getPath());
         Blob blob = new FileBlob(file);
-        Map<String,Serializable> storyboardItem = new HashMap<>();
-        storyboardItem.put("comment","mytitle");
+        Map<String, Serializable> storyboardItem = new HashMap<>();
+        storyboardItem.put("comment", "mytitle");
         storyboardItem.put("content", (Serializable) blob);
-        List<Map<String,Serializable>> storyboard = new ArrayList<>();
+        List<Map<String, Serializable>> storyboard = new ArrayList<>();
         storyboard.add(storyboardItem);
         video.setPropertyValue(VideoConstants.STORYBOARD_PROPERTY, (Serializable) storyboard);
         video = session.createDocument(video);
@@ -102,46 +108,49 @@ public class TestVideoEventChain {
         chain.add("javascript.VideoVisionDefaultMapper");
         video = (DocumentModel) as.run(ctx, chain);
 
-        List<Tag> tags =
-                tagService.getDocumentTags(session,video.getId(),session.getPrincipal().getName());
+        List<Tag> tags = tagService.getDocumentTags(session, video.getId(), session.getPrincipal().getName());
 
-        Assert.assertTrue(tags.size()>0);
+        Assert.assertTrue(tags.size() > 0);
         System.out.print(tags);
     }
 
-
     @Test
     public void testVideoWorker() throws IOException, OperationException {
-        
+
         Assume.assumeTrue("Test credential file not set", CheckCredentials.ok());
+
+        DummyTestListener.clear();
 
         DocumentModel video = session.createDocumentModel("/", "Video", "Video");
         video = session.createDocument(video);
 
         File file = new File(getClass().getResource("/files/plane2.jpg").getPath());
         Blob blob = new FileBlob(file);
-        Map<String,Serializable> storyboardItem = new HashMap<>();
-        storyboardItem.put("comment","mytitle");
+        Map<String, Serializable> storyboardItem = new HashMap<>();
+        storyboardItem.put("comment", "mytitle");
         storyboardItem.put("content", (Serializable) blob);
-        List<Map<String,Serializable>> storyboard = new ArrayList<>();
+        List<Map<String, Serializable>> storyboard = new ArrayList<>();
         storyboard.add(storyboardItem);
         video.setPropertyValue(VideoConstants.STORYBOARD_PROPERTY, (Serializable) storyboard);
 
-        MockWorkManager wm = (MockWorkManager)Framework.getService(WorkManager.class);
+        MockWorkManager wm = (MockWorkManager) Framework.getService(WorkManager.class);
         wm.isActive = false;
         video = session.saveDocument(video);
 
-        VideoVisionWorker work = new VideoVisionWorker(video.getRepositoryName(),video.getId());
+        VideoVisionWorker work = new VideoVisionWorker(video.getRepositoryName(), video.getId());
         work.work();
-        Assert.assertEquals("Done",work.getStatus());
-        work.cleanUp(true,null);
+        Assert.assertEquals("Done", work.getStatus());
+        work.cleanUp(true, null);
+
+        assertEquals(1, DummyTestListener.EVENTS_RECEIVED.size());
+        assertEquals(Vision.EVENT_VIDEO_HANDLED, DummyTestListener.EVENTS_RECEIVED.get(0).getName());
+        DummyTestListener.clear();
 
     }
 
-
     @Test
     public void testVideoListener() throws IOException, OperationException {
-        
+
         Assume.assumeTrue("Test credential file not set", CheckCredentials.ok());
 
         DocumentModel video = session.createDocumentModel("/", "Video", "Video");
@@ -149,14 +158,14 @@ public class TestVideoEventChain {
 
         File file = new File(getClass().getResource("/files/plane2.jpg").getPath());
         Blob blob = new FileBlob(file);
-        Map<String,Serializable> storyboardItem = new HashMap<>();
-        storyboardItem.put("comment","mytitle");
+        Map<String, Serializable> storyboardItem = new HashMap<>();
+        storyboardItem.put("comment", "mytitle");
         storyboardItem.put("content", (Serializable) blob);
-        List<Map<String,Serializable>> storyboard = new ArrayList<>();
+        List<Map<String, Serializable>> storyboard = new ArrayList<>();
         storyboard.add(storyboardItem);
         video.setPropertyValue(VideoConstants.STORYBOARD_PROPERTY, (Serializable) storyboard);
 
-        MockWorkManager wm = (MockWorkManager)Framework.getService(WorkManager.class);
+        MockWorkManager wm = (MockWorkManager) Framework.getService(WorkManager.class);
         wm.isActive = true;
         wm.wasSchedule = false;
 

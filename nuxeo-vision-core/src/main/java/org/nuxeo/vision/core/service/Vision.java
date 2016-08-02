@@ -15,6 +15,7 @@
  *
  * Contributors:
  *     Michael Vachette
+ *     Thibaud Arguillere
  */
 
 package org.nuxeo.vision.core.service;
@@ -30,6 +31,9 @@ import java.util.List;
  * A service that performs Computer Vision tasks like classification, OCR, Face Detection ...
  */
 public interface Vision {
+    
+    public static final String EVENT_IMAGE_HANDLED = "visionOnImageDone";
+    public static final String EVENT_VIDEO_HANDLED = "visionOnVideoDone";
 
     /**
      *
