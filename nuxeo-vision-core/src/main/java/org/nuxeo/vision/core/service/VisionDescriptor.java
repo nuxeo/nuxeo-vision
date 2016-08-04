@@ -16,12 +16,10 @@
  * Contributors:
  *     Michael Vachette
  */
-
 package org.nuxeo.vision.core.service;
 
 import org.nuxeo.common.xmap.annotation.XNode;
 import org.nuxeo.common.xmap.annotation.XObject;
-
 
 @XObject("configuration")
 public class VisionDescriptor {
@@ -29,12 +27,11 @@ public class VisionDescriptor {
     @XNode("pictureMapperChainName")
     protected String pictureMapperChainName = "javascript.PictureVisionDefaultMapper";
 
-
     @XNode("videoMapperChainName")
     protected String videoMapperChainName = "javascript.VideoVisionDefaultMapper";
 
     public String getPictureMapperChainName() {
-        return  pictureMapperChainName;
+        return pictureMapperChainName;
     }
 
     public String getVideoMapperChainName() {

@@ -16,27 +16,20 @@
  * Contributors:
  *     Michael Vachette
  */
-
 package org.nuxeo.vision.core.service;
-
 
 public enum VisionFeature {
 
-    FACE_DETECTION("FACE_DETECTION"),
-    LANDMARK_DETECTION("LANDMARK_DETECTION"),
-    LOGO_DETECTION("LOGO_DETECTION"),
-    LABEL_DETECTION("LABEL_DETECTION"),
-    TEXT_DETECTION("TEXT_DETECTION"),
-    SAFE_SEARCH_DETECTION("SAFE_SEARCH_DETECTION"),
-    IMAGE_PROPERTIES("IMAGE_PROPERTIES");
+    FACE_DETECTION("FACE_DETECTION"), LANDMARK_DETECTION("LANDMARK_DETECTION"), LOGO_DETECTION(
+            "LOGO_DETECTION"), LABEL_DETECTION("LABEL_DETECTION"), TEXT_DETECTION(
+            "TEXT_DETECTION"), SAFE_SEARCH_DETECTION("SAFE_SEARCH_DETECTION"), IMAGE_PROPERTIES(
+            "IMAGE_PROPERTIES");
 
     private final String text;
-
 
     VisionFeature(final String text) {
         this.text = text;
     }
-
 
     @Override
     public String toString() {

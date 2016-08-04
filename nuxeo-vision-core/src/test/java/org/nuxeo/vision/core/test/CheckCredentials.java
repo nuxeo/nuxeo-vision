@@ -14,7 +14,7 @@
  * limitations under the License.
  *
  * Contributors:
- *     Thibaud Arguillere
+ *     Michael Vachette
  */
 package org.nuxeo.vision.core.test;
 

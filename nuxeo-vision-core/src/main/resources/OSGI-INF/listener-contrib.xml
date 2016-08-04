@@ -1,16 +1,16 @@
 <?xml version="1.0"?>
 <component name="org.nuxeo.vision.core.listener">
-    <extension target="org.nuxeo.ecm.core.event.EventServiceComponent" point="listener">
+  <extension target="org.nuxeo.ecm.core.event.EventServiceComponent" point="listener">
 
-        <listener name="visionPictureConversionChangedListener" async="true" postCommit="true"
-                  class="org.nuxeo.vision.core.listener.PictureConversionChangedListener" priority="20">
-            <event>pictureViewsGenerationDone</event>
-        </listener>
+    <listener name="visionPictureConversionChangedListener" async="true" postCommit="true"
+      class="org.nuxeo.vision.core.listener.PictureConversionChangedListener" priority="20">
+      <event>pictureViewsGenerationDone</event>
+    </listener>
 
-        <listener name="visionVideoChangedListener" async="false" postCommit="false"
-                  class="org.nuxeo.vision.core.listener.VideoStoryboardChangedListener" priority="20">
-            <event>beforeDocumentModification</event>
-        </listener>
+    <listener name="visionVideoChangedListener" async="false" postCommit="false"
+      class="org.nuxeo.vision.core.listener.VideoStoryboardChangedListener" priority="20">
+      <event>beforeDocumentModification</event>
+    </listener>
 
-    </extension>
+  </extension>
 </component>

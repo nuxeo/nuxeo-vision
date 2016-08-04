@@ -16,11 +16,9 @@
  * Contributors:
  *     Michael Vachette
  */
-
 package org.nuxeo.vision.core.image;
 
 import java.util.List;
-
 
 public class ImageProprerties {
 

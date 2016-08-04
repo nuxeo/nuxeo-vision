@@ -17,7 +17,8 @@
   </extension-point>
 
   <extension-point name="google">
-    <documentation>Used to configure the application name to send to the Google API as well as the path of the JSON credential file</documentation>
+    <documentation>Used to configure the application name to send to the Google API as well as the path of the JSON
+      credential file</documentation>
     <object class="org.nuxeo.vision.core.google.GoogleVisionDescriptor" />
   </extension-point>
 

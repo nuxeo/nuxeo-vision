@@ -18,7 +18,6 @@
  *
  * $Id$
  */
-
 package org.nuxeo.vision.core.test.mock;
 
 import org.nuxeo.ecm.core.api.DocumentModel;

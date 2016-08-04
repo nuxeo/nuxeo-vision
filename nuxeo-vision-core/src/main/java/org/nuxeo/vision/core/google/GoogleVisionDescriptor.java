@@ -43,14 +43,13 @@ public class GoogleVisionDescriptor {
     @XNode("credentialFilePath")
     protected String credentialFilePath;
 
-
     public String getAppName() {
         return appName;
     }
 
     public String getCredentialFilePath() {
-        if (Framework.isTestModeSet() &&
-                (credentialFilePath==null || credentialFilePath.length()==0)) {
+        if (Framework.isTestModeSet()
+                && (credentialFilePath == null || credentialFilePath.length() == 0)) {
             // Use ENV variable if running unit tests
             return System.getenv(CRED_ENV_VARIABLE);
         } else {
@@ -59,8 +58,8 @@ public class GoogleVisionDescriptor {
     }
 
     public String getApiKey() {
-        if (Framework.isTestModeSet() &&
-                (apiKey==null || apiKey.length()==0)) {
+        if (Framework.isTestModeSet()
+                && (apiKey == null || apiKey.length() == 0)) {
             // Use ENV variable if running unit tests
             return System.getenv(KEY_ENV_VARIABLE);
         } else {
