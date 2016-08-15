@@ -31,8 +31,8 @@ public class CheckCredentials {
     public static boolean ok() {
 
         if (hasCredentials == null) {
-            hasCredentials = StringUtils.isNotBlank(System.getenv(GoogleVisionDescriptor.CRED_ENV_VARIABLE))
-                    && StringUtils.isNotBlank(System.getenv(GoogleVisionDescriptor.KEY_ENV_VARIABLE));
+            hasCredentials = StringUtils.isNotBlank(System.getProperty(GoogleVisionDescriptor.CRED_PROP))
+                    || StringUtils.isNotBlank(System.getProperty(GoogleVisionDescriptor.KEY_PROP));
         }
 
         return hasCredentials.booleanValue();

@@ -27,11 +27,11 @@ N/A
 ## Build
 - Enable the Vision API from the google developer console
 - As of march 2nd 2016, billing must be activated in your google account in order to use the Vision API
-- Get an API key from the Google Developer Console and set the NUXEO_GOOGLE_APPLICATION_KEY Environment Variable with the key
+- Get an API key from the Google Developer Console
 ```
 git clone https://github.com/nuxeo/nuxeo-vision
 cd nuxeo-vision
-mvn clean install
+mvn clean install -Dorg.nuxeo.vision.test.credentail.key=MY_KEY
 ```
  
 ## Deploy (how to install build product)

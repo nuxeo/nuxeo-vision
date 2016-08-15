@@ -78,11 +78,16 @@ public class GoogleVisionResponse implements VisionResponse {
 
         for (com.google.api.services.vision.v1.model.ColorInfo colorInfo : colors) {
             Color color = colorInfo.getColor();
-            java.awt.Color resultColor = new java.awt.Color(
-                    color.getRed() / 255, color.getGreen() / 255,
-                    color.getBlue() / 255);
-            results.add(new ColorInfo(resultColor,
-                    colorInfo.getPixelFraction(), colorInfo.getScore()));
+
+            float red = color.getRed() != null ? color.getRed()/255 : 0;
+            float blue = color.getBlue() != null ? color.getBlue()/255 : 0;
+            float green = color.getGreen() != null ? color.getGreen()/255 : 0;
+
+            java.awt.Color resultColor = new java.awt.Color(red,green,blue);
+
+            results.add(
+                    new ColorInfo(
+                            resultColor,colorInfo.getPixelFraction(),colorInfo.getScore()));
         }
         return new ImageProprerties(results);
     }
