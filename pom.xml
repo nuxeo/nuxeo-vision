@@ -13,10 +13,36 @@
   <description></description>
   <packaging>pom</packaging>
 
+  <properties>
+    <nuxeo.dam.nxr.version>6.2.3-SNAPSHOT</nuxeo.dam.nxr.version>
+  </properties>
+
   <modules>
     <module>nuxeo-vision-core</module>
     <module>nuxeo-vision-marketplace</module>
   </modules>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.nuxeo</groupId>
+        <artifactId>nuxeo-vision-core</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.nuxeo</groupId>
+        <artifactId>nuxeo-vision-marketplace</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.nuxeo.marketplace.dam</groupId>
+        <artifactId>marketplace</artifactId>
+        <classifier>nxr-server</classifier>
+        <version>${nuxeo.dam.nxr.version}</version>
+        <type>zip</type>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
 
   <repositories>
     <repository>
@@ -66,20 +92,6 @@
       </snapshots>
     </pluginRepository>
   </pluginRepositories>
-  <dependencyManagement>
-    <dependencies>
-      <dependency>
-        <groupId>org.nuxeo</groupId>
-        <artifactId>nuxeo-vision-core</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.nuxeo</groupId>
-        <artifactId>nuxeo-vision-marketplace</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
 
   <scm>
     <connection>scm:git:git://github.com/nuxeo/nuxeo-vision.git</connection>

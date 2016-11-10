@@ -12,15 +12,16 @@
   <name>Nuxeo Vision Package</name>
 
   <dependencies>
-    <!-- Base distribution(s) for the MP -->
     <dependency>
       <groupId>org.nuxeo.ecm.distribution</groupId>
-      <artifactId>nuxeo-distribution-cap</artifactId>
-      <type>pom</type>
+      <artifactId>nuxeo-nxr-server</artifactId>
+      <type>zip</type>
+      <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.nuxeo.ecm.distribution</groupId>
-      <artifactId>nuxeo-distribution-cap</artifactId>
+      <groupId>org.nuxeo.marketplace.dam</groupId>
+      <artifactId>marketplace</artifactId>
+      <classifier>nxr-server</classifier>
       <type>zip</type>
       <scope>provided</scope>
     </dependency>
