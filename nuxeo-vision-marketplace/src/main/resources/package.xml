@@ -2,10 +2,7 @@
 <package type="addon" name="nuxeo-vision" version="@VERSION@">
   <title>Nuxeo Vision</title>
   <description>
-    <p>This plugin provides a wrapper for Computer Vision Services.
-      Currently it supports the Google Vision API.
-    </p>
-    <p>Requires Nuxeo DAM.</p>
+The Nuxeo Vision addon provides a wrapper for Computer Vision Services. Currently it supports the Google Vision API and allows to retrieve relevant tags on images and videos. It also provides automation operations for customized re-use. The usages can easily be extended to a wide range of features including share recognition, auto-classification, OCR and more.
   </description>
   <home-page>https://doc.nuxeo.com/x/PYHZAQ/</home-page>
   <vendor>Nuxeo</vendor>
