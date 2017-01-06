@@ -20,11 +20,11 @@ package org.nuxeo.vision.core.image;
 
 import java.util.List;
 
-public class ImageProprerties {
+public class ImageProperties {
 
     List<ColorInfo> colors;
 
-    public ImageProprerties(List<ColorInfo> colors) {
+    public ImageProperties(List<ColorInfo> colors) {
         this.colors = colors;
     }
 
