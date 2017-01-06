@@ -18,7 +18,7 @@
  */
 package org.nuxeo.vision.core.service;
 
-import org.nuxeo.vision.core.image.ImageProprerties;
+import org.nuxeo.vision.core.image.ImageProperties;
 import org.nuxeo.vision.core.image.TextEntity;
 
 import java.util.List;
@@ -41,7 +41,7 @@ public interface VisionResponse {
      *
      * @return a list of properties
      */
-    ImageProprerties getImageProperties();
+    ImageProperties getImageProperties();
 
     /**
      *

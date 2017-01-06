@@ -24,7 +24,7 @@ import com.google.api.services.vision.v1.model.Color;
 import com.google.api.services.vision.v1.model.DominantColorsAnnotation;
 import com.google.api.services.vision.v1.model.EntityAnnotation;
 import org.nuxeo.vision.core.image.ColorInfo;
-import org.nuxeo.vision.core.image.ImageProprerties;
+import org.nuxeo.vision.core.image.ImageProperties;
 import org.nuxeo.vision.core.image.TextEntity;
 import org.nuxeo.vision.core.service.VisionResponse;
 
@@ -61,19 +61,19 @@ public class GoogleVisionResponse implements VisionResponse {
     }
 
     @Override
-    public ImageProprerties getImageProperties() {
+    public ImageProperties getImageProperties() {
         List<ColorInfo> results = new ArrayList<>();
         com.google.api.services.vision.v1.model.ImageProperties properties = response.getImagePropertiesAnnotation();
         if (properties == null) {
-            return new ImageProprerties(results);
+            return new ImageProperties(results);
         }
         DominantColorsAnnotation annotation = properties.getDominantColors();
         if (annotation == null) {
-            return new ImageProprerties(results);
+            return new ImageProperties(results);
         }
         List<com.google.api.services.vision.v1.model.ColorInfo> colors = annotation.getColors();
         if (colors == null) {
-            return new ImageProprerties(results);
+            return new ImageProperties(results);
         }
 
         for (com.google.api.services.vision.v1.model.ColorInfo colorInfo : colors) {
@@ -89,7 +89,7 @@ public class GoogleVisionResponse implements VisionResponse {
                     new ColorInfo(
                             resultColor,colorInfo.getPixelFraction(),colorInfo.getScore()));
         }
-        return new ImageProprerties(results);
+        return new ImageProperties(results);
     }
 
     @Override
