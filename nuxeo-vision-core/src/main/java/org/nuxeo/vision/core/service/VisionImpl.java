@@ -18,12 +18,6 @@
  */
 package org.nuxeo.vision.core.service;
 
-import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
-import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
-import com.google.api.client.json.JsonFactory;
-import com.google.api.client.json.jackson2.JacksonFactory;
-import com.google.api.services.vision.v1.VisionScopes;
-import com.google.api.services.vision.v1.model.*;
 import com.google.common.collect.ImmutableList;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -32,21 +26,20 @@ import org.nuxeo.ecm.core.api.NuxeoException;
 import org.nuxeo.runtime.model.ComponentContext;
 import org.nuxeo.runtime.model.ComponentInstance;
 import org.nuxeo.runtime.model.DefaultComponent;
+import org.nuxeo.vision.core.google.GoogleProvider;
 import org.nuxeo.vision.core.google.GoogleVisionDescriptor;
-import org.nuxeo.vision.core.google.GoogleVisionResponse;
 
-import java.io.File;
-import java.io.FileInputStream;
+
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 
 public class VisionImpl extends DefaultComponent implements Vision {
 
     private static final Log log = LogFactory.getLog(VisionImpl.class);
-
-    private volatile com.google.api.services.vision.v1.Vision visionClient;
 
     protected static final String CONFIG_EXT_POINT = "configuration";
 
@@ -61,6 +54,8 @@ public class VisionImpl extends DefaultComponent implements Vision {
     protected VisionDescriptor config = null;
 
     protected GoogleVisionDescriptor googleConfig = null;
+
+    protected Map<String, VisionProvider> providers = new HashMap<String, VisionProvider>();
 
     /**
      * Component activated notification. Called when the component is activated.
@@ -105,7 +100,7 @@ public class VisionImpl extends DefaultComponent implements Vision {
         if (CONFIG_EXT_POINT.equals(extensionPoint)) {
             config = (VisionDescriptor) contribution;
         } else if (GOOGLE_EXT_POINT.equals(extensionPoint)) {
-            googleConfig = (GoogleVisionDescriptor) contribution;
+            providers.put("google", new GoogleProvider((GoogleVisionDescriptor) contribution));
         }
     }
 
@@ -113,34 +108,6 @@ public class VisionImpl extends DefaultComponent implements Vision {
     public void unregisterContribution(Object contribution,
             String extensionPoint, ComponentInstance contributor) {
         // Logic to do when unregistering any contribution
-    }
-
-    private com.google.api.services.vision.v1.Vision getVisionService()
-            throws IOException, GeneralSecurityException {
-        // thread safe lazy initialization of the google vision client
-        // see https://en.wikipedia.org/wiki/Double-checked_locking
-        com.google.api.services.vision.v1.Vision result = visionClient;
-        if (result == null) {
-            synchronized (this) {
-                result = visionClient;
-                if (result == null) {
-                    GoogleCredential credential = null;
-                    if (usesServiceAccount()) {
-                        File file = new File(
-                                googleConfig.getCredentialFilePath());
-                        credential = GoogleCredential.fromStream(
-                                new FileInputStream(file)).createScoped(
-                                VisionScopes.all());
-                    }
-                    JsonFactory jsonFactory = JacksonFactory.getDefaultInstance();
-                    result = visionClient = new com.google.api.services.vision.v1.Vision.Builder(
-                            GoogleNetHttpTransport.newTrustedTransport(),
-                            jsonFactory, credential).setApplicationName(
-                            googleConfig.getAppName()).build();
-                }
-            }
-        }
-        return result;
     }
 
     @Override
@@ -181,42 +148,12 @@ public class VisionImpl extends DefaultComponent implements Vision {
             throw new IllegalArgumentException(
                     "The feature list cannot be empty or null");
         }
-
-        // build list of requested features
-        List<Feature> requestFeatures = buildFeatureList(features, maxResults);
-
-        // build list of request
-        List<AnnotateImageRequest> requests = buildRequestList(blobs,
-                requestFeatures);
-
-        com.google.api.services.vision.v1.Vision.Images.Annotate annotate;
-        annotate = getVisionService().images().annotate(
-                new BatchAnnotateImagesRequest().setRequests(requests));
-
-        if (!usesServiceAccount() && usesApiKey()) {
-            annotate.setKey(googleConfig.getApiKey());
+        // Launch provider
+        if (!providers.containsKey(config.getProvider())) {
+            throw new IllegalArgumentException(
+                    "The provider '" + config.getProvider() + "'is unknown");
         }
-
-        // Due to a bug: requests to Vision API containing large images fail
-        // when GZipped.
-        annotate.setDisableGZipContent(true);
-
-        // execute request
-        BatchAnnotateImagesResponse batchResponse;
-        batchResponse = annotate.execute();
-
-        // check response is not empty
-        if (batchResponse.getResponses() == null) {
-            throw new IllegalStateException(
-                    "Google Vision returned an empty response");
-        }
-
-        List<AnnotateImageResponse> responses = batchResponse.getResponses();
-        List<VisionResponse> output = new ArrayList<>();
-        for (AnnotateImageResponse response : responses) {
-            output.add(new GoogleVisionResponse(response));
-        }
-        return output;
+        return providers.get(config.getProvider()).execute(blobs, features, maxResults);
     }
 
     @Override
@@ -227,30 +164,6 @@ public class VisionImpl extends DefaultComponent implements Vision {
     @Override
     public String getVideoMapperChainName() {
         return config.getVideoMapperChainName();
-    }
-
-    protected List<Feature> buildFeatureList(List<VisionFeature> features,
-            int maxResults) {
-
-        List<Feature> requestFeatures = new ArrayList<>();
-        for (VisionFeature feature : features) {
-            requestFeatures.add(new Feature().setType(feature.toString()).setMaxResults(
-                    maxResults));
-        }
-        return requestFeatures;
-    }
-
-    protected List<AnnotateImageRequest> buildRequestList(List<Blob> blobs,
-            List<Feature> features) throws IOException {
-
-        List<AnnotateImageRequest> requests = new ArrayList<>();
-        for (Blob blob : blobs) {
-            AnnotateImageRequest request = new AnnotateImageRequest().setImage(
-                    new Image().encodeContent(blob.getByteArray())).setFeatures(
-                    features);
-            requests.add(request);
-        }
-        return requests;
     }
 
     protected boolean checkBlobs(List<Blob> blobs) throws IOException {
@@ -272,16 +185,6 @@ public class VisionImpl extends DefaultComponent implements Vision {
             }
         }
         return true;
-    }
-
-    protected boolean usesServiceAccount() {
-        String path = googleConfig.getCredentialFilePath();
-        return path != null && path.length() > 0;
-    }
-
-    protected boolean usesApiKey() {
-        String key = googleConfig.getApiKey();
-        return key != null && key.length() > 0;
     }
 
 }
