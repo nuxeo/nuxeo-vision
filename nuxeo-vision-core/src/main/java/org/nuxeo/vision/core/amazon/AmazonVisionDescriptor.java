@@ -16,32 +16,30 @@
  * Contributors:
  *     Michael Vachette
  */
-package org.nuxeo.vision.core.service;
+
+package org.nuxeo.vision.core.amazon;
 
 import org.nuxeo.common.xmap.annotation.XNode;
 import org.nuxeo.common.xmap.annotation.XObject;
+import org.nuxeo.runtime.api.Framework;
+
+/**
+ * Created by Remi on 1/5/2017.
+ */
 
 @XObject("configuration")
-public class VisionDescriptor {
+public class AmazonVisionDescriptor {
 
-    @XNode("pictureMapperChainName")
-    protected String pictureMapperChainName = "javascript.PictureVisionDefaultMapper";
+    @XNode("accessKey")
+    protected String accessKey;
 
-    @XNode("videoMapperChainName")
-    protected String videoMapperChainName = "javascript.VideoVisionDefaultMapper";
+    @XNode("secretKey")
+    protected String secretKey;
 
-    @XNode("provider")
-    protected String provider = "google";
-
-    public String getPictureMapperChainName() {
-        return pictureMapperChainName;
+    public String getAccessKey() {
+        return accessKey;
     }
 
-    public String getVideoMapperChainName() {
-        return videoMapperChainName;
-    }
+    public String getSecretKey() { return secretKey; }
 
-    public String getProvider() {
-        return provider;
-    }
 }
