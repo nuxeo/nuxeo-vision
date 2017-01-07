@@ -26,13 +26,14 @@ import org.nuxeo.ecm.core.api.NuxeoException;
 import org.nuxeo.runtime.model.ComponentContext;
 import org.nuxeo.runtime.model.ComponentInstance;
 import org.nuxeo.runtime.model.DefaultComponent;
+import org.nuxeo.vision.core.amazon.AmazonProvider;
+import org.nuxeo.vision.core.amazon.AmazonVisionDescriptor;
 import org.nuxeo.vision.core.google.GoogleProvider;
 import org.nuxeo.vision.core.google.GoogleVisionDescriptor;
 
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
@@ -45,6 +46,8 @@ public class VisionImpl extends DefaultComponent implements Vision {
 
     protected static final String GOOGLE_EXT_POINT = "google";
 
+    protected static final String AMAZON_EXT_POINT = "amazon";
+
     protected static final long _4MB = 4194304;
 
     protected static final long _8MB = 8388608;
@@ -52,8 +55,6 @@ public class VisionImpl extends DefaultComponent implements Vision {
     protected static final int MAX_BLOB_PER_REQUEST = 16;
 
     protected VisionDescriptor config = null;
-
-    protected GoogleVisionDescriptor googleConfig = null;
 
     protected Map<String, VisionProvider> providers = new HashMap<String, VisionProvider>();
 
@@ -101,6 +102,8 @@ public class VisionImpl extends DefaultComponent implements Vision {
             config = (VisionDescriptor) contribution;
         } else if (GOOGLE_EXT_POINT.equals(extensionPoint)) {
             providers.put("google", new GoogleProvider((GoogleVisionDescriptor) contribution));
+        } else if (AMAZON_EXT_POINT.equals(extensionPoint)) {
+            providers.put("amazon", new AmazonProvider((AmazonVisionDescriptor) contribution));
         }
     }
 
@@ -151,7 +154,7 @@ public class VisionImpl extends DefaultComponent implements Vision {
         // Launch provider
         if (!providers.containsKey(config.getProvider())) {
             throw new IllegalArgumentException(
-                    "The provider '" + config.getProvider() + "'is unknown");
+                    "The provider '" + config.getProvider() + "' is unknown");
         }
         return providers.get(config.getProvider()).execute(blobs, features, maxResults);
     }
