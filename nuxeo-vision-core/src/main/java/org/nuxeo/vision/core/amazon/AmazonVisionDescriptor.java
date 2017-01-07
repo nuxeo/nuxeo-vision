@@ -19,16 +19,17 @@
 
 package org.nuxeo.vision.core.amazon;
 
+import com.amazonaws.auth.AWSCredentials;
+import org.apache.commons.lang3.StringUtils;
 import org.nuxeo.common.xmap.annotation.XNode;
 import org.nuxeo.common.xmap.annotation.XObject;
-import org.nuxeo.runtime.api.Framework;
 
 /**
  * Created by Remi on 1/5/2017.
  */
 
 @XObject("configuration")
-public class AmazonVisionDescriptor {
+public class AmazonVisionDescriptor implements AWSCredentials {
 
     @XNode("accessKey")
     protected String accessKey;
@@ -36,10 +37,17 @@ public class AmazonVisionDescriptor {
     @XNode("secretKey")
     protected String secretKey;
 
-    public String getAccessKey() {
+    @Override
+    public String getAWSAccessKeyId() {
         return accessKey;
     }
 
-    public String getSecretKey() { return secretKey; }
+    @Override
+    public String getAWSSecretKey() {
+        return secretKey;
+    }
 
+    public Boolean isValid() {
+        return !StringUtils.isBlank(accessKey) && !StringUtils.isBlank(secretKey);
+    }
 }
