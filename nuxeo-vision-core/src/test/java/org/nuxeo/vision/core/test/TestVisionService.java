@@ -74,6 +74,10 @@ public class TestVisionService {
     @Test
     public void testTextFeature() throws IOException, GeneralSecurityException {
 
+        if (!"google".equals(vision.getProvider())) {
+            return;
+        }
+
         Assume.assumeTrue("Test credential file not set", CheckCredentials.ok());
 
         File file = new File(
@@ -89,6 +93,10 @@ public class TestVisionService {
 
     @Test
     public void testColorFeature() throws IOException, GeneralSecurityException {
+
+        if (!"google".equals(vision.getProvider())) {
+            return;
+        }
 
         Assume.assumeTrue("Test credential file not set", CheckCredentials.ok());
 
@@ -117,6 +125,11 @@ public class TestVisionService {
         List<TextEntity> labels = result.getClassificationLabels();
         assertNotNull(labels);
         assertTrue(labels.size() > 0);
+
+        if (!"google".equals(vision.getProvider())) {
+            return;
+        }
+
         List<TextEntity> texts = result.getOcrText();
         assertNotNull(texts);
         assertTrue(texts.size() > 0);
@@ -139,6 +152,11 @@ public class TestVisionService {
         assertNotNull(labels);
         assertTrue(labels.size() > 0);
         System.out.print(labels);
+
+        if (!"google".equals(vision.getProvider())) {
+            return;
+        }
+
         List<TextEntity> texts = result.getOcrText();
         assertNotNull(texts);
         assertTrue(texts.size() > 0);
