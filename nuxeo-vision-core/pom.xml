@@ -20,6 +20,10 @@
     </dependencies>
   </dependencyManagement>
 
+  <properties>
+    <aws.version>1.11.76</aws.version>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>org.nuxeo.runtime</groupId>
