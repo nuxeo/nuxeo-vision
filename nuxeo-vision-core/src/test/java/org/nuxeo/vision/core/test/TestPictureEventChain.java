@@ -74,6 +74,9 @@ public class TestPictureEventChain {
     CoreSession session;
 
     @Inject
+    protected Vision vision;
+
+    @Inject
     protected TagService tagService;
 
     @After
@@ -140,6 +143,11 @@ public class TestPictureEventChain {
 
         Assert.assertTrue(tags.size() > 0);
         System.out.print(tags);
+
+        if (!"google".equals(vision.getProvider())) {
+            return;
+        }
+
         Assert.assertNotNull(picture.getPropertyValue("dc:source"));
         System.out.print(picture.getPropertyValue("dc:source"));
 

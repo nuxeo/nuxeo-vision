@@ -169,6 +169,9 @@ public class VisionImpl extends DefaultComponent implements Vision {
         return config.getVideoMapperChainName();
     }
 
+    @Override
+    public String getProvider() { return config.getProvider(); }
+
     protected boolean checkBlobs(List<Blob> blobs) throws IOException {
         if (blobs.size() > MAX_BLOB_PER_REQUEST) {
             return false;

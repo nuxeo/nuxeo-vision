@@ -68,4 +68,9 @@ public interface Vision {
      */
     String getVideoMapperChainName();
 
+    /**
+     *
+     * @return The name of the provider used
+     */
+    String getProvider();
 }
