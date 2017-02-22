@@ -18,6 +18,7 @@
  */
 package org.nuxeo.vision.core.service;
 
+import org.apache.commons.lang3.StringUtils;
 import org.nuxeo.common.xmap.annotation.XNode;
 import org.nuxeo.common.xmap.annotation.XObject;
 import org.nuxeo.runtime.api.Framework;
@@ -45,6 +46,10 @@ public class VisionDescriptor {
     public String getProvider() {
         if (Framework.isTestModeSet()) {
             return System.getProperty("org.nuxeo.vision.test.provider");
+        }
+        // By default use Google vision
+        if (StringUtils.isBlank(provider)) {
+            return "google";
         }
         return provider;
     }

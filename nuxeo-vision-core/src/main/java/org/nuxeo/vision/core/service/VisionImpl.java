@@ -131,7 +131,7 @@ public class VisionImpl extends DefaultComponent implements Vision {
             return results.get(0);
         } else {
             throw new NuxeoException(
-                    "Google vision returned empty results for "
+                    "Provider " + config.getProvider() + " vision returned empty results for "
                             + blob.getFilename());
         }
     }
