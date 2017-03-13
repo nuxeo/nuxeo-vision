@@ -1,13 +1,27 @@
 # About / Synopsis
-This plugin provides a wrapper for Computer Vision Services. Currently it supports the [Google Vision API](https://cloud.google.com/vision/).
+This plugin provides a wrapper for Computer Vision Services. Currently it supports the [Google Vision API](https://cloud.google.com/vision/) and the [AWS Rekognition API](https://aws.amazon.com/rekognition/).
   
 # Installation
+##Google Vision
 - Configure a [Google service account](https://developers.google.com/identity/protocols/OAuth2ServiceAccount)
+- As of march 2nd 2016, billing must be activated in your google account in order to use the Vision API
 - Upload the JSON key file on your instance
 - Edit nuxeo.conf
 ```
 org.nuxeo.vision.google.credential=PATH_TO_JSON_CREDENTIAL_FILE
 ```
+
+##AWS Rekognition
+- Configure a key/secret pair in the [AWS console](http://docs.aws.amazon.com/general/latest/gr/managing-aws-access-keys.html)
+- Check the [FAQ](https://aws.amazon.com/rekognition/faqs/) to see in which regions the API is available 
+- Edit nuxeo.conf
+```
+org.nuxeo.vision.aws.region=
+org.nuxeo.vision.aws.key=
+org.nuxeo.vision.aws.secret=
+```
+
+##Plugin
 - From the Nuxeo Marketplace: install [the Sample Nuxeo Package](https://connect.nuxeo.com/nuxeo/site/marketplace/package/nuxeo-vision).
 - From the Nuxeo server web UI "Admin / Update Center / Packages from Nuxeo Marketplace"
 - From the command line: `nuxeoctl mp-install nuxeo-vision`
@@ -25,27 +39,38 @@ Build requires the following software:
 N/A
  
 ## Build
-- Enable the Vision API from the google developer console
-- As of march 2nd 2016, billing must be activated in your google account in order to use the Vision API
-- Get an API key from the Google Developer Console
 ```
 git clone https://github.com/nuxeo/nuxeo-vision
 cd nuxeo-vision
-mvn clean install -Dorg.nuxeo.vision.test.credentail.key=MY_KEY
+mvn clean install
 ```
  
 ## Deploy (how to install build product)
 - Install the marketplace package
-- Configure a [service account](https://developers.google.com/identity/protocols/OAuth2ServiceAccount)
+
+###Google Vision
+- Configure a [Google service account](https://developers.google.com/identity/protocols/OAuth2ServiceAccount)
+- As of march 2nd 2016, billing must be activated in your google account in order to use the Vision API
 - Upload the JSON key file on your instance
 - Edit nuxeo.conf
 ```
 org.nuxeo.vision.google.credential=PATH_TO_JSON_CREDENTIAL_FILE
 ```
+
+###AWS Rekognition
+- Configure a key/secret pair in the [AWS console](http://docs.aws.amazon.com/general/latest/gr/managing-aws-access-keys.html)
+- Check the [FAQ](https://aws.amazon.com/rekognition/faqs/) to see in which regions the API is available 
+- Edit nuxeo.conf
+```
+org.nuxeo.vision.aws.region=
+org.nuxeo.vision.aws.key=
+org.nuxeo.vision.aws.secret=
+```
  
 # Resources (Documentation and other links)
 [Plugin Documentation](https://doc.nuxeo.com/x/PYHZAQ)
 [Google Vision](https://cloud.google.com/vision/)
+[AWS Rekognition](https://aws.amazon.com/rekognition/)
  
 # Contributing / Reporting issues
 [JIRA](https://jira.nuxeo.com/browse/NXP/component/15408/)
