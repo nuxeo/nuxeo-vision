@@ -19,11 +19,8 @@
  */
 package org.nuxeo.vision.core.test;
 
-import static org.junit.Assert.assertEquals;
-
 import org.junit.After;
 import org.junit.Assert;
-import org.junit.Assume;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.nuxeo.ecm.automation.AutomationService;
@@ -53,7 +50,6 @@ import org.nuxeo.vision.core.test.mock.MockWorkManager;
 import org.nuxeo.vision.core.worker.VideoVisionWorker;
 
 import javax.inject.Inject;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
@@ -62,13 +58,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.junit.Assert.assertEquals;
+
 @RunWith(FeaturesRunner.class)
 @Features(AutomationFeature.class)
 @RepositoryConfig(init = DefaultRepositoryInit.class, cleanup = Granularity.METHOD)
 @Deploy({ "nuxeo-vision-core", "org.nuxeo.ecm.platform.video.core",
         "org.nuxeo.ecm.platform.tag", "org.nuxeo.ecm.automation.scripting" })
 @LocalDeploy({ "nuxeo-vision-core:OSGI-INF/mock-work-manager-contrib.xml",
-        "nuxeo-vision-core:OSGI-INF/dummy-listener-contrib.xml" })
+        "nuxeo-vision-core:OSGI-INF/dummy-listener-contrib.xml",
+        "nuxeo-vision-core:OSGI-INF/mock-provider-contrib.xml"})
 public class TestVideoEventChain {
 
     @Inject
@@ -85,8 +84,6 @@ public class TestVideoEventChain {
 
     @Test
     public void testVideoChain() throws IOException, OperationException {
-
-        Assume.assumeTrue("Test credential file not set", CheckCredentials.ok());
 
         DocumentModel video = session.createDocumentModel("/", "Video", "Video");
         File file = new File(
@@ -118,8 +115,6 @@ public class TestVideoEventChain {
 
     @Test
     public void testVideoWorker() throws IOException, OperationException {
-
-        Assume.assumeTrue("Test credential file not set", CheckCredentials.ok());
 
         DummyTestListener.clear();
 
@@ -156,8 +151,6 @@ public class TestVideoEventChain {
 
     @Test
     public void testVideoListener() throws IOException, OperationException {
-
-        Assume.assumeTrue("Test credential file not set", CheckCredentials.ok());
 
         DocumentModel video = session.createDocumentModel("/", "Video", "Video");
         video = session.createDocument(video);

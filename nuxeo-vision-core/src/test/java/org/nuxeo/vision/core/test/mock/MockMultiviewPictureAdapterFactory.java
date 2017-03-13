@@ -26,9 +26,6 @@ import org.nuxeo.ecm.core.api.adapter.DocumentAdapterFactory;
 import static org.nuxeo.ecm.platform.picture.api.ImagingDocumentConstants.MULTIVIEW_PICTURE_FACET;
 import static org.nuxeo.ecm.platform.picture.api.ImagingDocumentConstants.PICTURE_FACET;
 
-/**
- * Created by Michaël on 3/8/2016.
- */
 public class MockMultiviewPictureAdapterFactory implements
         DocumentAdapterFactory {
 

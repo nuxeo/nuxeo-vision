@@ -11,7 +11,7 @@
               var blob = Picture.GetView(input, {'viewName': 'Medium'});
 
               blob = VisionOp(blob, {
-                'features': ['LABEL_DETECTION','TEXT_DETECTION','LANDMARK_DETECTION','LOGO_DETECTION','IMAGE_PROPERTIES'],
+                'features': ['LABEL_DETECTION'],
                 'maxResults': 5,
                 'outputVariable': 'annotations'
               });
@@ -37,26 +37,6 @@
                   input = Services.TagDocument(input, {'tags': tags });
               }
 
-
-              // build description
-              var texts = textAndLabels.getOcrText();
-
-              if (texts !== undefined && texts !== null && texts.length>0) {
-                  var description = "";
-
-                  for(var j=0;j<texts.length;j++) {
-                    description+= texts[j].getText()+"\n";
-                  }
-
-                  input = Document.SetProperty(input, {
-                    'xpath': 'dc:source',
-                    'save': 'false',
-                    'value': description
-                  });
-              }
-
-              input = Document.Save(input, {});
-
               return input;
 
         }]]></script>
@@ -78,7 +58,7 @@
                 var blob = storyboard[index].content;
 
                 VisionOp(blob, {
-                  'features': ['LABEL_DETECTION','LANDMARK_DETECTION','LOGO_DETECTION'],
+                  'features': ['LABEL_DETECTION'],
                   'maxResults': 5,
                   'outputVariable': 'annotations'
                 });
@@ -101,8 +81,6 @@
                     tags.push(label.getText().replace(/\s/g,'+'));
                 }
               }
-
-              print('Got tags:'+tags.length);
 
               input = Services.TagDocument(input, {'tags': tags });
 

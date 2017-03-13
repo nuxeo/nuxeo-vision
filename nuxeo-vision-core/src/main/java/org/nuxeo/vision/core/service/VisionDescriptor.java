@@ -18,10 +18,8 @@
  */
 package org.nuxeo.vision.core.service;
 
-import org.apache.commons.lang3.StringUtils;
 import org.nuxeo.common.xmap.annotation.XNode;
 import org.nuxeo.common.xmap.annotation.XObject;
-import org.nuxeo.runtime.api.Framework;
 
 @XObject("configuration")
 public class VisionDescriptor {
@@ -32,8 +30,8 @@ public class VisionDescriptor {
     @XNode("videoMapperChainName")
     protected String videoMapperChainName = "javascript.VideoVisionDefaultMapper";
 
-    @XNode("provider")
-    protected String provider = "google";
+    @XNode("defaultProviderName")
+    protected String defaultProviderName;
 
     public String getPictureMapperChainName() {
         return pictureMapperChainName;
@@ -43,14 +41,7 @@ public class VisionDescriptor {
         return videoMapperChainName;
     }
 
-    public String getProvider() {
-        if (Framework.isTestModeSet()) {
-            return System.getProperty("org.nuxeo.vision.test.provider");
-        }
-        // By default use Google vision
-        if (StringUtils.isBlank(provider)) {
-            return "google";
-        }
-        return provider;
+    public String getDefaultProviderName() {
+        return defaultProviderName;
     }
 }

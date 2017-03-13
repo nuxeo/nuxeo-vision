@@ -19,6 +19,8 @@
 
   <modules>
     <module>nuxeo-vision-core</module>
+    <module>nuxeo-vision-google</module>
+    <module>nuxeo-vision-aws</module>
     <module>nuxeo-vision-marketplace</module>
   </modules>
 
@@ -27,6 +29,16 @@
       <dependency>
         <groupId>org.nuxeo</groupId>
         <artifactId>nuxeo-vision-core</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.nuxeo</groupId>
+        <artifactId>nuxeo-vision-google</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.nuxeo</groupId>
+        <artifactId>nuxeo-vision-aws</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>

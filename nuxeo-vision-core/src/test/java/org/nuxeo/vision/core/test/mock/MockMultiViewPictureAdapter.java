@@ -24,9 +24,6 @@ import org.nuxeo.ecm.platform.picture.api.PictureView;
 import org.nuxeo.ecm.platform.picture.api.PictureViewImpl;
 import org.nuxeo.ecm.platform.picture.api.adapters.MultiviewPictureAdapter;
 
-/**
- * Created by Michaël on 3/8/2016.
- */
 public class MockMultiViewPictureAdapter extends MultiviewPictureAdapter {
 
     private DocumentModel doc;

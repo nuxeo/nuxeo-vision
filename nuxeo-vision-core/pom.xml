@@ -4,25 +4,10 @@
     <groupId>org.nuxeo</groupId>
     <artifactId>nuxeo-vision-parent</artifactId>
     <version>1.2.0-SNAPSHOT</version>
+    <relativePath>../pom.xml</relativePath>
   </parent>
   <artifactId>nuxeo-vision-core</artifactId>
   <name>Nuxeo Vision Core</name>
-
-  <dependencyManagement>
-    <dependencies>
-      <dependency>
-        <groupId>com.amazonaws</groupId>
-        <artifactId>aws-java-sdk-bom</artifactId>
-        <version>1.11.76</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
-
-  <properties>
-    <aws.version>1.11.76</aws.version>
-  </properties>
 
   <dependencies>
     <dependency>
@@ -48,21 +33,6 @@
     <dependency>
       <groupId>org.nuxeo.ecm.automation</groupId>
       <artifactId>nuxeo-automation-core</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.google.apis</groupId>
-      <artifactId>google-api-services-vision</artifactId>
-      <version>v1-rev2-1.21.0</version>
-    </dependency>
-
-    <dependency>
-      <groupId>com.amazonaws</groupId>
-      <artifactId>aws-java-sdk-rekognition</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>com.google.api-client</groupId>
-      <artifactId>google-api-client</artifactId>
     </dependency>
     <dependency>
       <groupId>com.google.guava</groupId>
@@ -109,6 +79,7 @@
           <systemPropertyVariables>
             <org.nuxeo.vision.test.credential.key>${org.nuxeo.vision.test.credential.key}</org.nuxeo.vision.test.credential.key>
             <org.nuxeo.vision.test.credential.file>${org.nuxeo.vision.test.credential.file}</org.nuxeo.vision.test.credential.file>
+            <org.nuxeo.vision.default.provider>mock</org.nuxeo.vision.default.provider>
           </systemPropertyVariables>
         </configuration>
       </plugin>

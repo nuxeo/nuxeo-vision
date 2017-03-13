@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<component name="org.nuxeo.vision.core.test.mock.provider">
+
+  <require>org.nuxeo.vision.core.service</require>
+
+  <extension target="org.nuxeo.vision.core.service" point="configuration">
+    <configuration>
+      <pictureMapperChainName>javascript.PictureVisionDefaultMapper</pictureMapperChainName>
+      <videoMapperChainName>javascript.VideoVisionDefaultMapper</videoMapperChainName>
+      <defaultProviderName>mock</defaultProviderName>
+    </configuration>
+  </extension>
+
+  <extension point="provider" target="org.nuxeo.vision.core.service">
+    <provider class="org.nuxeo.vision.core.test.mock.MockVisionProvider" name="mock"/>
+  </extension>
+
+</component>

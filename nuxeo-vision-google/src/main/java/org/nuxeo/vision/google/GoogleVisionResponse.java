@@ -17,7 +17,7 @@
  *     Michael Vachette
  */
 
-package org.nuxeo.vision.core.google;
+package org.nuxeo.vision.google;
 
 import com.google.api.services.vision.v1.model.AnnotateImageResponse;
 import com.google.api.services.vision.v1.model.Color;

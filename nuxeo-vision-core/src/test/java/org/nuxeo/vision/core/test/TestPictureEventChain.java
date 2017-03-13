@@ -18,11 +18,8 @@
  */
 package org.nuxeo.vision.core.test;
 
-import static org.junit.Assert.*;
-
 import org.junit.After;
 import org.junit.Assert;
-import org.junit.Assume;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.nuxeo.ecm.automation.AutomationService;
@@ -54,11 +51,12 @@ import org.nuxeo.vision.core.listener.PictureConversionChangedListener;
 import org.nuxeo.vision.core.service.Vision;
 
 import javax.inject.Inject;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.List;
+
+import static org.junit.Assert.assertEquals;
 
 @RunWith(FeaturesRunner.class)
 @Features(AutomationFeature.class)
@@ -67,7 +65,8 @@ import java.util.List;
         "org.nuxeo.ecm.platform.tag", "org.nuxeo.ecm.automation.scripting" })
 @LocalDeploy({ "nuxeo-vision-core:OSGI-INF/mock-adapter-contrib.xml",
         "nuxeo-vision-core:OSGI-INF/disabled-listener-contrib.xml",
-        "nuxeo-vision-core:OSGI-INF/dummy-listener-contrib.xml" })
+        "nuxeo-vision-core:OSGI-INF/dummy-listener-contrib.xml",
+        "nuxeo-vision-core:OSGI-INF/mock-provider-contrib.xml"})
 public class TestPictureEventChain {
 
     @Inject
@@ -81,14 +80,11 @@ public class TestPictureEventChain {
 
     @After
     public void cleanup() {
-
         DummyTestListener.clear();
     }
 
     @Test
     public void testPictureChain() throws IOException, OperationException {
-
-        Assume.assumeTrue("Test credential file not set", CheckCredentials.ok());
 
         DocumentModel picture = session.createDocumentModel("/", "Picture",
                 "Picture");
@@ -114,8 +110,6 @@ public class TestPictureEventChain {
 
     @Test
     public void testPictureListener() throws IOException, OperationException {
-
-        Assume.assumeTrue("Test credential file not set", CheckCredentials.ok());
 
         DummyTestListener.clear();
 
@@ -143,13 +137,6 @@ public class TestPictureEventChain {
 
         Assert.assertTrue(tags.size() > 0);
         System.out.print(tags);
-
-        if (!"google".equals(vision.getProvider())) {
-            return;
-        }
-
-        Assert.assertNotNull(picture.getPropertyValue("dc:source"));
-        System.out.print(picture.getPropertyValue("dc:source"));
 
         assertEquals(1, DummyTestListener.EVENTS_RECEIVED.size());
         assertEquals(Vision.EVENT_IMAGE_HANDLED,
