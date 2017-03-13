@@ -19,6 +19,8 @@
 package org.nuxeo.vision.google.test;
 
 import com.google.common.collect.ImmutableList;
+import org.apache.commons.lang.StringUtils;
+import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -67,6 +69,8 @@ public class TestGoogleVisionProvider {
     @Test
     public void testLabelFeature() throws IOException, GeneralSecurityException {
 
+        Assume.assumeTrue("Ccredentials not set",areCredentialsSet());
+
         File file = new File(
                 getClass().getResource("/files/plane.jpg").getPath());
         Blob blob = new FileBlob(file);
@@ -81,6 +85,8 @@ public class TestGoogleVisionProvider {
 
     @Test
     public void testTextFeature() throws IOException, GeneralSecurityException {
+
+        Assume.assumeTrue("Ccredentials not set",areCredentialsSet());
 
         File file = new File(
                 getClass().getResource("/files/text.png").getPath());
@@ -97,6 +103,8 @@ public class TestGoogleVisionProvider {
     @Test
     public void testColorFeature() throws IOException, GeneralSecurityException {
 
+        Assume.assumeTrue("Ccredentials not set",areCredentialsSet());
+
         File file = new File(
                 getClass().getResource("/files/plane.jpg").getPath());
         Blob blob = new FileBlob(file);
@@ -112,6 +120,8 @@ public class TestGoogleVisionProvider {
     @Test
     public void testMultipleFeatures() throws IOException,
             GeneralSecurityException {
+
+        Assume.assumeTrue("Ccredentials not set",areCredentialsSet());
 
         File file = new File(
                 getClass().getResource("/files/plane.jpg").getPath());
@@ -131,6 +141,8 @@ public class TestGoogleVisionProvider {
 
     @Test
     public void testAllFeatures() throws IOException, GeneralSecurityException {
+
+        Assume.assumeTrue("Ccredentials not set",areCredentialsSet());
 
         File file = new File(getClass().getResource("/files/nyc.jpg").getPath());
         Blob blob = new FileBlob(file);
@@ -156,6 +168,8 @@ public class TestGoogleVisionProvider {
     public void testMultipleBlobs() throws IOException,
             GeneralSecurityException {
 
+        Assume.assumeTrue("Ccredentials not set",areCredentialsSet());
+
         List<Blob> blobs = new ArrayList<>();
         blobs.add(new FileBlob(new File(getClass().getResource(
                 "/files/plane.jpg").getPath())));
@@ -175,6 +189,11 @@ public class TestGoogleVisionProvider {
         params.put(GoogleVisionProvider.CREDENTIAL_PATH_PARAM,System.getProperty(CRED_PROP));
         googleVisionProvider = new GoogleVisionProvider(params);
         return googleVisionProvider;
+    }
+
+    protected boolean areCredentialsSet() {
+        return StringUtils.isNotBlank(System.getProperty(CRED_PROP)) ||
+                StringUtils.isNotBlank(System.getProperty(KEY_PROP));
     }
 
 }

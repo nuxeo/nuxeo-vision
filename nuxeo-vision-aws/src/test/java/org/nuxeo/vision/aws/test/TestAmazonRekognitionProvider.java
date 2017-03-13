@@ -19,6 +19,8 @@
 package org.nuxeo.vision.aws.test;
 
 import com.google.common.collect.ImmutableList;
+import org.apache.commons.lang.StringUtils;
+import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -66,6 +68,8 @@ public class TestAmazonRekognitionProvider {
     @Test
     public void testLabelFeature() throws IOException, GeneralSecurityException {
 
+        Assume.assumeTrue("Ccredentials not set",areCredentialsSet());
+
         File file = new File(
                 getClass().getResource("/files/plane.jpg").getPath());
         Blob blob = new FileBlob(file);
@@ -81,6 +85,8 @@ public class TestAmazonRekognitionProvider {
     @Test
     public void testMultipleBlobs() throws IOException,
             GeneralSecurityException {
+
+        Assume.assumeTrue("Ccredentials not set",areCredentialsSet());
 
         List<Blob> blobs = new ArrayList<>();
         blobs.add(new FileBlob(new File(getClass().getResource(
@@ -103,4 +109,9 @@ public class TestAmazonRekognitionProvider {
         return provider;
     }
 
+    protected boolean areCredentialsSet() {
+        return StringUtils.isNotBlank(System.getProperty(AWS_REGION)) &&
+                StringUtils.isNotBlank(System.getProperty(AWS_KEY)) &&
+                StringUtils.isNotBlank(System.getProperty(AWS_SECRET));
+    }
 }
