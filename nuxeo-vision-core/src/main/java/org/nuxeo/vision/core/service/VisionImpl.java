@@ -26,17 +26,13 @@ import org.nuxeo.ecm.core.api.NuxeoException;
 import org.nuxeo.runtime.model.ComponentContext;
 import org.nuxeo.runtime.model.ComponentInstance;
 import org.nuxeo.runtime.model.DefaultComponent;
-import org.nuxeo.vision.core.amazon.AmazonProvider;
-import org.nuxeo.vision.core.amazon.AmazonVisionDescriptor;
-import org.nuxeo.vision.core.google.GoogleProvider;
-import org.nuxeo.vision.core.google.GoogleVisionDescriptor;
-
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.security.GeneralSecurityException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.HashMap;
 
 public class VisionImpl extends DefaultComponent implements Vision {
 
@@ -44,19 +40,11 @@ public class VisionImpl extends DefaultComponent implements Vision {
 
     protected static final String CONFIG_EXT_POINT = "configuration";
 
-    protected static final String GOOGLE_EXT_POINT = "google";
-
-    protected static final String AMAZON_EXT_POINT = "amazon";
-
-    protected static final long _4MB = 4194304;
-
-    protected static final long _8MB = 8388608;
-
-    protected static final int MAX_BLOB_PER_REQUEST = 16;
+    protected static final String PROVIDER_EXT_POINT = "provider";
 
     protected VisionDescriptor config = null;
 
-    protected Map<String, VisionProvider> providers = new HashMap<String, VisionProvider>();
+    protected Map<String, VisionProvider> providers = new HashMap<>();
 
     /**
      * Component activated notification. Called when the component is activated.
@@ -96,14 +84,21 @@ public class VisionImpl extends DefaultComponent implements Vision {
     }
 
     @Override
-    public void registerContribution(Object contribution,
-            String extensionPoint, ComponentInstance contributor) {
+    public void registerContribution(Object contribution, String extensionPoint,
+                                     ComponentInstance contributor) {
         if (CONFIG_EXT_POINT.equals(extensionPoint)) {
             config = (VisionDescriptor) contribution;
-        } else if (GOOGLE_EXT_POINT.equals(extensionPoint)) {
-            providers.put("google", new GoogleProvider((GoogleVisionDescriptor) contribution));
-        } else if (AMAZON_EXT_POINT.equals(extensionPoint)) {
-            providers.put("amazon", new AmazonProvider((AmazonVisionDescriptor) contribution));
+        } else if (PROVIDER_EXT_POINT.equals(extensionPoint)) {
+            VisionProviderDescriptor desc = (VisionProviderDescriptor) contribution;
+            try {
+                VisionProvider provider = (VisionProvider) desc.getClassName()
+                        .getConstructor(Map.class)
+                        .newInstance(desc.getParameters());
+                providers.put(desc.getProviderName(),provider);
+            } catch (InstantiationException | IllegalAccessException |
+                     NoSuchMethodException | InvocationTargetException e) {
+                throw new NuxeoException(e);
+            }
         }
     }
 
@@ -117,7 +112,20 @@ public class VisionImpl extends DefaultComponent implements Vision {
     public VisionResponse execute(Blob blob, List<VisionFeature> features,
             int maxResults) throws IOException, GeneralSecurityException,
             IllegalStateException {
+        return execute(config.getDefaultProviderName(),blob,features,maxResults);
+    }
 
+    @Override
+    public List<VisionResponse> execute(List<Blob> blobs,
+                                        List<VisionFeature> features, int maxResults) throws IOException,
+            GeneralSecurityException, IllegalStateException {
+        return execute(config.getDefaultProviderName(),blobs,features,maxResults);
+    }
+
+    //since 9.1
+    @Override
+    public VisionResponse execute(String providerName, Blob blob, List<VisionFeature> features, int maxResults) throws
+            IOException, GeneralSecurityException {
         if (blob == null) {
             throw new IllegalArgumentException("Input Blob cannot be null");
         } else if (features == null || features.size() == 0) {
@@ -125,38 +133,36 @@ public class VisionImpl extends DefaultComponent implements Vision {
                     "The feature list cannot be empty or null");
         }
 
-        List<VisionResponse> results = execute(ImmutableList.of(blob),
+        List<VisionResponse> results = execute(providerName,ImmutableList.of(blob),
                 features, maxResults);
         if (results.size() > 0) {
             return results.get(0);
         } else {
             throw new NuxeoException(
-                    "Provider " + config.getProvider() + " vision returned empty results for "
+                    "Provider " + providerName + " vision returned empty results for "
                             + blob.getFilename());
         }
     }
 
+    //since 9.1
     @Override
-    public List<VisionResponse> execute(List<Blob> blobs,
-            List<VisionFeature> features, int maxResults) throws IOException,
-            GeneralSecurityException, IllegalStateException {
+    public List<VisionResponse> execute(String providerName, List<Blob> blobs, List<VisionFeature> features, int
+            maxResults) throws IOException, GeneralSecurityException {
+        VisionProvider provider = providers.get(providerName);
+
+        if (provider==null) throw new NuxeoException("Unknown provider: "+providerName);
 
         if (blobs == null || blobs.size() == 0) {
             throw new IllegalArgumentException(
                     "Input Blob list cannot be null or empty");
-        } else if (!checkBlobs(blobs)) {
+        } else if (!provider.checkBlobs(blobs)) {
             throw new IllegalArgumentException(
                     "Too many blobs or size exceeds the API limit");
         } else if (features == null || features.size() == 0) {
             throw new IllegalArgumentException(
                     "The feature list cannot be empty or null");
         }
-        // Launch provider
-        if (!providers.containsKey(config.getProvider())) {
-            throw new IllegalArgumentException(
-                    "The provider '" + config.getProvider() + "' is unknown");
-        }
-        return providers.get(config.getProvider()).execute(blobs, features, maxResults);
+        return provider.execute(blobs, features, maxResults);
     }
 
     @Override
@@ -170,27 +176,18 @@ public class VisionImpl extends DefaultComponent implements Vision {
     }
 
     @Override
-    public String getProvider() { return config.getProvider(); }
+    public String getDefaultProvider() {
+        return config.getDefaultProviderName();
+    }
 
-    protected boolean checkBlobs(List<Blob> blobs) throws IOException {
-        if (blobs.size() > MAX_BLOB_PER_REQUEST) {
-            return false;
-        }
-        long totalSize = 0;
-        for (Blob blob : blobs) {
-            long size = blob.getLength();
-            if (size <= 0) {
-                throw new IOException("Could not read the blob size");
-            }
-            if (size > _4MB) {
-                return false;
-            }
-            totalSize += size;
-            if (totalSize > _8MB) {
-                return false;
-            }
-        }
-        return true;
+    @Override
+    public VisionProvider getProvider(String name) {
+        return providers.get(name);
+    }
+
+    @Override
+    public Map<String, VisionProvider> getProviders() {
+        return providers;
     }
 
 }

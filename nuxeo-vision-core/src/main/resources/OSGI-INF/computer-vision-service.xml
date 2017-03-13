@@ -16,37 +16,16 @@
     <object class="org.nuxeo.vision.core.service.VisionDescriptor" />
   </extension-point>
 
-  <extension-point name="google">
-    <documentation>Used to configure the application name to send to the Google API as well as the path of the JSON
-      credential file</documentation>
-    <object class="org.nuxeo.vision.core.google.GoogleVisionDescriptor" />
-  </extension-point>
-
-  <extension-point name="amazon">
-    <documentation>Used to configure the AWS access if needed</documentation>
-    <object class="org.nuxeo.vision.core.amazon.AmazonVisionDescriptor" />
+  <extension-point name="provider">
+    <documentation>Used to define a new vision service provider</documentation>
+    <object class="org.nuxeo.vision.core.service.VisionProviderDescriptor" />
   </extension-point>
 
   <extension target="org.nuxeo.vision.core.service" point="configuration">
     <configuration>
       <pictureMapperChainName>javascript.PictureVisionDefaultMapper</pictureMapperChainName>
       <videoMapperChainName>javascript.VideoVisionDefaultMapper</videoMapperChainName>
-      <provider>${org.nuxeo.vision.provider:=}</provider>
-    </configuration>
-  </extension>
-
-  <extension target="org.nuxeo.vision.core.service" point="google">
-    <configuration>
-      <appName>Nuxeo</appName>
-      <credentialFilePath>${org.nuxeo.vision.google.credential:=}</credentialFilePath>
-      <apiKey>${org.nuxeo.vision.google.key:=}</apiKey>
-    </configuration>
-  </extension>
-
-  <extension target="org.nuxeo.vision.core.service" point="amazon">
-    <configuration>
-      <accessKey>${org.nuxeo.vision.amazon.access_key:=}</accessKey>
-      <secretKey>${org.nuxeo.vision.amazon.secret_key:=}</secretKey>
+      <defaultProviderName>${org.nuxeo.vision.default.provider:=}</defaultProviderName>
     </configuration>
   </extension>
 

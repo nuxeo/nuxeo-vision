@@ -22,9 +22,6 @@ import org.nuxeo.ecm.core.work.WorkManagerImpl;
 import org.nuxeo.ecm.core.work.api.Work;
 import org.nuxeo.vision.core.worker.VideoVisionWorker;
 
-/**
- * Created by Michaël on 3/10/2016.
- */
 public class MockWorkManager extends WorkManagerImpl {
 
     public boolean wasSchedule = false;

@@ -54,14 +54,14 @@ public class VisionOp {
     @Context
     protected Vision visionService;
 
-    @Param(name = "features", description = "A StringList of features to request from the API. "
-            + "Available Features are described at"
-            + " https://cloud.google.com/vision/reference/rest/v1/images/annotate#Feature", required = true)
+    @Param(name = "provider", description = "The vision provider name", required = false)
+    protected String provider;
+
+    @Param(name = "features", description = "A StringList of features to request from the API", required = true)
     protected StringList features;
 
     @Param(name = "outputVariable", description = "The key of the context output variable. "
-            + "The output variable is a list of AnnotateImageResponse objects. "
-            + "See https://cloud.google.com/vision/reference/rest/v1/images/annotate#AnnotateImageResponse", required = true)
+            + "The output variable is a list of VisionResponse objects. ", required = true)
     protected String outputVariable;
 
     @Param(name = "maxResults", description = "The maximum number of results per feature", required = true)
@@ -88,7 +88,11 @@ public class VisionOp {
         }
 
         try {
-            results = visionService.execute(blobs, featureList, maxResults);
+            if (provider==null || provider.length()==0) {
+                results = visionService.execute(blobs, featureList, maxResults);
+            } else {
+                results = visionService.execute(provider,blobs,featureList,maxResults);
+            }
             ctx.put(outputVariable, results);
         } catch (IOException | GeneralSecurityException e) {
             log.warn("Call to google vision API failed", e);

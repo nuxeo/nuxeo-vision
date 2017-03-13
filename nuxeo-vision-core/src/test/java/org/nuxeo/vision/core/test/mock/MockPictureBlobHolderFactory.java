@@ -14,9 +14,8 @@
  * limitations under the License.
  *
  * Contributors:
- *     Nuxeo - initial API and implementation
+ *     Michael Vachette
  *
- * $Id$
  */
 package org.nuxeo.vision.core.test.mock;
 

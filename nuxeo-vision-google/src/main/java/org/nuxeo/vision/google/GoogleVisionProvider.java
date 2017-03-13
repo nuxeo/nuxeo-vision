@@ -1,4 +1,24 @@
-package org.nuxeo.vision.core.google;
+/*
+ * (C) Copyright 2015-2016 Nuxeo SA (http://nuxeo.com/) and others.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Contributors:
+ *     Michael Vachette
+ *     Remi Cattiau
+ */
+
+package org.nuxeo.vision.google;
 
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
@@ -7,6 +27,7 @@ import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.vision.v1.VisionScopes;
 import com.google.api.services.vision.v1.model.*;
 import org.nuxeo.ecm.core.api.Blob;
+import org.nuxeo.ecm.core.api.NuxeoException;
 import org.nuxeo.vision.core.service.VisionFeature;
 import org.nuxeo.vision.core.service.VisionProvider;
 import org.nuxeo.vision.core.service.VisionResponse;
@@ -17,21 +38,29 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
-/**
- * Created by loopingz on 05/01/2017.
- */
-public class GoogleProvider implements VisionProvider {
+public class GoogleVisionProvider implements VisionProvider {
 
-    protected  GoogleVisionDescriptor config;
+    public static final String APP_NAME_PARAM = "appName";
+    public static final String API_KEY_PARAM = "apiKey";
+    public static final String CREDENTIAL_PATH_PARAM = "credentialFilePath";
 
-    public GoogleProvider(GoogleVisionDescriptor config) {
-        this.config = config;
+    protected static final long _4MB = 4194304;
+
+    protected static final long _8MB = 8388608;
+
+    protected static final int MAX_BLOB_PER_REQUEST = 16;
+
+    protected  Map<String,String> params;
+
+    public GoogleVisionProvider(Map<String,String> parameters) {
+        this.params = parameters;
     }
 
     private volatile com.google.api.services.vision.v1.Vision visionClient;
 
-    private com.google.api.services.vision.v1.Vision getVisionService()
+    private com.google.api.services.vision.v1.Vision getVisionClient()
             throws IOException, GeneralSecurityException {
         // thread safe lazy initialization of the google vision client
         // see https://en.wikipedia.org/wiki/Double-checked_locking
@@ -42,8 +71,7 @@ public class GoogleProvider implements VisionProvider {
                 if (result == null) {
                     GoogleCredential credential = null;
                     if (usesServiceAccount()) {
-                        File file = new File(
-                                config.getCredentialFilePath());
+                        File file = new File(getCredentialFilePath());
                         credential = GoogleCredential.fromStream(
                                 new FileInputStream(file)).createScoped(
                                 VisionScopes.all());
@@ -52,7 +80,7 @@ public class GoogleProvider implements VisionProvider {
                     result = visionClient = new com.google.api.services.vision.v1.Vision.Builder(
                             GoogleNetHttpTransport.newTrustedTransport(),
                             jsonFactory, credential).setApplicationName(
-                            config.getAppName()).build();
+                            getAppName()).build();
                 }
             }
         }
@@ -69,11 +97,11 @@ public class GoogleProvider implements VisionProvider {
                 requestFeatures);
 
         com.google.api.services.vision.v1.Vision.Images.Annotate annotate;
-        annotate = getVisionService().images().annotate(
+        annotate = getVisionClient().images().annotate(
                 new BatchAnnotateImagesRequest().setRequests(requests));
 
         if (!usesServiceAccount() && usesApiKey()) {
-            annotate.setKey(config.getApiKey());
+            annotate.setKey(getApiKey());
         }
 
         // Due to a bug: requests to Vision API containing large images fail
@@ -97,6 +125,65 @@ public class GoogleProvider implements VisionProvider {
         }
         return output;
     }
+
+    @Override
+    public List<VisionFeature> getSupportedFeatures() {
+        return null;
+    }
+
+    @Override
+    public boolean checkBlobs(List<Blob> blobs) throws IOException {
+        if (blobs.size() > MAX_BLOB_PER_REQUEST) {
+            return false;
+        }
+        long totalSize = 0;
+        for (Blob blob : blobs) {
+            long size = blob.getLength();
+            if (size <= 0) {
+                throw new IOException("Could not read the blob size");
+            }
+            if (size > _4MB) {
+                return false;
+            }
+            totalSize += size;
+            if (totalSize > _8MB) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public com.google.api.services.vision.v1.Vision getNativeClient() {
+        try {
+            return getVisionClient();
+        } catch (IOException | GeneralSecurityException e) {
+            throw new NuxeoException(e);
+        }
+    }
+
+    protected String getCredentialFilePath() {
+        return params.get(CREDENTIAL_PATH_PARAM);
+    }
+
+    protected String getApiKey() {
+        return params.get(API_KEY_PARAM);
+    }
+
+    protected String getAppName() {
+        return params.get(APP_NAME_PARAM);
+    }
+
+    protected boolean usesServiceAccount() {
+        String path = getCredentialFilePath();
+        return path != null && path.length() > 0;
+    }
+
+    protected boolean usesApiKey() {
+        String key = getApiKey();
+        return key != null && key.length() > 0;
+    }
+
 
     protected List<Feature> buildFeatureList(List<VisionFeature> features,
                                              int maxResults) {
@@ -122,13 +209,4 @@ public class GoogleProvider implements VisionProvider {
         return requests;
     }
 
-    protected boolean usesServiceAccount() {
-        String path = config.getCredentialFilePath();
-        return path != null && path.length() > 0;
-    }
-
-    protected boolean usesApiKey() {
-        String key = config.getApiKey();
-        return key != null && key.length() > 0;
-    }
 }
