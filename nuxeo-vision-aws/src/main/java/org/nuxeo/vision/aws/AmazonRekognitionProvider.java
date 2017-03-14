@@ -96,7 +96,7 @@ public class AmazonRekognitionProvider implements VisionProvider {
     }
 
     private AmazonRekognition getClient() {
-        // thread safe lazy initialization of the google vision client
+        // thread safe lazy initialization of the AWS Rekognition client
         // see https://en.wikipedia.org/wiki/Double-checked_locking
         AmazonRekognition result = client;
         if (result == null) {
