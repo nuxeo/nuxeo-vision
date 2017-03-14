@@ -1,8 +1,6 @@
 <?xml version="1.0"?>
 <component name="org.nuxeo.vision.aws.provider" version="1.0">
 
-  <require>org.nuxeo.vision.core.service</require>
-
   <extension point="provider" target="org.nuxeo.vision.core.service">
     <provider class="org.nuxeo.vision.aws.AmazonRekognitionProvider" name="aws">
       <parameters>
