@@ -37,8 +37,9 @@ import org.nuxeo.runtime.transaction.TransactionHelper;
 import org.nuxeo.vision.core.service.Vision;
 
 public class VideoVisionWorker extends AbstractWork {
-    
+
     private static final long serialVersionUID = 1L;
+
     private static final Log log = LogFactory.getLog(VideoVisionWorker.class);
 
     public VideoVisionWorker(String repositoryName, String docId) {
@@ -77,8 +78,7 @@ public class VideoVisionWorker extends AbstractWork {
             doc = (DocumentModel) as.run(octx, chain);
             session.saveDocument(doc);
 
-            EventContextImpl evctx = new DocumentEventContext(session,
-                    session.getPrincipal(), doc);
+            EventContextImpl evctx = new DocumentEventContext(session, session.getPrincipal(), doc);
             Event eventToSend = evctx.newEvent(Vision.EVENT_VIDEO_HANDLED);
             EventService eventService = Framework.getLocalService(EventService.class);
             eventService.fireEvent(eventToSend);

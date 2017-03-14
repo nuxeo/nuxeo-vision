@@ -30,7 +30,7 @@ public class MockVisionResponse implements VisionResponse {
 
     @Override
     public List<TextEntity> getClassificationLabels() {
-        return ImmutableList.of(new TextEntity("label",1.0f,"en"));
+        return ImmutableList.of(new TextEntity("label", 1.0f, "en"));
     }
 
     @Override

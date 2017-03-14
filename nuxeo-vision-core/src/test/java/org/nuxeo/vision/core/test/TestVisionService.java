@@ -46,7 +46,7 @@ import static org.junit.Assert.assertTrue;
 @Deploy("nuxeo-vision-core")
 @LocalDeploy({ "nuxeo-vision-core:OSGI-INF/mock-adapter-contrib.xml",
         "nuxeo-vision-core:OSGI-INF/disabled-listener-contrib.xml",
-        "nuxeo-vision-core:OSGI-INF/mock-provider-contrib.xml"})
+        "nuxeo-vision-core:OSGI-INF/mock-provider-contrib.xml" })
 public class TestVisionService {
 
     @Inject
@@ -54,26 +54,21 @@ public class TestVisionService {
 
     @Test
     public void testLabelFeature() throws IOException, GeneralSecurityException {
-        File file = new File(
-                getClass().getResource("/files/plane.jpg").getPath());
+        File file = new File(getClass().getResource("/files/plane.jpg").getPath());
         Blob blob = new FileBlob(file);
-        VisionResponse result = vision.execute(blob, ImmutableList.of(
-                VisionFeature.LABEL_DETECTION), 5);
+        VisionResponse result = vision.execute(blob, ImmutableList.of(VisionFeature.LABEL_DETECTION), 5);
         assertNotNull(result);
     }
 
     @Test
-    public void testMultipleBlobs() throws IOException,
-            GeneralSecurityException {
+    public void testMultipleBlobs() throws IOException, GeneralSecurityException {
 
         List<Blob> blobs = new ArrayList<>();
-        blobs.add(new FileBlob(new File(getClass().getResource(
-                "/files/plane.jpg").getPath())));
-        blobs.add(new FileBlob(new File(getClass().getResource(
-                "/files/text.png").getPath())));
+        blobs.add(new FileBlob(new File(getClass().getResource("/files/plane.jpg").getPath())));
+        blobs.add(new FileBlob(new File(getClass().getResource("/files/text.png").getPath())));
 
-        List<VisionResponse> results = vision.execute(blobs, ImmutableList.of(
-                VisionFeature.TEXT_DETECTION, VisionFeature.LABEL_DETECTION), 5);
+        List<VisionResponse> results = vision.execute(blobs,
+                ImmutableList.of(VisionFeature.TEXT_DETECTION, VisionFeature.LABEL_DETECTION), 5);
         assertTrue(results.size() == 2);
     }
 

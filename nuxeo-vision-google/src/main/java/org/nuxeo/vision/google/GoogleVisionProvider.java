@@ -44,7 +44,9 @@ import java.util.Map;
 public class GoogleVisionProvider implements VisionProvider {
 
     public static final String APP_NAME_PARAM = "appName";
+
     public static final String API_KEY_PARAM = "apiKey";
+
     public static final String CREDENTIAL_PATH_PARAM = "credentialFilePath";
 
     protected static final long _4MB = 4194304;
@@ -53,16 +55,15 @@ public class GoogleVisionProvider implements VisionProvider {
 
     protected static final int MAX_BLOB_PER_REQUEST = 16;
 
-    protected  Map<String,String> params;
+    protected Map<String, String> params;
 
-    public GoogleVisionProvider(Map<String,String> parameters) {
+    public GoogleVisionProvider(Map<String, String> parameters) {
         this.params = parameters;
     }
 
     private volatile com.google.api.services.vision.v1.Vision visionClient;
 
-    private com.google.api.services.vision.v1.Vision getVisionClient()
-            throws IOException, GeneralSecurityException {
+    private com.google.api.services.vision.v1.Vision getVisionClient() throws IOException, GeneralSecurityException {
         // thread safe lazy initialization of the google vision client
         // see https://en.wikipedia.org/wiki/Double-checked_locking
         com.google.api.services.vision.v1.Vision result = visionClient;
@@ -73,15 +74,15 @@ public class GoogleVisionProvider implements VisionProvider {
                     GoogleCredential credential = null;
                     if (usesServiceAccount()) {
                         File file = new File(getCredentialFilePath());
-                        credential = GoogleCredential.fromStream(
-                                new FileInputStream(file)).createScoped(
-                                VisionScopes.all());
+                        credential = GoogleCredential.fromStream(new FileInputStream(file))
+                                                     .createScoped(VisionScopes.all());
                     }
                     JsonFactory jsonFactory = JacksonFactory.getDefaultInstance();
                     result = visionClient = new com.google.api.services.vision.v1.Vision.Builder(
-                            GoogleNetHttpTransport.newTrustedTransport(),
-                            jsonFactory, credential).setApplicationName(
-                            getAppName()).build();
+                            GoogleNetHttpTransport.newTrustedTransport(), jsonFactory, credential)
+                                                                                                  .setApplicationName(
+                                                                                                          getAppName())
+                                                                                                  .build();
                 }
             }
         }
@@ -89,17 +90,16 @@ public class GoogleVisionProvider implements VisionProvider {
     }
 
     @Override
-    public List<VisionResponse> execute(List<Blob> blobs, List<VisionFeature> features, int maxResults) throws IOException, GeneralSecurityException, IllegalStateException {
+    public List<VisionResponse> execute(List<Blob> blobs, List<VisionFeature> features, int maxResults)
+            throws IOException, GeneralSecurityException, IllegalStateException {
         // build list of requested features
         List<Feature> requestFeatures = buildFeatureList(features, maxResults);
 
         // build list of request
-        List<AnnotateImageRequest> requests = buildRequestList(blobs,
-                requestFeatures);
+        List<AnnotateImageRequest> requests = buildRequestList(blobs, requestFeatures);
 
         com.google.api.services.vision.v1.Vision.Images.Annotate annotate;
-        annotate = getVisionClient().images().annotate(
-                new BatchAnnotateImagesRequest().setRequests(requests));
+        annotate = getVisionClient().images().annotate(new BatchAnnotateImagesRequest().setRequests(requests));
 
         if (!usesServiceAccount() && usesApiKey()) {
             annotate.setKey(getApiKey());
@@ -115,8 +115,7 @@ public class GoogleVisionProvider implements VisionProvider {
 
         // check response is not empty
         if (batchResponse.getResponses() == null) {
-            throw new IllegalStateException(
-                    "Google Vision returned an empty response");
+            throw new IllegalStateException("Google Vision returned an empty response");
         }
 
         List<AnnotateImageResponse> responses = batchResponse.getResponses();
@@ -129,12 +128,8 @@ public class GoogleVisionProvider implements VisionProvider {
 
     @Override
     public List<VisionFeature> getSupportedFeatures() {
-        return ImmutableList.of(
-                VisionFeature.FACE_DETECTION,
-                VisionFeature.LANDMARK_DETECTION,
-                VisionFeature.LOGO_DETECTION,
-                VisionFeature.LABEL_DETECTION,
-                VisionFeature.SAFE_SEARCH_DETECTION,
+        return ImmutableList.of(VisionFeature.FACE_DETECTION, VisionFeature.LANDMARK_DETECTION,
+                VisionFeature.LOGO_DETECTION, VisionFeature.LABEL_DETECTION, VisionFeature.SAFE_SEARCH_DETECTION,
                 VisionFeature.IMAGE_PROPERTIES);
     }
 
@@ -191,26 +186,21 @@ public class GoogleVisionProvider implements VisionProvider {
         return key != null && key.length() > 0;
     }
 
-
-    protected List<Feature> buildFeatureList(List<VisionFeature> features,
-                                             int maxResults) {
+    protected List<Feature> buildFeatureList(List<VisionFeature> features, int maxResults) {
 
         List<Feature> requestFeatures = new ArrayList<>();
         for (VisionFeature feature : features) {
-            requestFeatures.add(new Feature().setType(feature.toString()).setMaxResults(
-                    maxResults));
+            requestFeatures.add(new Feature().setType(feature.toString()).setMaxResults(maxResults));
         }
         return requestFeatures;
     }
 
-    protected List<AnnotateImageRequest> buildRequestList(List<Blob> blobs,
-                                                          List<Feature> features) throws IOException {
+    protected List<AnnotateImageRequest> buildRequestList(List<Blob> blobs, List<Feature> features) throws IOException {
 
         List<AnnotateImageRequest> requests = new ArrayList<>();
         for (Blob blob : blobs) {
             AnnotateImageRequest request = new AnnotateImageRequest().setImage(
-                    new Image().encodeContent(blob.getByteArray())).setFeatures(
-                    features);
+                    new Image().encodeContent(blob.getByteArray())).setFeatures(features);
             requests.add(request);
         }
         return requests;

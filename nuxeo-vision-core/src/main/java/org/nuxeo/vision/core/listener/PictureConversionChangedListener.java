@@ -35,8 +35,7 @@ import org.nuxeo.vision.core.service.Vision;
 
 import static org.nuxeo.ecm.platform.picture.api.ImagingDocumentConstants.PICTURE_FACET;
 
-public class PictureConversionChangedListener implements
-        PostCommitEventListener {
+public class PictureConversionChangedListener implements PostCommitEventListener {
 
     private static final Log log = LogFactory.getLog(PictureConversionChangedListener.class);
 
@@ -71,8 +70,7 @@ public class PictureConversionChangedListener implements
         try {
             as.run(octx, chain);
 
-            EventContextImpl evctx = new DocumentEventContext(session,
-                    session.getPrincipal(), doc);
+            EventContextImpl evctx = new DocumentEventContext(session, session.getPrincipal(), doc);
             Event eventToSend = evctx.newEvent(Vision.EVENT_IMAGE_HANDLED);
             EventService eventService = Framework.getLocalService(EventService.class);
             eventService.fireEvent(eventToSend);

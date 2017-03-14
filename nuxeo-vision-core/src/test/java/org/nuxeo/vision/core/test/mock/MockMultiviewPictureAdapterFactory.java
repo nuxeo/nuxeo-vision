@@ -26,15 +26,13 @@ import org.nuxeo.ecm.core.api.adapter.DocumentAdapterFactory;
 import static org.nuxeo.ecm.platform.picture.api.ImagingDocumentConstants.MULTIVIEW_PICTURE_FACET;
 import static org.nuxeo.ecm.platform.picture.api.ImagingDocumentConstants.PICTURE_FACET;
 
-public class MockMultiviewPictureAdapterFactory implements
-        DocumentAdapterFactory {
+public class MockMultiviewPictureAdapterFactory implements DocumentAdapterFactory {
 
     private static final Log log = LogFactory.getLog(MockMultiviewPictureAdapterFactory.class);
 
     @Override
     public Object getAdapter(DocumentModel doc, Class itf) {
-        if (doc.hasFacet(PICTURE_FACET)
-                || doc.hasFacet(MULTIVIEW_PICTURE_FACET)) {
+        if (doc.hasFacet(PICTURE_FACET) || doc.hasFacet(MULTIVIEW_PICTURE_FACET)) {
             return new MockMultiViewPictureAdapter(doc);
         }
         return null;

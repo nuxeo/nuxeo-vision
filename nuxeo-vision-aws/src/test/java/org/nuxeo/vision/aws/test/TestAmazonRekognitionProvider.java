@@ -48,17 +48,19 @@ import static org.junit.Assert.*;
 
 @RunWith(FeaturesRunner.class)
 @org.nuxeo.runtime.test.runner.Features({ PlatformFeature.class })
-@Deploy({"nuxeo-vision-core","nuxeo-vision-aws"})
+@Deploy({ "nuxeo-vision-core", "nuxeo-vision-aws" })
 public class TestAmazonRekognitionProvider {
 
     public static final String AWS_KEY = "org.nuxeo.vision.aws.key";
+
     public static final String AWS_SECRET = "org.nuxeo.vision.aws.secret";
+
     public static final String AWS_REGION = "org.nuxeo.vision.aws.region";
 
     @Inject
     Vision visionService;
 
-    protected AmazonRekognitionProvider provider=null;
+    protected AmazonRekognitionProvider provider = null;
 
     @Before
     public void testProviderisLoaded() {
@@ -68,14 +70,13 @@ public class TestAmazonRekognitionProvider {
     @Test
     public void testLabelFeature() throws IOException, GeneralSecurityException {
 
-        Assume.assumeTrue("Ccredentials not set",areCredentialsSet());
+        Assume.assumeTrue("Ccredentials not set", areCredentialsSet());
 
-        File file = new File(
-                getClass().getResource("/files/plane.jpg").getPath());
+        File file = new File(getClass().getResource("/files/plane.jpg").getPath());
         Blob blob = new FileBlob(file);
         List<VisionResponse> results = getProvider().execute(ImmutableList.of(blob),
                 ImmutableList.of(VisionFeature.LABEL_DETECTION), 5);
-        assertEquals(1,results.size());
+        assertEquals(1, results.size());
         List<TextEntity> labels = results.get(0).getClassificationLabels();
         assertNotNull(labels);
         assertTrue(labels.size() > 0);
@@ -83,35 +84,32 @@ public class TestAmazonRekognitionProvider {
     }
 
     @Test
-    public void testMultipleBlobs() throws IOException,
-            GeneralSecurityException {
+    public void testMultipleBlobs() throws IOException, GeneralSecurityException {
 
-        Assume.assumeTrue("Ccredentials not set",areCredentialsSet());
+        Assume.assumeTrue("Ccredentials not set", areCredentialsSet());
 
         List<Blob> blobs = new ArrayList<>();
-        blobs.add(new FileBlob(new File(getClass().getResource(
-                "/files/plane.jpg").getPath())));
-        blobs.add(new FileBlob(new File(getClass().getResource(
-                "/files/text.png").getPath())));
+        blobs.add(new FileBlob(new File(getClass().getResource("/files/plane.jpg").getPath())));
+        blobs.add(new FileBlob(new File(getClass().getResource("/files/text.png").getPath())));
 
-        List<VisionResponse> results = getProvider().execute(blobs, ImmutableList.of(
-                VisionFeature.LABEL_DETECTION), 5);
+        List<VisionResponse> results = getProvider().execute(blobs, ImmutableList.of(VisionFeature.LABEL_DETECTION), 5);
         assertTrue(results.size() == 2);
     }
 
     protected AmazonRekognitionProvider getProvider() {
-        if (provider!=null) return provider;
-        Map<String,String> params = new HashMap<>();
-        params.put(AmazonRekognitionProvider.ACCESS_KEY_PARAM,System.getProperty(AWS_KEY));
-        params.put(AmazonRekognitionProvider.SECRET_KEY_PARAM,System.getProperty(AWS_SECRET));
-        params.put(AmazonRekognitionProvider.REGION_PARAM,System.getProperty(AWS_REGION));
-        provider =  new AmazonRekognitionProvider(params);
+        if (provider != null)
+            return provider;
+        Map<String, String> params = new HashMap<>();
+        params.put(AmazonRekognitionProvider.ACCESS_KEY_PARAM, System.getProperty(AWS_KEY));
+        params.put(AmazonRekognitionProvider.SECRET_KEY_PARAM, System.getProperty(AWS_SECRET));
+        params.put(AmazonRekognitionProvider.REGION_PARAM, System.getProperty(AWS_REGION));
+        provider = new AmazonRekognitionProvider(params);
         return provider;
     }
 
     protected boolean areCredentialsSet() {
-        return StringUtils.isNotBlank(System.getProperty(AWS_REGION)) &&
-                StringUtils.isNotBlank(System.getProperty(AWS_KEY)) &&
-                StringUtils.isNotBlank(System.getProperty(AWS_SECRET));
+        return StringUtils.isNotBlank(System.getProperty(AWS_REGION))
+                && StringUtils.isNotBlank(System.getProperty(AWS_KEY))
+                && StringUtils.isNotBlank(System.getProperty(AWS_SECRET));
     }
 }

@@ -55,7 +55,6 @@ public class TextEntity {
 
     @Override
     public String toString() {
-        return "TextEntity{" + "text='" + text + '\'' + ", score=" + score
-                + ", locale='" + locale + '\'' + '}';
+        return "TextEntity{" + "text='" + text + '\'' + ", score=" + score + ", locale='" + locale + '\'' + '}';
     }
 }
