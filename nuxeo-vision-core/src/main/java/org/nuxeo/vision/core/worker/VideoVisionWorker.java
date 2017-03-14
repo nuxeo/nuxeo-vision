@@ -36,14 +36,8 @@ import org.nuxeo.runtime.api.Framework;
 import org.nuxeo.runtime.transaction.TransactionHelper;
 import org.nuxeo.vision.core.service.Vision;
 
-/**
- * Created by Michaël on 3/10/2016.
- */
 public class VideoVisionWorker extends AbstractWork {
-
-    /**
-     *
-     */
+    
     private static final long serialVersionUID = 1L;
     private static final Log log = LogFactory.getLog(VideoVisionWorker.class);
 
