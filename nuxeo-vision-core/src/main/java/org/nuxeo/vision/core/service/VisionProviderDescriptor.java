@@ -26,7 +26,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * since 9.1
+ * @since 9.1
  */
 @XObject("provider")
 public class VisionProviderDescriptor {

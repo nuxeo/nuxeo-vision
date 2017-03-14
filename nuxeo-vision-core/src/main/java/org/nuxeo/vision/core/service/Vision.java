@@ -45,7 +45,7 @@ public interface Vision {
             throws IOException, GeneralSecurityException;
 
     /**
-     * since 9.1
+     * @since 9.1
      * 
      * @param provider the provider to use
      * @param blob the image blob
@@ -57,7 +57,7 @@ public interface Vision {
             throws IOException, GeneralSecurityException;
 
     /**
-     * since 9.1
+     * @since 9.1
      * 
      * @param provider the provider to use
      * @param blobs A list of image blobs
@@ -88,21 +88,21 @@ public interface Vision {
     String getVideoMapperChainName();
 
     /**
-     * since 9.1
+     * @since 9.1
      * 
      * @return The name of default provider
      */
     String getDefaultProvider();
 
     /**
-     * since 9.1
+     * @since 9.1
      * 
      * @return The provider object
      */
     VisionProvider getProvider(String name);
 
     /**
-     * since 9.1
+     * @since 9.1
      * 
      * @return all registered providers
      */
