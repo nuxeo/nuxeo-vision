@@ -52,7 +52,7 @@ import java.util.List;
 @org.nuxeo.runtime.test.runner.Features(AutomationFeature.class)
 @RepositoryConfig(init = DefaultRepositoryInit.class, cleanup = Granularity.METHOD)
 @Deploy({ "nuxeo-vision-core" })
-@LocalDeploy({"nuxeo-vision-core:OSGI-INF/mock-provider-contrib.xml"})
+@LocalDeploy({ "nuxeo-vision-core:OSGI-INF/mock-provider-contrib.xml" })
 public class TestVisionOp {
 
     @Inject
@@ -72,8 +72,7 @@ public class TestVisionOp {
         ctx.setInput(blob);
         ctx.setCoreSession(session);
         OperationChain chain = new OperationChain("TestTextTagBlobOp");
-        chain.add(VisionOp.ID).set("features", features).set("outputVariable",
-                "testTags").set("maxResults", 5);
+        chain.add(VisionOp.ID).set("features", features).set("outputVariable", "testTags").set("maxResults", 5);
         blob = (Blob) as.run(ctx, chain);
 
         List<VisionResponse> resultList = (List<VisionResponse>) ctx.get("testTags");
@@ -87,14 +86,11 @@ public class TestVisionOp {
     }
 
     @Test
-    public void testMultipleBlobsWithTags() throws IOException,
-            OperationException {
+    public void testMultipleBlobsWithTags() throws IOException, OperationException {
 
         BlobList blobs = new BlobList();
-        blobs.add(new FileBlob(new File(getClass().getResource(
-                "/files/plane.jpg").getPath())));
-        blobs.add(new FileBlob(new File(getClass().getResource(
-                "/files/text.png").getPath())));
+        blobs.add(new FileBlob(new File(getClass().getResource("/files/plane.jpg").getPath())));
+        blobs.add(new FileBlob(new File(getClass().getResource("/files/text.png").getPath())));
 
         StringList features = new StringList();
         features.add(VisionFeature.LABEL_DETECTION.toString());
@@ -104,8 +100,7 @@ public class TestVisionOp {
         ctx.setInput(blobs);
         ctx.setCoreSession(session);
         OperationChain chain = new OperationChain("TestTextTagBlobOp");
-        chain.add(VisionOp.ID).set("features", features).set("outputVariable",
-                "testTags").set("maxResults", 5);
+        chain.add(VisionOp.ID).set("features", features).set("outputVariable", "testTags").set("maxResults", 5);
         blobs = (BlobList) as.run(ctx, chain);
 
         List<VisionResponse> resultList = (List<VisionResponse>) ctx.get("testTags");

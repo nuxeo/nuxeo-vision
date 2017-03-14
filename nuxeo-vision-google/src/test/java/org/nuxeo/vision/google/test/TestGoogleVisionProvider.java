@@ -50,10 +50,11 @@ import static org.junit.Assert.*;
 
 @RunWith(FeaturesRunner.class)
 @Features({ PlatformFeature.class })
-@Deploy({"nuxeo-vision-core","nuxeo-vision-google"})
+@Deploy({ "nuxeo-vision-core", "nuxeo-vision-google" })
 public class TestGoogleVisionProvider {
 
     public static final String CRED_PROP = "org.nuxeo.vision.test.credential.file";
+
     public static final String KEY_PROP = "org.nuxeo.vision.test.credential.key";
 
     @Inject
@@ -69,14 +70,13 @@ public class TestGoogleVisionProvider {
     @Test
     public void testLabelFeature() throws IOException, GeneralSecurityException {
 
-        Assume.assumeTrue("Ccredentials not set",areCredentialsSet());
+        Assume.assumeTrue("Ccredentials not set", areCredentialsSet());
 
-        File file = new File(
-                getClass().getResource("/files/plane.jpg").getPath());
+        File file = new File(getClass().getResource("/files/plane.jpg").getPath());
         Blob blob = new FileBlob(file);
         List<VisionResponse> results = getGoogleVisionProvider().execute(ImmutableList.of(blob),
                 ImmutableList.of(VisionFeature.LABEL_DETECTION), 5);
-        assertEquals(1,results.size());
+        assertEquals(1, results.size());
         List<TextEntity> labels = results.get(0).getClassificationLabels();
         assertNotNull(labels);
         assertTrue(labels.size() > 0);
@@ -86,14 +86,13 @@ public class TestGoogleVisionProvider {
     @Test
     public void testTextFeature() throws IOException, GeneralSecurityException {
 
-        Assume.assumeTrue("Ccredentials not set",areCredentialsSet());
+        Assume.assumeTrue("Ccredentials not set", areCredentialsSet());
 
-        File file = new File(
-                getClass().getResource("/files/text.png").getPath());
+        File file = new File(getClass().getResource("/files/text.png").getPath());
         Blob blob = new FileBlob(file);
         List<VisionResponse> results = getGoogleVisionProvider().execute(ImmutableList.of(blob),
                 ImmutableList.of(VisionFeature.TEXT_DETECTION), 5);
-        assertEquals(1,results.size());
+        assertEquals(1, results.size());
         List<TextEntity> texts = results.get(0).getOcrText();
         assertNotNull(texts);
         assertTrue(texts.size() > 0);
@@ -103,14 +102,13 @@ public class TestGoogleVisionProvider {
     @Test
     public void testColorFeature() throws IOException, GeneralSecurityException {
 
-        Assume.assumeTrue("Ccredentials not set",areCredentialsSet());
+        Assume.assumeTrue("Ccredentials not set", areCredentialsSet());
 
-        File file = new File(
-                getClass().getResource("/files/plane.jpg").getPath());
+        File file = new File(getClass().getResource("/files/plane.jpg").getPath());
         Blob blob = new FileBlob(file);
         List<VisionResponse> results = getGoogleVisionProvider().execute(ImmutableList.of(blob),
                 ImmutableList.of(VisionFeature.IMAGE_PROPERTIES), 5);
-        assertEquals(1,results.size());
+        assertEquals(1, results.size());
         List<ColorInfo> colors = results.get(0).getImageProperties().getColors();
         assertNotNull(colors);
         assertTrue(colors.size() > 0);
@@ -118,17 +116,15 @@ public class TestGoogleVisionProvider {
     }
 
     @Test
-    public void testMultipleFeatures() throws IOException,
-            GeneralSecurityException {
+    public void testMultipleFeatures() throws IOException, GeneralSecurityException {
 
-        Assume.assumeTrue("Ccredentials not set",areCredentialsSet());
+        Assume.assumeTrue("Ccredentials not set", areCredentialsSet());
 
-        File file = new File(
-                getClass().getResource("/files/plane.jpg").getPath());
+        File file = new File(getClass().getResource("/files/plane.jpg").getPath());
         Blob blob = new FileBlob(file);
         List<VisionResponse> results = getGoogleVisionProvider().execute(ImmutableList.of(blob),
                 ImmutableList.of(VisionFeature.TEXT_DETECTION, VisionFeature.LABEL_DETECTION), 5);
-        assertEquals(1,results.size());
+        assertEquals(1, results.size());
         List<TextEntity> labels = results.get(0).getClassificationLabels();
         assertNotNull(labels);
         assertTrue(labels.size() > 0);
@@ -142,16 +138,16 @@ public class TestGoogleVisionProvider {
     @Test
     public void testAllFeatures() throws IOException, GeneralSecurityException {
 
-        Assume.assumeTrue("Ccredentials not set",areCredentialsSet());
+        Assume.assumeTrue("Ccredentials not set", areCredentialsSet());
 
         File file = new File(getClass().getResource("/files/nyc.jpg").getPath());
         Blob blob = new FileBlob(file);
-        List<VisionResponse> results = getGoogleVisionProvider().execute(ImmutableList.of(blob), ImmutableList.of(
-                VisionFeature.TEXT_DETECTION, VisionFeature.LABEL_DETECTION,
-                VisionFeature.IMAGE_PROPERTIES, VisionFeature.FACE_DETECTION,
-                VisionFeature.LOGO_DETECTION, VisionFeature.LANDMARK_DETECTION,
-                VisionFeature.SAFE_SEARCH_DETECTION), 5);
-        assertEquals(1,results.size());
+        List<VisionResponse> results = getGoogleVisionProvider().execute(ImmutableList.of(blob),
+                ImmutableList.of(VisionFeature.TEXT_DETECTION, VisionFeature.LABEL_DETECTION,
+                        VisionFeature.IMAGE_PROPERTIES, VisionFeature.FACE_DETECTION, VisionFeature.LOGO_DETECTION,
+                        VisionFeature.LANDMARK_DETECTION, VisionFeature.SAFE_SEARCH_DETECTION),
+                5);
+        assertEquals(1, results.size());
         VisionResponse result = results.get(0);
         List<TextEntity> labels = result.getClassificationLabels();
         assertNotNull(labels);
@@ -165,35 +161,33 @@ public class TestGoogleVisionProvider {
     }
 
     @Test
-    public void testMultipleBlobs() throws IOException,
-            GeneralSecurityException {
+    public void testMultipleBlobs() throws IOException, GeneralSecurityException {
 
-        Assume.assumeTrue("Ccredentials not set",areCredentialsSet());
+        Assume.assumeTrue("Ccredentials not set", areCredentialsSet());
 
         List<Blob> blobs = new ArrayList<>();
-        blobs.add(new FileBlob(new File(getClass().getResource(
-                "/files/plane.jpg").getPath())));
-        blobs.add(new FileBlob(new File(getClass().getResource(
-                "/files/text.png").getPath())));
+        blobs.add(new FileBlob(new File(getClass().getResource("/files/plane.jpg").getPath())));
+        blobs.add(new FileBlob(new File(getClass().getResource("/files/text.png").getPath())));
 
-        List<VisionResponse> results = getGoogleVisionProvider().execute(blobs, ImmutableList.of(
-                VisionFeature.TEXT_DETECTION, VisionFeature.LABEL_DETECTION), 5);
+        List<VisionResponse> results = getGoogleVisionProvider().execute(blobs,
+                ImmutableList.of(VisionFeature.TEXT_DETECTION, VisionFeature.LABEL_DETECTION), 5);
         assertTrue(results.size() == 2);
     }
 
     protected GoogleVisionProvider getGoogleVisionProvider() {
-        if (googleVisionProvider!=null) return googleVisionProvider;
-        Map<String,String> params = new HashMap<>();
-        params.put(GoogleVisionProvider.APP_NAME_PARAM,"Nuxeo");
-        params.put(GoogleVisionProvider.API_KEY_PARAM,System.getProperty(KEY_PROP));
-        params.put(GoogleVisionProvider.CREDENTIAL_PATH_PARAM,System.getProperty(CRED_PROP));
+        if (googleVisionProvider != null)
+            return googleVisionProvider;
+        Map<String, String> params = new HashMap<>();
+        params.put(GoogleVisionProvider.APP_NAME_PARAM, "Nuxeo");
+        params.put(GoogleVisionProvider.API_KEY_PARAM, System.getProperty(KEY_PROP));
+        params.put(GoogleVisionProvider.CREDENTIAL_PATH_PARAM, System.getProperty(CRED_PROP));
         googleVisionProvider = new GoogleVisionProvider(params);
         return googleVisionProvider;
     }
 
     protected boolean areCredentialsSet() {
-        return StringUtils.isNotBlank(System.getProperty(CRED_PROP)) ||
-                StringUtils.isNotBlank(System.getProperty(KEY_PROP));
+        return StringUtils.isNotBlank(System.getProperty(CRED_PROP))
+                || StringUtils.isNotBlank(System.getProperty(KEY_PROP));
     }
 
 }

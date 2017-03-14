@@ -40,16 +40,20 @@ import java.util.Map;
 public class AmazonRekognitionProvider implements VisionProvider {
 
     public static final String REGION_PARAM = "region";
+
     public static final String ACCESS_KEY_PARAM = "accessKey";
+
     public static final String SECRET_KEY_PARAM = "secretKey";
 
     protected static final long _5MB = 5242880;
-    protected static final List<String> SUPPORTED_FORMAT = ImmutableList.of("image/jpeg","image/png");
 
-    private volatile AmazonRekognition client=null;
-    private Map<String,String> parameters;
+    protected static final List<String> SUPPORTED_FORMAT = ImmutableList.of("image/jpeg", "image/png");
 
-    public AmazonRekognitionProvider(Map<String,String> parameters) {
+    private volatile AmazonRekognition client = null;
+
+    private Map<String, String> parameters;
+
+    public AmazonRekognitionProvider(Map<String, String> parameters) {
         this.parameters = parameters;
     }
 
@@ -58,18 +62,16 @@ public class AmazonRekognitionProvider implements VisionProvider {
             throws IOException, GeneralSecurityException, IllegalStateException {
         ArrayList<VisionResponse> result = new ArrayList<>();
         for (Blob blob : blobs) {
-            result.add(new AmazonRekognitionResponse(
-                    getClient().detectLabels(new DetectLabelsRequest().withImage(
-                        new com.amazonaws.services.rekognition.model.Image()
-                            .withBytes(ByteBuffer.wrap(blob.getByteArray())))
-                            .withMaxLabels(maxResults))));
+            result.add(new AmazonRekognitionResponse(getClient().detectLabels(
+                    new DetectLabelsRequest().withImage(new com.amazonaws.services.rekognition.model.Image().withBytes(
+                            ByteBuffer.wrap(blob.getByteArray()))).withMaxLabels(maxResults))));
         }
         return result;
     }
 
     @Override
     public List<VisionFeature> getSupportedFeatures() {
-        return ImmutableList.of(VisionFeature.LABEL_DETECTION,VisionFeature.FACE_DETECTION);
+        return ImmutableList.of(VisionFeature.LABEL_DETECTION, VisionFeature.FACE_DETECTION);
     }
 
     @Override
@@ -104,10 +106,8 @@ public class AmazonRekognitionProvider implements VisionProvider {
                 result = client;
                 if (result == null) {
                     AmazonRekognitionClientBuilder builder = AmazonRekognitionClientBuilder.standard();
-                    builder.withCredentials(
-                            new AWSStaticCredentialsProvider(
-                                    new BasicAWSCredentials(
-                                            parameters.get(ACCESS_KEY_PARAM),parameters.get(SECRET_KEY_PARAM))));
+                    builder.withCredentials(new AWSStaticCredentialsProvider(new BasicAWSCredentials(
+                            parameters.get(ACCESS_KEY_PARAM), parameters.get(SECRET_KEY_PARAM))));
                     builder.withRegion(parameters.get(REGION_PARAM));
                     result = client = builder.build();
                 }

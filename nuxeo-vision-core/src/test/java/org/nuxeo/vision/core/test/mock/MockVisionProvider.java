@@ -35,14 +35,14 @@ public class MockVisionProvider implements VisionProvider {
 
     public static final String NAME = "mock";
 
-    public MockVisionProvider(Map<String,String> parameters) {}
+    public MockVisionProvider(Map<String, String> parameters) {
+    }
 
     @Override
-    public List<VisionResponse> execute(List<Blob> blobs, List<VisionFeature> features,
-                                        int maxResults)
+    public List<VisionResponse> execute(List<Blob> blobs, List<VisionFeature> features, int maxResults)
             throws IOException, GeneralSecurityException, IllegalStateException {
         List<VisionResponse> responses = new ArrayList<>();
-        for(Blob blob:blobs) {
+        for (Blob blob : blobs) {
             responses.add(new MockVisionResponse());
         }
         return responses;

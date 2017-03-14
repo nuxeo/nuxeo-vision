@@ -79,15 +79,13 @@ public class GoogleVisionResponse implements VisionResponse {
         for (com.google.api.services.vision.v1.model.ColorInfo colorInfo : colors) {
             Color color = colorInfo.getColor();
 
-            float red = color.getRed() != null ? color.getRed()/255 : 0;
-            float blue = color.getBlue() != null ? color.getBlue()/255 : 0;
-            float green = color.getGreen() != null ? color.getGreen()/255 : 0;
+            float red = color.getRed() != null ? color.getRed() / 255 : 0;
+            float blue = color.getBlue() != null ? color.getBlue() / 255 : 0;
+            float green = color.getGreen() != null ? color.getGreen() / 255 : 0;
 
-            java.awt.Color resultColor = new java.awt.Color(red,green,blue);
+            java.awt.Color resultColor = new java.awt.Color(red, green, blue);
 
-            results.add(
-                    new ColorInfo(
-                            resultColor,colorInfo.getPixelFraction(),colorInfo.getScore()));
+            results.add(new ColorInfo(resultColor, colorInfo.getPixelFraction(), colorInfo.getScore()));
         }
         return new ImageProperties(results);
     }
@@ -97,16 +95,14 @@ public class GoogleVisionResponse implements VisionResponse {
         return response;
     }
 
-    protected List<TextEntity> processEntityAnnotationList(
-            List<EntityAnnotation> annotations) {
+    protected List<TextEntity> processEntityAnnotationList(List<EntityAnnotation> annotations) {
         List<TextEntity> result = new ArrayList<>();
         if (annotations == null) {
             return result;
         }
         for (EntityAnnotation annotation : annotations) {
             result.add(new TextEntity(annotation.getDescription(),
-                    annotation.getScore() != null ? annotation.getScore() : 0,
-                    annotation.getLocale()));
+                    annotation.getScore() != null ? annotation.getScore() : 0, annotation.getLocale()));
         }
         return result;
     }

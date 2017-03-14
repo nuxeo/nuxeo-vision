@@ -88,10 +88,10 @@ public class VisionOp {
         }
 
         try {
-            if (provider==null || provider.length()==0) {
+            if (provider == null || provider.length() == 0) {
                 results = visionService.execute(blobs, featureList, maxResults);
             } else {
-                results = visionService.execute(provider,blobs,featureList,maxResults);
+                results = visionService.execute(provider, blobs, featureList, maxResults);
             }
             ctx.put(outputVariable, results);
         } catch (IOException | GeneralSecurityException e) {

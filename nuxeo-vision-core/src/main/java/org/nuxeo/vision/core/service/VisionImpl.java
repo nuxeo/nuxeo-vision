@@ -47,9 +47,8 @@ public class VisionImpl extends DefaultComponent implements Vision {
     protected Map<String, VisionProvider> providers = new HashMap<>();
 
     /**
-     * Component activated notification. Called when the component is activated.
-     * All component dependencies are resolved at that moment. Use this method
-     * to initialize the component.
+     * Component activated notification. Called when the component is activated. All component dependencies are resolved
+     * at that moment. Use this method to initialize the component.
      *
      * @param context the component context.
      */
@@ -59,9 +58,8 @@ public class VisionImpl extends DefaultComponent implements Vision {
     }
 
     /**
-     * Component deactivated notification. Called before a component is
-     * unregistered. Use this method to do cleanup if any and free any resources
-     * held by the component.
+     * Component deactivated notification. Called before a component is unregistered. Use this method to do cleanup if
+     * any and free any resources held by the component.
      *
      * @param context the component context.
      */
@@ -71,12 +69,10 @@ public class VisionImpl extends DefaultComponent implements Vision {
     }
 
     /**
-     * Application started notification. Called after the application started.
-     * You can do here any initialization that requires a working application
-     * (all resolved bundles and components are active at that moment)
+     * Application started notification. Called after the application started. You can do here any initialization that
+     * requires a working application (all resolved bundles and components are active at that moment)
      *
-     * @param context the component context. Use it to get the current bundle
-     *            context
+     * @param context the component context. Use it to get the current bundle context
      * @throws Exception
      */
     @Override
@@ -84,83 +80,73 @@ public class VisionImpl extends DefaultComponent implements Vision {
     }
 
     @Override
-    public void registerContribution(Object contribution, String extensionPoint,
-                                     ComponentInstance contributor) {
+    public void registerContribution(Object contribution, String extensionPoint, ComponentInstance contributor) {
         if (CONFIG_EXT_POINT.equals(extensionPoint)) {
             config = (VisionDescriptor) contribution;
         } else if (PROVIDER_EXT_POINT.equals(extensionPoint)) {
             VisionProviderDescriptor desc = (VisionProviderDescriptor) contribution;
             try {
-                VisionProvider provider = (VisionProvider) desc.getClassName()
-                        .getConstructor(Map.class)
-                        .newInstance(desc.getParameters());
-                providers.put(desc.getProviderName(),provider);
-            } catch (InstantiationException | IllegalAccessException |
-                     NoSuchMethodException | InvocationTargetException e) {
+                VisionProvider provider = (VisionProvider) desc.getClassName().getConstructor(Map.class).newInstance(
+                        desc.getParameters());
+                providers.put(desc.getProviderName(), provider);
+            } catch (InstantiationException | IllegalAccessException | NoSuchMethodException
+                    | InvocationTargetException e) {
                 throw new NuxeoException(e);
             }
         }
     }
 
     @Override
-    public void unregisterContribution(Object contribution,
-            String extensionPoint, ComponentInstance contributor) {
+    public void unregisterContribution(Object contribution, String extensionPoint, ComponentInstance contributor) {
         // Logic to do when unregistering any contribution
     }
 
     @Override
-    public VisionResponse execute(Blob blob, List<VisionFeature> features,
-            int maxResults) throws IOException, GeneralSecurityException,
-            IllegalStateException {
-        return execute(config.getDefaultProviderName(),blob,features,maxResults);
+    public VisionResponse execute(Blob blob, List<VisionFeature> features, int maxResults)
+            throws IOException, GeneralSecurityException, IllegalStateException {
+        return execute(config.getDefaultProviderName(), blob, features, maxResults);
     }
 
     @Override
-    public List<VisionResponse> execute(List<Blob> blobs,
-                                        List<VisionFeature> features, int maxResults) throws IOException,
-            GeneralSecurityException, IllegalStateException {
-        return execute(config.getDefaultProviderName(),blobs,features,maxResults);
+    public List<VisionResponse> execute(List<Blob> blobs, List<VisionFeature> features, int maxResults)
+            throws IOException, GeneralSecurityException, IllegalStateException {
+        return execute(config.getDefaultProviderName(), blobs, features, maxResults);
     }
 
-    //since 9.1
+    // since 9.1
     @Override
-    public VisionResponse execute(String providerName, Blob blob, List<VisionFeature> features, int maxResults) throws
-            IOException, GeneralSecurityException {
+    public VisionResponse execute(String providerName, Blob blob, List<VisionFeature> features, int maxResults)
+            throws IOException, GeneralSecurityException {
         if (blob == null) {
             throw new IllegalArgumentException("Input Blob cannot be null");
         } else if (features == null || features.size() == 0) {
-            throw new IllegalArgumentException(
-                    "The feature list cannot be empty or null");
+            throw new IllegalArgumentException("The feature list cannot be empty or null");
         }
 
-        List<VisionResponse> results = execute(providerName,ImmutableList.of(blob),
-                features, maxResults);
+        List<VisionResponse> results = execute(providerName, ImmutableList.of(blob), features, maxResults);
         if (results.size() > 0) {
             return results.get(0);
         } else {
             throw new NuxeoException(
-                    "Provider " + providerName + " vision returned empty results for "
-                            + blob.getFilename());
+                    "Provider " + providerName + " vision returned empty results for " + blob.getFilename());
         }
     }
 
-    //since 9.1
+    // since 9.1
     @Override
-    public List<VisionResponse> execute(String providerName, List<Blob> blobs, List<VisionFeature> features, int
-            maxResults) throws IOException, GeneralSecurityException {
+    public List<VisionResponse> execute(String providerName, List<Blob> blobs, List<VisionFeature> features,
+            int maxResults) throws IOException, GeneralSecurityException {
         VisionProvider provider = providers.get(providerName);
 
-        if (provider==null) throw new NuxeoException("Unknown provider: "+providerName);
+        if (provider == null)
+            throw new NuxeoException("Unknown provider: " + providerName);
 
         if (blobs == null || blobs.size() == 0) {
-            throw new IllegalArgumentException(
-                    "Input Blob list cannot be null or empty");
+            throw new IllegalArgumentException("Input Blob list cannot be null or empty");
         } else if (!provider.checkBlobs(blobs)) {
-            throw new IllegalArgumentException(
-                    "Too many blobs or size exceeds the API limit");
+            throw new IllegalArgumentException("Too many blobs or size exceeds the API limit");
         } else if (features == null || features.size() == 0) {
-            throw new IllegalArgumentException(
-                    "The feature list cannot be empty or null");
+            throw new IllegalArgumentException("The feature list cannot be empty or null");
         }
         return provider.execute(blobs, features, maxResults);
     }

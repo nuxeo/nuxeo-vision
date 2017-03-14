@@ -26,25 +26,21 @@ import java.util.List;
 public interface VisionResponse {
 
     /**
-     *
      * @return a list of classification labels returned by the service
      */
     List<TextEntity> getClassificationLabels();
 
     /**
-     *
      * @return a list of text strings extracted by the service
      */
     List<TextEntity> getOcrText();
 
     /**
-     *
      * @return a list of properties
      */
     ImageProperties getImageProperties();
 
     /**
-     *
      * @return the native object returned by the service provider
      */
     Object getNativeObject();

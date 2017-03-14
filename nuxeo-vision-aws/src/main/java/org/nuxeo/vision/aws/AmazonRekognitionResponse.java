@@ -30,6 +30,7 @@ import java.util.List;
 public class AmazonRekognitionResponse implements VisionResponse {
 
     private DetectLabelsResult response;
+
     private List<TextEntity> labels = new ArrayList<TextEntity>();
 
     public AmazonRekognitionResponse(DetectLabelsResult response) {
