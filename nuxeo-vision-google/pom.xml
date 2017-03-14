@@ -26,7 +26,7 @@
     <dependency>
       <groupId>com.google.apis</groupId>
       <artifactId>google-api-services-vision</artifactId>
-      <version>v1-rev2-1.21.0</version>
+      <version>${google.vision.version}</version>
     </dependency>
      <dependency>
       <groupId>com.google.api-client</groupId>
