@@ -18,9 +18,6 @@
  */
 package org.nuxeo.vision.core.image;
 
-/**
- * Created by Michaël on 3/10/2016.
- */
 public class TextEntity {
 
     /**
