@@ -25,6 +25,9 @@ import org.nuxeo.common.xmap.annotation.XObject;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * since 9.1
+ */
 @XObject("provider")
 public class VisionProviderDescriptor {
 
