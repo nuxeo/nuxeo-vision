@@ -113,7 +113,7 @@ public class VisionImpl extends DefaultComponent implements Vision {
         return execute(config.getDefaultProviderName(), blobs, features, maxResults);
     }
 
-    // since 9.1
+    // @since 9.1
     @Override
     public VisionResponse execute(String providerName, Blob blob, List<VisionFeature> features, int maxResults)
             throws IOException, GeneralSecurityException {
@@ -132,7 +132,7 @@ public class VisionImpl extends DefaultComponent implements Vision {
         }
     }
 
-    // since 9.1
+    // @since 9.1
     @Override
     public List<VisionResponse> execute(String providerName, List<Blob> blobs, List<VisionFeature> features,
             int maxResults) throws IOException, GeneralSecurityException {
