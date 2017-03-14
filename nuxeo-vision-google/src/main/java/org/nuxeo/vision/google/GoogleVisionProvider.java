@@ -26,6 +26,7 @@ import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.vision.v1.VisionScopes;
 import com.google.api.services.vision.v1.model.*;
+import com.google.common.collect.ImmutableList;
 import org.nuxeo.ecm.core.api.Blob;
 import org.nuxeo.ecm.core.api.NuxeoException;
 import org.nuxeo.vision.core.service.VisionFeature;
@@ -128,7 +129,13 @@ public class GoogleVisionProvider implements VisionProvider {
 
     @Override
     public List<VisionFeature> getSupportedFeatures() {
-        return null;
+        return ImmutableList.of(
+                VisionFeature.FACE_DETECTION,
+                VisionFeature.LANDMARK_DETECTION,
+                VisionFeature.LOGO_DETECTION,
+                VisionFeature.LABEL_DETECTION,
+                VisionFeature.SAFE_SEARCH_DETECTION,
+                VisionFeature.IMAGE_PROPERTIES);
     }
 
     @Override
