@@ -15,6 +15,7 @@
 
   <properties>
     <nuxeo.dam.nxr.version>6.3.0-SNAPSHOT</nuxeo.dam.nxr.version>
+    <google.vision.version>v1-rev2-1.21.0</google.vision.version>
   </properties>
 
   <modules>
