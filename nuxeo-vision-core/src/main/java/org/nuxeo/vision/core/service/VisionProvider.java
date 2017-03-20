@@ -1,5 +1,5 @@
 /*
- * (C) Copyright 2017 Nuxeo SA (http://nuxeo.com/) and others.
+ * (C) Copyright 2015-2017 Nuxeo (http://nuxeo.com/) and others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,13 +20,14 @@
 
 package org.nuxeo.vision.core.service;
 
-import org.nuxeo.ecm.core.api.Blob;
-
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.List;
 
+import org.nuxeo.ecm.core.api.Blob;
+
 /**
+ * A vision provider is a wrapper that encapsulates calls to a given computer vision service
  * @since 9.1
  */
 public interface VisionProvider {

@@ -1,5 +1,5 @@
 /*
- * (C) Copyright 2017 Nuxeo SA (http://nuxeo.com/) and others.
+ * (C) Copyright 2015-2017 Nuxeo (http://nuxeo.com/) and others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,18 +19,18 @@
 
 package org.nuxeo.vision.core.test.mock;
 
-import com.google.common.collect.ImmutableList;
+import java.util.Arrays;
+import java.util.List;
+
 import org.nuxeo.vision.core.image.ImageProperties;
 import org.nuxeo.vision.core.image.TextEntity;
 import org.nuxeo.vision.core.service.VisionResponse;
-
-import java.util.List;
 
 public class MockVisionResponse implements VisionResponse {
 
     @Override
     public List<TextEntity> getClassificationLabels() {
-        return ImmutableList.of(new TextEntity("label", 1.0f, "en"));
+        return Arrays.asList(new TextEntity("label", 1.0f, "en"));
     }
 
     @Override

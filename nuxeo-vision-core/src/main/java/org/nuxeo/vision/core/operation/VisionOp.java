@@ -1,5 +1,5 @@
 /*
- * (C) Copyright 2017 Nuxeo SA (http://nuxeo.com/) and others.
+ * (C) Copyright 2015-2017 Nuxeo (http://nuxeo.com/) and others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,12 @@
  */
 package org.nuxeo.vision.core.operation;
 
+import java.io.IOException;
+import java.security.GeneralSecurityException;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.nuxeo.ecm.automation.OperationContext;
@@ -32,11 +38,6 @@ import org.nuxeo.ecm.core.api.Blob;
 import org.nuxeo.vision.core.service.Vision;
 import org.nuxeo.vision.core.service.VisionFeature;
 import org.nuxeo.vision.core.service.VisionResponse;
-
-import java.io.IOException;
-import java.security.GeneralSecurityException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  *
@@ -88,7 +89,7 @@ public class VisionOp {
         }
 
         try {
-            if (provider == null || provider.length() == 0) {
+            if (StringUtils.isEmpty(provider)) {
                 results = visionService.execute(blobs, featureList, maxResults);
             } else {
                 results = visionService.execute(provider, blobs, featureList, maxResults);

@@ -1,5 +1,5 @@
 /*
- * (C) Copyright 2017 Nuxeo SA (http://nuxeo.com/) and others.
+ * (C) Copyright 2015-2017 Nuxeo (http://nuxeo.com/) and others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,15 @@
  */
 package org.nuxeo.vision.google.test;
 
-import com.google.common.collect.ImmutableList;
+import static org.junit.Assert.*;
+
+import java.io.File;
+import java.io.IOException;
+import java.security.GeneralSecurityException;
+import java.util.*;
+
+import javax.inject.Inject;
+
 import org.apache.commons.lang.StringUtils;
 import org.junit.Assume;
 import org.junit.Before;
@@ -36,17 +44,6 @@ import org.nuxeo.vision.core.service.Vision;
 import org.nuxeo.vision.core.service.VisionFeature;
 import org.nuxeo.vision.core.service.VisionResponse;
 import org.nuxeo.vision.google.GoogleVisionProvider;
-
-import javax.inject.Inject;
-import java.io.File;
-import java.io.IOException;
-import java.security.GeneralSecurityException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static org.junit.Assert.*;
 
 @RunWith(FeaturesRunner.class)
 @Features({ PlatformFeature.class })
@@ -74,8 +71,8 @@ public class TestGoogleVisionProvider {
 
         File file = new File(getClass().getResource("/files/plane.jpg").getPath());
         Blob blob = new FileBlob(file);
-        List<VisionResponse> results = getGoogleVisionProvider().execute(ImmutableList.of(blob),
-                ImmutableList.of(VisionFeature.LABEL_DETECTION), 5);
+        List<VisionResponse> results = getGoogleVisionProvider().execute(Arrays.asList(blob),
+                Arrays.asList(VisionFeature.LABEL_DETECTION), 5);
         assertEquals(1, results.size());
         List<TextEntity> labels = results.get(0).getClassificationLabels();
         assertNotNull(labels);
@@ -90,8 +87,8 @@ public class TestGoogleVisionProvider {
 
         File file = new File(getClass().getResource("/files/text.png").getPath());
         Blob blob = new FileBlob(file);
-        List<VisionResponse> results = getGoogleVisionProvider().execute(ImmutableList.of(blob),
-                ImmutableList.of(VisionFeature.TEXT_DETECTION), 5);
+        List<VisionResponse> results = getGoogleVisionProvider().execute(Arrays.asList(blob),
+                Arrays.asList(VisionFeature.TEXT_DETECTION), 5);
         assertEquals(1, results.size());
         List<TextEntity> texts = results.get(0).getOcrText();
         assertNotNull(texts);
@@ -106,8 +103,8 @@ public class TestGoogleVisionProvider {
 
         File file = new File(getClass().getResource("/files/plane.jpg").getPath());
         Blob blob = new FileBlob(file);
-        List<VisionResponse> results = getGoogleVisionProvider().execute(ImmutableList.of(blob),
-                ImmutableList.of(VisionFeature.IMAGE_PROPERTIES), 5);
+        List<VisionResponse> results = getGoogleVisionProvider().execute(Arrays.asList(blob),
+                Arrays.asList(VisionFeature.IMAGE_PROPERTIES), 5);
         assertEquals(1, results.size());
         List<ColorInfo> colors = results.get(0).getImageProperties().getColors();
         assertNotNull(colors);
@@ -122,8 +119,8 @@ public class TestGoogleVisionProvider {
 
         File file = new File(getClass().getResource("/files/plane.jpg").getPath());
         Blob blob = new FileBlob(file);
-        List<VisionResponse> results = getGoogleVisionProvider().execute(ImmutableList.of(blob),
-                ImmutableList.of(VisionFeature.TEXT_DETECTION, VisionFeature.LABEL_DETECTION), 5);
+        List<VisionResponse> results = getGoogleVisionProvider().execute(Arrays.asList(blob),
+                Arrays.asList(VisionFeature.TEXT_DETECTION, VisionFeature.LABEL_DETECTION), 5);
         assertEquals(1, results.size());
         List<TextEntity> labels = results.get(0).getClassificationLabels();
         assertNotNull(labels);
@@ -142,8 +139,8 @@ public class TestGoogleVisionProvider {
 
         File file = new File(getClass().getResource("/files/nyc.jpg").getPath());
         Blob blob = new FileBlob(file);
-        List<VisionResponse> results = getGoogleVisionProvider().execute(ImmutableList.of(blob),
-                ImmutableList.of(VisionFeature.TEXT_DETECTION, VisionFeature.LABEL_DETECTION,
+        List<VisionResponse> results = getGoogleVisionProvider().execute(Arrays.asList(blob),
+                Arrays.asList(VisionFeature.TEXT_DETECTION, VisionFeature.LABEL_DETECTION,
                         VisionFeature.IMAGE_PROPERTIES, VisionFeature.FACE_DETECTION, VisionFeature.LOGO_DETECTION,
                         VisionFeature.LANDMARK_DETECTION, VisionFeature.SAFE_SEARCH_DETECTION),
                 5);
@@ -170,7 +167,7 @@ public class TestGoogleVisionProvider {
         blobs.add(new FileBlob(new File(getClass().getResource("/files/text.png").getPath())));
 
         List<VisionResponse> results = getGoogleVisionProvider().execute(blobs,
-                ImmutableList.of(VisionFeature.TEXT_DETECTION, VisionFeature.LABEL_DETECTION), 5);
+                Arrays.asList(VisionFeature.TEXT_DETECTION, VisionFeature.LABEL_DETECTION), 5);
         assertTrue(results.size() == 2);
     }
 

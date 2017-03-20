@@ -1,5 +1,5 @@
 /*
- * (C) Copyright 2017 Nuxeo SA (http://nuxeo.com/) and others.
+ * (C) Copyright 2015-2017 Nuxeo (http://nuxeo.com/) and others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,17 +19,17 @@
 
 package org.nuxeo.vision.core.test.mock;
 
-import com.google.common.collect.ImmutableList;
+import java.io.IOException;
+import java.security.GeneralSecurityException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+
 import org.nuxeo.ecm.core.api.Blob;
 import org.nuxeo.vision.core.service.VisionFeature;
 import org.nuxeo.vision.core.service.VisionProvider;
 import org.nuxeo.vision.core.service.VisionResponse;
-
-import java.io.IOException;
-import java.security.GeneralSecurityException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 public class MockVisionProvider implements VisionProvider {
 
@@ -50,7 +50,7 @@ public class MockVisionProvider implements VisionProvider {
 
     @Override
     public List<VisionFeature> getSupportedFeatures() {
-        return ImmutableList.of(VisionFeature.LABEL_DETECTION);
+        return Arrays.asList(VisionFeature.LABEL_DETECTION);
     }
 
     @Override

@@ -1,5 +1,5 @@
 /*
- * (C) Copyright 2017 Nuxeo SA (http://nuxeo.com/) and others.
+ * (C) Copyright 2015-2017 Nuxeo (http://nuxeo.com/) and others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,12 @@
  *     Michael Vachette
  */
 package org.nuxeo.vision.core.test;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+
+import javax.inject.Inject;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -42,11 +48,6 @@ import org.nuxeo.vision.core.image.TextEntity;
 import org.nuxeo.vision.core.operation.VisionOp;
 import org.nuxeo.vision.core.service.VisionFeature;
 import org.nuxeo.vision.core.service.VisionResponse;
-
-import javax.inject.Inject;
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
 
 @RunWith(FeaturesRunner.class)
 @org.nuxeo.runtime.test.runner.Features(AutomationFeature.class)

@@ -1,5 +1,5 @@
 /*
- * (C) Copyright 2017 Nuxeo SA (http://nuxeo.com/) and others.
+ * (C) Copyright 2015-2017 Nuxeo (http://nuxeo.com/) and others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,13 @@
  */
 package org.nuxeo.vision.core.service;
 
-import com.google.common.collect.ImmutableList;
+import java.io.IOException;
+import java.security.GeneralSecurityException;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.nuxeo.ecm.core.api.Blob;
@@ -26,13 +32,6 @@ import org.nuxeo.ecm.core.api.NuxeoException;
 import org.nuxeo.runtime.model.ComponentContext;
 import org.nuxeo.runtime.model.ComponentInstance;
 import org.nuxeo.runtime.model.DefaultComponent;
-
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.security.GeneralSecurityException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class VisionImpl extends DefaultComponent implements Vision {
 
@@ -86,11 +85,10 @@ public class VisionImpl extends DefaultComponent implements Vision {
         } else if (PROVIDER_EXT_POINT.equals(extensionPoint)) {
             VisionProviderDescriptor desc = (VisionProviderDescriptor) contribution;
             try {
-                VisionProvider provider = (VisionProvider) desc.getClassName().getConstructor(Map.class).newInstance(
+                VisionProvider provider = (VisionProvider) desc.getKlass().getConstructor(Map.class).newInstance(
                         desc.getParameters());
                 providers.put(desc.getProviderName(), provider);
-            } catch (InstantiationException | IllegalAccessException | NoSuchMethodException
-                    | InvocationTargetException e) {
+            } catch (ReflectiveOperationException e) {
                 throw new NuxeoException(e);
             }
         }
@@ -123,7 +121,7 @@ public class VisionImpl extends DefaultComponent implements Vision {
             throw new IllegalArgumentException("The feature list cannot be empty or null");
         }
 
-        List<VisionResponse> results = execute(providerName, ImmutableList.of(blob), features, maxResults);
+        List<VisionResponse> results = execute(providerName, Arrays.asList(blob), features, maxResults);
         if (results.size() > 0) {
             return results.get(0);
         } else {
