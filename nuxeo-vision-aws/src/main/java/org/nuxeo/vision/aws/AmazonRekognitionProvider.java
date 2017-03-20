@@ -1,5 +1,5 @@
 /*
- * (C) Copyright 2017 Nuxeo SA (http://nuxeo.com/) and others.
+ * (C) Copyright 2015-2017 Nuxeo (http://nuxeo.com/) and others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,23 +19,24 @@
  */
 package org.nuxeo.vision.aws;
 
-import com.amazonaws.auth.AWSStaticCredentialsProvider;
-import com.amazonaws.auth.BasicAWSCredentials;
-import com.amazonaws.services.rekognition.AmazonRekognition;
-import com.amazonaws.services.rekognition.AmazonRekognitionClientBuilder;
-import com.amazonaws.services.rekognition.model.DetectLabelsRequest;
-import com.google.common.collect.ImmutableList;
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.security.GeneralSecurityException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+
 import org.nuxeo.ecm.core.api.Blob;
 import org.nuxeo.vision.core.service.VisionFeature;
 import org.nuxeo.vision.core.service.VisionProvider;
 import org.nuxeo.vision.core.service.VisionResponse;
 
-import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.security.GeneralSecurityException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import com.amazonaws.auth.AWSStaticCredentialsProvider;
+import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.services.rekognition.AmazonRekognition;
+import com.amazonaws.services.rekognition.AmazonRekognitionClientBuilder;
+import com.amazonaws.services.rekognition.model.DetectLabelsRequest;
 
 public class AmazonRekognitionProvider implements VisionProvider {
 
@@ -45,13 +46,16 @@ public class AmazonRekognitionProvider implements VisionProvider {
 
     public static final String SECRET_KEY_PARAM = "secretKey";
 
-    protected static final long _5MB = 5242880;
+    protected static final long BLOB_MAX_SIZE = 5*1024*1024;
 
-    protected static final List<String> SUPPORTED_FORMAT = ImmutableList.of("image/jpeg", "image/png");
+    protected static final List<String> SUPPORTED_FORMAT = Arrays.asList("image/jpeg", "image/png");
 
-    private volatile AmazonRekognition client = null;
+    /**
+     * volatile on purpose to allow for the double-checked locking idiom
+     */
+    protected volatile AmazonRekognition client;
 
-    private Map<String, String> parameters;
+    protected Map<String, String> parameters;
 
     public AmazonRekognitionProvider(Map<String, String> parameters) {
         this.parameters = parameters;
@@ -60,7 +64,7 @@ public class AmazonRekognitionProvider implements VisionProvider {
     @Override
     public List<VisionResponse> execute(List<Blob> blobs, List<VisionFeature> features, int maxResults)
             throws IOException, GeneralSecurityException, IllegalStateException {
-        ArrayList<VisionResponse> result = new ArrayList<>();
+        List<VisionResponse> result = new ArrayList<>();
         for (Blob blob : blobs) {
             result.add(new AmazonRekognitionResponse(getClient().detectLabels(
                     new DetectLabelsRequest().withImage(new com.amazonaws.services.rekognition.model.Image().withBytes(
@@ -71,7 +75,7 @@ public class AmazonRekognitionProvider implements VisionProvider {
 
     @Override
     public List<VisionFeature> getSupportedFeatures() {
-        return ImmutableList.of(VisionFeature.LABEL_DETECTION, VisionFeature.FACE_DETECTION);
+        return Arrays.asList(VisionFeature.LABEL_DETECTION, VisionFeature.FACE_DETECTION);
     }
 
     @Override
@@ -81,7 +85,7 @@ public class AmazonRekognitionProvider implements VisionProvider {
             if (size <= 0) {
                 throw new IOException("Could not read the blob size");
             }
-            if (size > _5MB) {
+            if (size > BLOB_MAX_SIZE) {
                 return false;
             }
             if (!SUPPORTED_FORMAT.contains(blob.getMimeType())) {
@@ -97,7 +101,7 @@ public class AmazonRekognitionProvider implements VisionProvider {
         return getClient();
     }
 
-    private AmazonRekognition getClient() {
+    protected AmazonRekognition getClient() {
         // thread safe lazy initialization of the AWS Rekognition client
         // see https://en.wikipedia.org/wiki/Double-checked_locking
         AmazonRekognition result = client;

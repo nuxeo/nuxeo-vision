@@ -1,5 +1,5 @@
 /*
- * (C) Copyright 2017 Nuxeo SA (http://nuxeo.com/) and others.
+ * (C) Copyright 2015-2017 Nuxeo (http://nuxeo.com/) and others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,8 +18,16 @@
  */
 package org.nuxeo.vision.core.test;
 
-import com.google.common.collect.ImmutableList;
-import com.google.inject.Inject;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
+import java.io.File;
+import java.io.IOException;
+import java.security.GeneralSecurityException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.nuxeo.ecm.core.api.Blob;
@@ -32,14 +40,7 @@ import org.nuxeo.vision.core.service.Vision;
 import org.nuxeo.vision.core.service.VisionFeature;
 import org.nuxeo.vision.core.service.VisionResponse;
 
-import java.io.File;
-import java.io.IOException;
-import java.security.GeneralSecurityException;
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import com.google.inject.Inject;
 
 @RunWith(FeaturesRunner.class)
 @org.nuxeo.runtime.test.runner.Features({ PlatformFeature.class })
@@ -56,7 +57,7 @@ public class TestVisionService {
     public void testLabelFeature() throws IOException, GeneralSecurityException {
         File file = new File(getClass().getResource("/files/plane.jpg").getPath());
         Blob blob = new FileBlob(file);
-        VisionResponse result = vision.execute(blob, ImmutableList.of(VisionFeature.LABEL_DETECTION), 5);
+        VisionResponse result = vision.execute(blob, Arrays.asList(VisionFeature.LABEL_DETECTION), 5);
         assertNotNull(result);
     }
 
@@ -68,7 +69,7 @@ public class TestVisionService {
         blobs.add(new FileBlob(new File(getClass().getResource("/files/text.png").getPath())));
 
         List<VisionResponse> results = vision.execute(blobs,
-                ImmutableList.of(VisionFeature.TEXT_DETECTION, VisionFeature.LABEL_DETECTION), 5);
+                Arrays.asList(VisionFeature.TEXT_DETECTION, VisionFeature.LABEL_DETECTION), 5);
         assertTrue(results.size() == 2);
     }
 

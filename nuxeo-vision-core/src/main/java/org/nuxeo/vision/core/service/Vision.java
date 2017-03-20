@@ -1,5 +1,5 @@
 /*
- * (C) Copyright 2017 Nuxeo SA (http://nuxeo.com/) and others.
+ * (C) Copyright 2015-2017 Nuxeo (http://nuxeo.com/) and others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,21 +19,21 @@
  */
 package org.nuxeo.vision.core.service;
 
-import org.nuxeo.ecm.core.api.Blob;
-
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.List;
 import java.util.Map;
+
+import org.nuxeo.ecm.core.api.Blob;
 
 /**
  * A service that performs Computer Vision tasks like classification, OCR, Face Detection ...
  */
 public interface Vision {
 
-    public static final String EVENT_IMAGE_HANDLED = "visionOnImageDone";
+    String EVENT_IMAGE_HANDLED = "visionOnImageDone";
 
-    public static final String EVENT_VIDEO_HANDLED = "visionOnVideoDone";
+    String EVENT_VIDEO_HANDLED = "visionOnVideoDone";
 
     /**
      * @param blob the image blob
@@ -45,25 +45,25 @@ public interface Vision {
             throws IOException, GeneralSecurityException;
 
     /**
-     * @since 9.1
      * 
      * @param provider the provider to use
      * @param blob the image blob
      * @param features the feature to request from the service
      * @param maxResults the maximum number of results per feature
      * @return a {@link VisionResponse} object
+     * @since 9.1
      */
     VisionResponse execute(String provider, Blob blob, List<VisionFeature> features, int maxResults)
             throws IOException, GeneralSecurityException;
 
     /**
-     * @since 9.1
-     * 
+     *
      * @param provider the provider to use
      * @param blobs A list of image blobs
      * @param features the feature to request from the service
      * @param maxResults the maximum number of results per feature
      * @return a list of {@link VisionResponse} object
+     * @since 9.1
      */
     List<VisionResponse> execute(String provider, List<Blob> blobs, List<VisionFeature> features, int maxResults)
             throws IOException, GeneralSecurityException;
@@ -88,23 +88,20 @@ public interface Vision {
     String getVideoMapperChainName();
 
     /**
-     * @since 9.1
-     * 
      * @return The name of default provider
+     * @since 9.1
      */
     String getDefaultProvider();
 
     /**
-     * @since 9.1
-     * 
      * @return The provider object
+     * @since 9.1
      */
     VisionProvider getProvider(String name);
 
     /**
-     * @since 9.1
-     * 
      * @return all registered providers
+     * @since 9.1
      */
     Map<String, VisionProvider> getProviders();
 

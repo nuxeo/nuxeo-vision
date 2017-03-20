@@ -1,5 +1,5 @@
 /*
- * (C) Copyright 2017 Nuxeo SA (http://nuxeo.com/) and others.
+ * (C) Copyright 2015-2017 Nuxeo (http://nuxeo.com/) and others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,17 +19,18 @@
 
 package org.nuxeo.vision.google;
 
-import com.google.api.services.vision.v1.model.AnnotateImageResponse;
-import com.google.api.services.vision.v1.model.Color;
-import com.google.api.services.vision.v1.model.DominantColorsAnnotation;
-import com.google.api.services.vision.v1.model.EntityAnnotation;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.nuxeo.vision.core.image.ColorInfo;
 import org.nuxeo.vision.core.image.ImageProperties;
 import org.nuxeo.vision.core.image.TextEntity;
 import org.nuxeo.vision.core.service.VisionResponse;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.google.api.services.vision.v1.model.AnnotateImageResponse;
+import com.google.api.services.vision.v1.model.Color;
+import com.google.api.services.vision.v1.model.DominantColorsAnnotation;
+import com.google.api.services.vision.v1.model.EntityAnnotation;
 
 public class GoogleVisionResponse implements VisionResponse {
 

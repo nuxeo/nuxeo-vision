@@ -1,5 +1,5 @@
 /*
- * (C) Copyright 2017 Nuxeo SA (http://nuxeo.com/) and others.
+ * (C) Copyright 2015-2017 Nuxeo (http://nuxeo.com/) and others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,15 @@
  */
 package org.nuxeo.vision.aws.test;
 
-import com.google.common.collect.ImmutableList;
+import static org.junit.Assert.*;
+
+import java.io.File;
+import java.io.IOException;
+import java.security.GeneralSecurityException;
+import java.util.*;
+
+import javax.inject.Inject;
+
 import org.apache.commons.lang.StringUtils;
 import org.junit.Assume;
 import org.junit.Before;
@@ -34,17 +42,6 @@ import org.nuxeo.vision.core.image.TextEntity;
 import org.nuxeo.vision.core.service.Vision;
 import org.nuxeo.vision.core.service.VisionFeature;
 import org.nuxeo.vision.core.service.VisionResponse;
-
-import javax.inject.Inject;
-import java.io.File;
-import java.io.IOException;
-import java.security.GeneralSecurityException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static org.junit.Assert.*;
 
 @RunWith(FeaturesRunner.class)
 @org.nuxeo.runtime.test.runner.Features({ PlatformFeature.class })
@@ -74,8 +71,8 @@ public class TestAmazonRekognitionProvider {
 
         File file = new File(getClass().getResource("/files/plane.jpg").getPath());
         Blob blob = new FileBlob(file);
-        List<VisionResponse> results = getProvider().execute(ImmutableList.of(blob),
-                ImmutableList.of(VisionFeature.LABEL_DETECTION), 5);
+        List<VisionResponse> results = getProvider().execute(Arrays.asList(blob),
+                Arrays.asList(VisionFeature.LABEL_DETECTION), 5);
         assertEquals(1, results.size());
         List<TextEntity> labels = results.get(0).getClassificationLabels();
         assertNotNull(labels);
@@ -92,7 +89,7 @@ public class TestAmazonRekognitionProvider {
         blobs.add(new FileBlob(new File(getClass().getResource("/files/plane.jpg").getPath())));
         blobs.add(new FileBlob(new File(getClass().getResource("/files/text.png").getPath())));
 
-        List<VisionResponse> results = getProvider().execute(blobs, ImmutableList.of(VisionFeature.LABEL_DETECTION), 5);
+        List<VisionResponse> results = getProvider().execute(blobs, Arrays.asList(VisionFeature.LABEL_DETECTION), 5);
         assertTrue(results.size() == 2);
     }
 

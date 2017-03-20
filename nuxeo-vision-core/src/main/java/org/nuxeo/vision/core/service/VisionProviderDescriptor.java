@@ -1,5 +1,5 @@
 /*
- * (C) Copyright 2017 Nuxeo SA (http://nuxeo.com/) and others.
+ * (C) Copyright 2015-2017 Nuxeo (http://nuxeo.com/) and others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,12 +18,12 @@
  */
 package org.nuxeo.vision.core.service;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.nuxeo.common.xmap.annotation.XNode;
 import org.nuxeo.common.xmap.annotation.XNodeMap;
 import org.nuxeo.common.xmap.annotation.XObject;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @since 9.1
@@ -35,13 +35,13 @@ public class VisionProviderDescriptor {
     protected String providerName;
 
     @XNode("@class")
-    protected Class className;
+    protected Class<?> klass;
 
     @XNodeMap(value = "parameters/parameter", key = "@name", type = HashMap.class, componentType = String.class)
     protected Map<String, String> parameters = new HashMap<>();
 
-    public Class getClassName() {
-        return className;
+    public Class<?> getKlass() {
+        return klass;
     }
 
     public String getProviderName() {

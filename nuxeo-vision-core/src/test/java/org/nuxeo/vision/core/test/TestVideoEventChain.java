@@ -1,5 +1,5 @@
 /*
- * (C) Copyright 2017 Nuxeo SA (http://nuxeo.com/) and others.
+ * (C) Copyright 2015-2017 Nuxeo (http://nuxeo.com/) and others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,18 @@
  *     Thibaud Arguillere
  */
 package org.nuxeo.vision.core.test;
+
+import static org.junit.Assert.assertEquals;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.inject.Inject;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -48,17 +60,6 @@ import org.nuxeo.runtime.test.runner.LocalDeploy;
 import org.nuxeo.vision.core.service.Vision;
 import org.nuxeo.vision.core.test.mock.MockWorkManager;
 import org.nuxeo.vision.core.worker.VideoVisionWorker;
-
-import javax.inject.Inject;
-import java.io.File;
-import java.io.IOException;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static org.junit.Assert.assertEquals;
 
 @RunWith(FeaturesRunner.class)
 @Features(AutomationFeature.class)

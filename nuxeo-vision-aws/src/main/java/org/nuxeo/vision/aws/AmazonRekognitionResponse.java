@@ -1,5 +1,5 @@
 /*
- * (C) Copyright 2017 Nuxeo SA (http://nuxeo.com/) and others.
+ * (C) Copyright 2015-2017 Nuxeo (http://nuxeo.com/) and others.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,20 +18,21 @@
  */
 package org.nuxeo.vision.aws;
 
-import com.amazonaws.services.rekognition.model.DetectLabelsResult;
-import com.amazonaws.services.rekognition.model.Label;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.nuxeo.vision.core.image.ImageProperties;
 import org.nuxeo.vision.core.image.TextEntity;
 import org.nuxeo.vision.core.service.VisionResponse;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.amazonaws.services.rekognition.model.DetectLabelsResult;
+import com.amazonaws.services.rekognition.model.Label;
 
 public class AmazonRekognitionResponse implements VisionResponse {
 
-    private DetectLabelsResult response;
+    protected DetectLabelsResult response;
 
-    private List<TextEntity> labels = new ArrayList<TextEntity>();
+    protected List<TextEntity> labels = new ArrayList<TextEntity>();
 
     public AmazonRekognitionResponse(DetectLabelsResult response) {
         this.response = response;
