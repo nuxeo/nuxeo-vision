@@ -2,9 +2,9 @@
 <package type="addon" name="nuxeo-vision" version="@VERSION@">
   <title>Nuxeo Vision</title>
   <description>
-The Nuxeo Vision addon provides a wrapper for Computer Vision Services. Currently it supports the Google Vision API and allows to retrieve relevant tags on images and videos. It also provides automation operations for customized re-use. The usages can easily be extended to a wide range of features including share recognition, auto-classification, OCR and more.
+The Nuxeo Vision addon provides a wrapper for Computer Vision Services. Currently, it supports the Google Vision API and the AWS Rekognition service. It allows retrieving relevant tags on images and videos. It also provides automation operations for customized re-use. The usages can easily be extended to a wide range of features including face recognition, auto-classification, OCR and more.
   </description>
-  <home-page>https://doc.nuxeo.com/x/PYHZAQ/</home-page>
+  <home-page>https://doc.nuxeo.com/nxdoc/nuxeo-vision/</home-page>
   <vendor>Nuxeo</vendor>
   <installer restart="true" />
   <uninstaller restart="true" />
