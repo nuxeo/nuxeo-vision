@@ -51,7 +51,7 @@ public class VideoStoryboardChangedListener implements EventListener {
         }
 
         VideoVisionWorker work = new VideoVisionWorker(doc.getRepositoryName(), doc.getId());
-        WorkManager workManager = Framework.getLocalService(WorkManager.class);
+        WorkManager workManager = Framework.getService(WorkManager.class);
         workManager.schedule(work, WorkManager.Scheduling.IF_NOT_SCHEDULED, true);
     }
 }
