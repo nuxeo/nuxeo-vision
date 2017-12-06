@@ -72,7 +72,7 @@ public class PictureConversionChangedListener implements PostCommitEventListener
 
             EventContextImpl evctx = new DocumentEventContext(session, session.getPrincipal(), doc);
             Event eventToSend = evctx.newEvent(Vision.EVENT_IMAGE_HANDLED);
-            EventService eventService = Framework.getLocalService(EventService.class);
+            EventService eventService = Framework.getService(EventService.class);
             eventService.fireEvent(eventToSend);
 
         } catch (OperationException e) {
