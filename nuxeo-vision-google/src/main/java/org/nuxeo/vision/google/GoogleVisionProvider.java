@@ -60,7 +60,7 @@ public class GoogleVisionProvider implements VisionProvider {
     protected Map<String, String> params;
 
     public GoogleVisionProvider(Map<String, String> parameters) {
-        this.params = parameters;
+        params = parameters;
     }
 
     /**
@@ -135,7 +135,7 @@ public class GoogleVisionProvider implements VisionProvider {
     public List<VisionFeature> getSupportedFeatures() {
         return Arrays.asList(VisionFeature.FACE_DETECTION, VisionFeature.LANDMARK_DETECTION,
                 VisionFeature.LOGO_DETECTION, VisionFeature.LABEL_DETECTION, VisionFeature.SAFE_SEARCH_DETECTION,
-                VisionFeature.IMAGE_PROPERTIES);
+                VisionFeature.IMAGE_PROPERTIES, VisionFeature.WEB_DETECTION);
     }
 
     @Override
