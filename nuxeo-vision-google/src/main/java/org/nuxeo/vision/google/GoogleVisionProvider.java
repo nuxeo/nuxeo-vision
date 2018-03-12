@@ -16,6 +16,7 @@
  * Contributors:
  *     Michael Vachette
  *     Remi Cattiau
+ *     Thibaud Arguillere
  */
 
 package org.nuxeo.vision.google;
@@ -25,14 +26,12 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.nuxeo.ecm.core.api.Blob;
 import org.nuxeo.ecm.core.api.NuxeoException;
-import org.nuxeo.vision.core.service.VisionFeature;
 import org.nuxeo.vision.core.service.VisionProvider;
 import org.nuxeo.vision.core.service.VisionResponse;
 
@@ -51,9 +50,9 @@ public class GoogleVisionProvider implements VisionProvider {
 
     public static final String CREDENTIAL_PATH_PARAM = "credentialFilePath";
 
-    protected static final long BLOB_MAX_SIZE = 4*1024*1024;
+    protected static final long BLOB_MAX_SIZE = 4 * 1024 * 1024;
 
-    protected static final long REQUEST_MAX_SIZE = 8*1024*1024;
+    protected static final long REQUEST_MAX_SIZE = 8 * 1024 * 1024;
 
     protected static final int MAX_BLOB_PER_REQUEST = 16;
 
@@ -95,7 +94,7 @@ public class GoogleVisionProvider implements VisionProvider {
     }
 
     @Override
-    public List<VisionResponse> execute(List<Blob> blobs, List<VisionFeature> features, int maxResults)
+    public List<VisionResponse> execute(List<Blob> blobs, List<String> features, int maxResults)
             throws IOException, GeneralSecurityException, IllegalStateException {
         // build list of requested features
         List<Feature> requestFeatures = buildFeatureList(features, maxResults);
@@ -129,13 +128,6 @@ public class GoogleVisionProvider implements VisionProvider {
             output.add(new GoogleVisionResponse(response));
         }
         return output;
-    }
-
-    @Override
-    public List<VisionFeature> getSupportedFeatures() {
-        return Arrays.asList(VisionFeature.FACE_DETECTION, VisionFeature.LANDMARK_DETECTION,
-                VisionFeature.LOGO_DETECTION, VisionFeature.LABEL_DETECTION, VisionFeature.SAFE_SEARCH_DETECTION,
-                VisionFeature.IMAGE_PROPERTIES, VisionFeature.WEB_DETECTION);
     }
 
     @Override
@@ -191,11 +183,11 @@ public class GoogleVisionProvider implements VisionProvider {
         return StringUtils.isNotEmpty(key);
     }
 
-    protected List<Feature> buildFeatureList(List<VisionFeature> features, int maxResults) {
+    protected List<Feature> buildFeatureList(List<String> features, int maxResults) {
 
         List<Feature> requestFeatures = new ArrayList<>();
-        for (VisionFeature feature : features) {
-            requestFeatures.add(new Feature().setType(feature.toString()).setMaxResults(maxResults));
+        for (String feature : features) {
+            requestFeatures.add(new Feature().setType(feature).setMaxResults(maxResults));
         }
         return requestFeatures;
     }

@@ -16,6 +16,7 @@
  * Contributors:
  *     Remi Cattiau
  *     Michael Vachette
+ *     Thibaud Arguillere
  */
 
 package org.nuxeo.vision.core.service;
@@ -34,21 +35,16 @@ public interface VisionProvider {
 
     /**
      * @param blobs the blobs to pass to the API
-     * @param features the feature to request from the provider
+     * @param feature(s) the feature to request from the provider
      * @param maxResults the maximum number of results per feature
      * @return a {@link VisionResponse} object
      */
-    List<VisionResponse> execute(List<Blob> blobs, List<VisionFeature> features, int maxResults)
+    List<VisionResponse> execute(List<Blob> blobs, List<String> features, int maxResults)
             throws IOException, GeneralSecurityException, IllegalStateException;
 
     /**
-     * @return The list of feature supported by the provider
-     */
-    List<VisionFeature> getSupportedFeatures();
-
-    /**
      * Verifies that the blobs size and format are supported by the provider
-     * 
+     *
      * @param blobs the blobs to pass to the API
      * @return a {@link VisionResponse} object
      */

@@ -104,7 +104,7 @@ public class TestPictureEventChain {
         List<Tag> tags = tagService.getDocumentTags(session, picture.getId(), session.getPrincipal().getName());
 
         Assert.assertTrue(tags.size() > 0);
-        System.out.print(tags);
+        //System.out.print(tags);
     }
 
     @Test
@@ -131,7 +131,7 @@ public class TestPictureEventChain {
         List<Tag> tags = tagService.getDocumentTags(session, picture.getId(), session.getPrincipal().getName());
 
         Assert.assertTrue(tags.size() > 0);
-        System.out.print(tags);
+        //System.out.print(tags);
 
         assertEquals(1, DummyTestListener.EVENTS_RECEIVED.size());
         assertEquals(Vision.EVENT_IMAGE_HANDLED, DummyTestListener.EVENTS_RECEIVED.get(0).getName());

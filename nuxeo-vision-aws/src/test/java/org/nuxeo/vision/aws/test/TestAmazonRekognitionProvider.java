@@ -67,12 +67,12 @@ public class TestAmazonRekognitionProvider {
     @Test
     public void testLabelFeature() throws IOException, GeneralSecurityException {
 
-        Assume.assumeTrue("Ccredentials not set", areCredentialsSet());
+        Assume.assumeTrue("Credentials not set", areCredentialsSet());
 
         File file = new File(getClass().getResource("/files/plane.jpg").getPath());
         Blob blob = new FileBlob(file);
         List<VisionResponse> results = getProvider().execute(Arrays.asList(blob),
-                Arrays.asList(VisionFeature.LABEL_DETECTION), 5);
+                Arrays.asList(VisionFeature.LABEL_DETECTION.toString()), 5);
         assertEquals(1, results.size());
         List<TextEntity> labels = results.get(0).getClassificationLabels();
         assertNotNull(labels);
@@ -83,19 +83,21 @@ public class TestAmazonRekognitionProvider {
     @Test
     public void testMultipleBlobs() throws IOException, GeneralSecurityException {
 
-        Assume.assumeTrue("Ccredentials not set", areCredentialsSet());
+        Assume.assumeTrue("Credentials not set", areCredentialsSet());
 
         List<Blob> blobs = new ArrayList<>();
         blobs.add(new FileBlob(new File(getClass().getResource("/files/plane.jpg").getPath())));
         blobs.add(new FileBlob(new File(getClass().getResource("/files/text.png").getPath())));
 
-        List<VisionResponse> results = getProvider().execute(blobs, Arrays.asList(VisionFeature.LABEL_DETECTION), 5);
+        List<VisionResponse> results = getProvider().execute(blobs,
+                Arrays.asList(VisionFeature.LABEL_DETECTION.toString()), 5);
         assertTrue(results.size() == 2);
     }
 
     protected AmazonRekognitionProvider getProvider() {
-        if (provider != null)
+        if (provider != null) {
             return provider;
+        }
         Map<String, String> params = new HashMap<>();
         params.put(AmazonRekognitionProvider.ACCESS_KEY_PARAM, System.getProperty(AWS_KEY));
         params.put(AmazonRekognitionProvider.SECRET_KEY_PARAM, System.getProperty(AWS_SECRET));

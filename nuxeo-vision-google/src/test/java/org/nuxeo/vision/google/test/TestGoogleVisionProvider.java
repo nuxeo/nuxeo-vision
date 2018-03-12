@@ -15,6 +15,7 @@
  *
  * Contributors:
  *     Michael Vachette
+ *     Thibaud Arguillere
  */
 package org.nuxeo.vision.google.test;
 
@@ -67,60 +68,60 @@ public class TestGoogleVisionProvider {
     @Test
     public void testLabelFeature() throws IOException, GeneralSecurityException {
 
-        Assume.assumeTrue("Ccredentials not set", areCredentialsSet());
+        Assume.assumeTrue("Credentials not set", areCredentialsSet());
 
         File file = new File(getClass().getResource("/files/plane.jpg").getPath());
         Blob blob = new FileBlob(file);
         List<VisionResponse> results = getGoogleVisionProvider().execute(Arrays.asList(blob),
-                Arrays.asList(VisionFeature.LABEL_DETECTION), 5);
+                Arrays.asList(VisionFeature.LABEL_DETECTION.toString()), 5);
         assertEquals(1, results.size());
         List<TextEntity> labels = results.get(0).getClassificationLabels();
         assertNotNull(labels);
         assertTrue(labels.size() > 0);
-        System.out.print(labels);
+        // System.out.print(labels);
     }
 
     @Test
     public void testTextFeature() throws IOException, GeneralSecurityException {
 
-        Assume.assumeTrue("Ccredentials not set", areCredentialsSet());
+        Assume.assumeTrue("Credentials not set", areCredentialsSet());
 
         File file = new File(getClass().getResource("/files/text.png").getPath());
         Blob blob = new FileBlob(file);
         List<VisionResponse> results = getGoogleVisionProvider().execute(Arrays.asList(blob),
-                Arrays.asList(VisionFeature.TEXT_DETECTION), 5);
+                Arrays.asList(VisionFeature.TEXT_DETECTION.toString()), 5);
         assertEquals(1, results.size());
         List<TextEntity> texts = results.get(0).getOcrText();
         assertNotNull(texts);
         assertTrue(texts.size() > 0);
-        System.out.print(texts.get(0));
+        // System.out.print(texts.get(0));
     }
 
     @Test
     public void testColorFeature() throws IOException, GeneralSecurityException {
 
-        Assume.assumeTrue("Ccredentials not set", areCredentialsSet());
+        Assume.assumeTrue("Credentials not set", areCredentialsSet());
 
         File file = new File(getClass().getResource("/files/plane.jpg").getPath());
         Blob blob = new FileBlob(file);
         List<VisionResponse> results = getGoogleVisionProvider().execute(Arrays.asList(blob),
-                Arrays.asList(VisionFeature.IMAGE_PROPERTIES), 5);
+                Arrays.asList(VisionFeature.IMAGE_PROPERTIES.toString()), 5);
         assertEquals(1, results.size());
         List<ColorInfo> colors = results.get(0).getImageProperties().getColors();
         assertNotNull(colors);
         assertTrue(colors.size() > 0);
-        System.out.print(colors.get(0));
+        // System.out.print(colors.get(0));
     }
 
     @Test
     public void testMultipleFeatures() throws IOException, GeneralSecurityException {
 
-        Assume.assumeTrue("Ccredentials not set", areCredentialsSet());
+        Assume.assumeTrue("Credentials not set", areCredentialsSet());
 
         File file = new File(getClass().getResource("/files/plane.jpg").getPath());
         Blob blob = new FileBlob(file);
         List<VisionResponse> results = getGoogleVisionProvider().execute(Arrays.asList(blob),
-                Arrays.asList(VisionFeature.TEXT_DETECTION, VisionFeature.LABEL_DETECTION), 5);
+                Arrays.asList(VisionFeature.TEXT_DETECTION.toString(), VisionFeature.LABEL_DETECTION.toString()), 5);
         assertEquals(1, results.size());
         List<TextEntity> labels = results.get(0).getClassificationLabels();
         assertNotNull(labels);
@@ -129,20 +130,21 @@ public class TestGoogleVisionProvider {
         List<TextEntity> texts = results.get(0).getOcrText();
         assertNotNull(texts);
         assertTrue(texts.size() > 0);
-        System.out.print(texts.get(0));
+        // System.out.print(texts.get(0));
     }
 
     @Test
     public void testAllFeatures() throws IOException, GeneralSecurityException {
 
-        Assume.assumeTrue("Ccredentials not set", areCredentialsSet());
+        Assume.assumeTrue("Credentials not set", areCredentialsSet());
 
         File file = new File(getClass().getResource("/files/nyc.jpg").getPath());
         Blob blob = new FileBlob(file);
         List<VisionResponse> results = getGoogleVisionProvider().execute(Arrays.asList(blob),
-                Arrays.asList(VisionFeature.TEXT_DETECTION, VisionFeature.LABEL_DETECTION,
-                        VisionFeature.IMAGE_PROPERTIES, VisionFeature.FACE_DETECTION, VisionFeature.LOGO_DETECTION,
-                        VisionFeature.LANDMARK_DETECTION, VisionFeature.SAFE_SEARCH_DETECTION),
+                Arrays.asList(VisionFeature.TEXT_DETECTION.toString(), VisionFeature.LABEL_DETECTION.toString(),
+                        VisionFeature.IMAGE_PROPERTIES.toString(), VisionFeature.FACE_DETECTION.toString(),
+                        VisionFeature.LOGO_DETECTION.toString(), VisionFeature.LANDMARK_DETECTION.toString(),
+                        VisionFeature.SAFE_SEARCH_DETECTION.toString()),
                 5);
         assertEquals(1, results.size());
         VisionResponse result = results.get(0);
@@ -154,26 +156,45 @@ public class TestGoogleVisionProvider {
         List<TextEntity> texts = result.getOcrText();
         assertNotNull(texts);
         assertTrue(texts.size() > 0);
-        System.out.print(texts.get(0));
+        // System.out.print(texts.get(0));
     }
 
     @Test
     public void testMultipleBlobs() throws IOException, GeneralSecurityException {
 
-        Assume.assumeTrue("Ccredentials not set", areCredentialsSet());
+        Assume.assumeTrue("Credentials not set", areCredentialsSet());
 
         List<Blob> blobs = new ArrayList<>();
         blobs.add(new FileBlob(new File(getClass().getResource("/files/plane.jpg").getPath())));
         blobs.add(new FileBlob(new File(getClass().getResource("/files/text.png").getPath())));
 
         List<VisionResponse> results = getGoogleVisionProvider().execute(blobs,
-                Arrays.asList(VisionFeature.TEXT_DETECTION, VisionFeature.LABEL_DETECTION), 5);
+                Arrays.asList(VisionFeature.TEXT_DETECTION.toString(), VisionFeature.LABEL_DETECTION.toString()), 5);
         assertTrue(results.size() == 2);
     }
 
+    @Test
+    public void shouldFailWithWrongFeature() throws Exception {
+
+        File file = new File(getClass().getResource("/files/plane.jpg").getPath());
+        Blob blob = new FileBlob(file);
+        try {
+            @SuppressWarnings("unused")
+            List<VisionResponse> results = getGoogleVisionProvider().execute(Arrays.asList(blob),
+                    Arrays.asList(UUID.randomUUID().toString()), 5);
+            assertTrue("The call should have failed", false);
+        } catch (Exception e) {
+            // In api v1, Google returns a GoogleJsonResponseException with a return code
+            // 400 (bad request). We could test the exact error etc., but let's keep it
+            // simple in case Google changes the format of the error.
+            // If we do have an error, we are good.
+        }
+    }
+
     protected GoogleVisionProvider getGoogleVisionProvider() {
-        if (googleVisionProvider != null)
+        if (googleVisionProvider != null) {
             return googleVisionProvider;
+        }
         Map<String, String> params = new HashMap<>();
         params.put(GoogleVisionProvider.APP_NAME_PARAM, "Nuxeo");
         params.put(GoogleVisionProvider.API_KEY_PARAM, System.getProperty(KEY_PROP));
@@ -185,6 +206,7 @@ public class TestGoogleVisionProvider {
     protected boolean areCredentialsSet() {
         return StringUtils.isNotBlank(System.getProperty(CRED_PROP))
                 || StringUtils.isNotBlank(System.getProperty(KEY_PROP));
+
     }
 
 }

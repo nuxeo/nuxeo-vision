@@ -28,7 +28,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.nuxeo.ecm.core.api.Blob;
-import org.nuxeo.vision.core.service.VisionFeature;
 import org.nuxeo.vision.core.service.VisionProvider;
 import org.nuxeo.vision.core.service.VisionResponse;
 
@@ -62,7 +61,7 @@ public class AmazonRekognitionProvider implements VisionProvider {
     }
 
     @Override
-    public List<VisionResponse> execute(List<Blob> blobs, List<VisionFeature> features, int maxResults)
+    public List<VisionResponse> execute(List<Blob> blobs, List<String> features, int maxResults)
             throws IOException, GeneralSecurityException, IllegalStateException {
         List<VisionResponse> result = new ArrayList<>();
         for (Blob blob : blobs) {
@@ -71,11 +70,6 @@ public class AmazonRekognitionProvider implements VisionProvider {
                             ByteBuffer.wrap(blob.getByteArray()))).withMaxLabels(maxResults))));
         }
         return result;
-    }
-
-    @Override
-    public List<VisionFeature> getSupportedFeatures() {
-        return Arrays.asList(VisionFeature.LABEL_DETECTION, VisionFeature.FACE_DETECTION);
     }
 
     @Override
