@@ -27,6 +27,7 @@ import org.nuxeo.ecm.automation.OperationContext;
 import org.nuxeo.ecm.automation.OperationException;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.IdRef;
+import org.nuxeo.ecm.core.api.NuxeoException;
 import org.nuxeo.ecm.core.event.Event;
 import org.nuxeo.ecm.core.event.EventService;
 import org.nuxeo.ecm.core.event.impl.DocumentEventContext;
@@ -84,7 +85,7 @@ public class VideoVisionWorker extends AbstractWork {
             eventService.fireEvent(eventToSend);
 
         } catch (OperationException e) {
-            log.warn(e);
+            throw new NuxeoException("Failed to run nuxeo vision",e);
         }
 
         setStatus("Done");
