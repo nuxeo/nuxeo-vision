@@ -27,6 +27,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.nuxeo.ecm.automation.OperationContext;
+import org.nuxeo.ecm.automation.OperationException;
 import org.nuxeo.ecm.automation.core.Constants;
 import org.nuxeo.ecm.automation.core.annotations.Context;
 import org.nuxeo.ecm.automation.core.annotations.Operation;
@@ -69,7 +70,7 @@ public class VisionOp {
     protected int maxResults;
 
     @OperationMethod
-    public Blob run(Blob blob) {
+    public Blob run(Blob blob) throws OperationException {
         if (blob == null) {
             return null;
         }
@@ -79,7 +80,7 @@ public class VisionOp {
     }
 
     @OperationMethod
-    public BlobList run(BlobList blobs) {
+    public BlobList run(BlobList blobs) throws OperationException {
         List<VisionResponse> results;
 
         // Convert feature string to enum
@@ -96,7 +97,7 @@ public class VisionOp {
             }
             ctx.put(outputVariable, results);
         } catch (IOException | GeneralSecurityException e) {
-            log.warn("Call to google vision API failed", e);
+            throw new OperationException("Call to google vision API failed", e);
         }
         return blobs;
     }

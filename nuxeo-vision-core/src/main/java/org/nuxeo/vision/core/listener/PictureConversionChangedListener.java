@@ -29,6 +29,7 @@ import org.nuxeo.ecm.automation.OperationContext;
 import org.nuxeo.ecm.automation.OperationException;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
+import org.nuxeo.ecm.core.api.NuxeoException;
 import org.nuxeo.ecm.core.event.*;
 import org.nuxeo.ecm.core.event.impl.DocumentEventContext;
 import org.nuxeo.ecm.core.event.impl.EventContextImpl;
@@ -76,7 +77,7 @@ public class PictureConversionChangedListener implements PostCommitEventListener
             eventService.fireEvent(eventToSend);
 
         } catch (OperationException e) {
-            log.warn(e);
+            throw new NuxeoException(e);
         }
     }
 }
