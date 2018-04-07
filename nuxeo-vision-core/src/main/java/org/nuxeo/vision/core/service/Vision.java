@@ -37,7 +37,7 @@ public interface Vision {
 
     /**
      * @param blob the image blob
-     * @param feature(s) the feature to request from the service
+     * @param features the feature to request from the service
      * @param maxResults the maximum number of results per feature
      * @return a {@link VisionResponse} object
      */

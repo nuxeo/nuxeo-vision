@@ -20,7 +20,7 @@
 
 package org.nuxeo.vision.core.test.mock;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.nuxeo.vision.core.image.ImageProperties;
@@ -35,12 +35,12 @@ public class MockVisionResponse implements VisionResponse {
 
     @Override
     public List<TextEntity> getClassificationLabels() {
-        return Arrays.asList(new TextEntity(MOCK_TEXT, 1.0f, "en"));
+        return Collections.singletonList(new TextEntity(MOCK_TEXT, 1.0f, "en"));
     }
 
     @Override
     public List<TextEntity> getOcrText() {
-        return Arrays.asList(new TextEntity(MOCK_TEXT, 1.0f, "en"));
+        return Collections.singletonList(new TextEntity(MOCK_TEXT, 1.0f, "en"));
     }
 
     @Override

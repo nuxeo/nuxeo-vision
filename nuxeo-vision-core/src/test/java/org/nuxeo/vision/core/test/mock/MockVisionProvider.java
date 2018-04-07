@@ -71,14 +71,7 @@ public class MockVisionProvider implements VisionProvider {
             return false;
         }
 
-        List<String> allowed = VisionFeature.asStringList();
-        for(String oneFeature : features) {
-            if(!allowed.contains(oneFeature)) {
-                return false;
-            }
-        }
-
-        return true;
+        return VisionFeature.asStringList().containsAll(features);
 
     }
 }

@@ -35,7 +35,7 @@ public interface VisionProvider {
 
     /**
      * @param blobs the blobs to pass to the API
-     * @param feature(s) the feature to request from the provider
+     * @param features the feature to request from the provider
      * @param maxResults the maximum number of results per feature
      * @return a {@link VisionResponse} object
      */

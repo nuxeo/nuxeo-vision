@@ -78,7 +78,7 @@ public class TestGoogleVisionProvider {
         List<TextEntity> labels = results.get(0).getClassificationLabels();
         assertNotNull(labels);
         assertTrue(labels.size() > 0);
-        // System.out.print(labels);
+
     }
 
     @Test
@@ -94,7 +94,7 @@ public class TestGoogleVisionProvider {
         List<TextEntity> texts = results.get(0).getOcrText();
         assertNotNull(texts);
         assertTrue(texts.size() > 0);
-        // System.out.print(texts.get(0));
+
     }
 
     @Test
@@ -110,7 +110,7 @@ public class TestGoogleVisionProvider {
         List<ColorInfo> colors = results.get(0).getImageProperties().getColors();
         assertNotNull(colors);
         assertTrue(colors.size() > 0);
-        // System.out.print(colors.get(0));
+
     }
 
     @Test
@@ -130,7 +130,7 @@ public class TestGoogleVisionProvider {
         List<TextEntity> texts = results.get(0).getOcrText();
         assertNotNull(texts);
         assertTrue(texts.size() > 0);
-        // System.out.print(texts.get(0));
+
     }
 
     @Test
@@ -156,7 +156,7 @@ public class TestGoogleVisionProvider {
         List<TextEntity> texts = result.getOcrText();
         assertNotNull(texts);
         assertTrue(texts.size() > 0);
-        // System.out.print(texts.get(0));
+
     }
 
     @Test
@@ -180,7 +180,7 @@ public class TestGoogleVisionProvider {
         Blob blob = new FileBlob(file);
         try {
             @SuppressWarnings("unused")
-            List<VisionResponse> results = getGoogleVisionProvider().execute(Arrays.asList(blob),
+            List<VisionResponse> ignored = getGoogleVisionProvider().execute(Arrays.asList(blob),
                     Arrays.asList(UUID.randomUUID().toString()), 5);
             assertTrue("The call should have failed", false);
         } catch (Exception e) {
