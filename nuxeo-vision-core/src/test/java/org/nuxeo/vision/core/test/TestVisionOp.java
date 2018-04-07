@@ -87,7 +87,6 @@ public class TestVisionOp {
         Assert.assertNotNull(labels);
         assertEquals(MockVisionResponse.MOCK_RESULT_SIZE, labels.size());
         assertEquals(MockVisionResponse.MOCK_TEXT, labels.get(0).getText());
-        //System.out.print(labels);
     }
 
     @Test
