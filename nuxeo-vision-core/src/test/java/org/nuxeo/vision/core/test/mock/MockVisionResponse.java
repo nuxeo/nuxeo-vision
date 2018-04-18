@@ -15,11 +15,12 @@
  *
  * Contributors:
  *     Michael Vachette
+ *     Thibaud Arguillere
  */
 
 package org.nuxeo.vision.core.test.mock;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.nuxeo.vision.core.image.ImageProperties;
@@ -28,14 +29,18 @@ import org.nuxeo.vision.core.service.VisionResponse;
 
 public class MockVisionResponse implements VisionResponse {
 
+    public static final int MOCK_RESULT_SIZE = 1;
+
+    public static final String MOCK_TEXT = "Hello World";
+
     @Override
     public List<TextEntity> getClassificationLabels() {
-        return Arrays.asList(new TextEntity("label", 1.0f, "en"));
+        return Collections.singletonList(new TextEntity(MOCK_TEXT, 1.0f, "en"));
     }
 
     @Override
     public List<TextEntity> getOcrText() {
-        return null;
+        return Collections.singletonList(new TextEntity(MOCK_TEXT, 1.0f, "en"));
     }
 
     @Override

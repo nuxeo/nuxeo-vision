@@ -15,6 +15,7 @@
  *
  * Contributors:
  *     Michael Vachette
+ *     Thibaud Arguillere
  */
 
 package org.nuxeo.vision.core.test.mock;
@@ -22,7 +23,6 @@ package org.nuxeo.vision.core.test.mock;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -35,22 +35,24 @@ public class MockVisionProvider implements VisionProvider {
 
     public static final String NAME = "mock";
 
+    public static final String UNSUPPORTED_FEATURE = "Unsupported feature";
+
     public MockVisionProvider(Map<String, String> parameters) {
     }
 
     @Override
-    public List<VisionResponse> execute(List<Blob> blobs, List<VisionFeature> features, int maxResults)
+    public List<VisionResponse> execute(List<Blob> blobs, List<String> features, int maxResults)
             throws IOException, GeneralSecurityException, IllegalStateException {
-        List<VisionResponse> responses = new ArrayList<>();
-        for (Blob blob : blobs) {
-            responses.add(new MockVisionResponse());
-        }
-        return responses;
-    }
 
-    @Override
-    public List<VisionFeature> getSupportedFeatures() {
-        return Arrays.asList(VisionFeature.LABEL_DETECTION);
+        if(!featuresAreSupported(features)) {
+            throw new IllegalArgumentException(UNSUPPORTED_FEATURE);
+        }
+
+        List<VisionResponse> responses = new ArrayList<>();
+        blobs.forEach(b -> {
+            responses.add(new MockVisionResponse());
+        });
+        return responses;
     }
 
     @Override
@@ -61,5 +63,15 @@ public class MockVisionProvider implements VisionProvider {
     @Override
     public Object getNativeClient() {
         return null;
+    }
+
+    protected boolean featuresAreSupported(List<String> features) {
+
+        if(features == null) {
+            return false;
+        }
+
+        return VisionFeature.asStringList().containsAll(features);
+
     }
 }

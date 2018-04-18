@@ -15,9 +15,21 @@
  *
  * Contributors:
  *     Michael Vachette
+ *     Thibaud Arguillere
  */
 package org.nuxeo.vision.core.service;
 
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Visionfeature is a way to centralize labels and as the first provider to be implemented was Google, we are use their
+ * labels. This list is just for convenience: If Google, Amazon or any provider adds new labels or change existing one,
+ * clients of the Vision service can still directly use the new labels, the service does not check if it is part of this
+ * list.
+ *
+ * @since 8.10
+ */
 public enum VisionFeature {
 
     FACE_DETECTION("FACE_DETECTION"), LANDMARK_DETECTION("LANDMARK_DETECTION"), LOGO_DETECTION(
@@ -34,5 +46,18 @@ public enum VisionFeature {
     @Override
     public String toString() {
         return text;
+    }
+
+    public static List<String> asStringList() {
+
+        List<String> list = new ArrayList<String>();
+        VisionFeature [] features = VisionFeature.values();
+
+        for(VisionFeature oneFeature : features) {
+            list.add(oneFeature.toString());
+        }
+
+        return list;
+
     }
 }

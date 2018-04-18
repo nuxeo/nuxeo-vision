@@ -15,6 +15,7 @@
  *
  * Contributors:
  *     Michael Vachette
+ *     Thibaud Arguillere
  */
 package org.nuxeo.vision.core.service;
 
@@ -100,20 +101,20 @@ public class VisionImpl extends DefaultComponent implements Vision {
     }
 
     @Override
-    public VisionResponse execute(Blob blob, List<VisionFeature> features, int maxResults)
+    public VisionResponse execute(Blob blob, List<String> features, int maxResults)
             throws IOException, GeneralSecurityException, IllegalStateException {
         return execute(config.getDefaultProviderName(), blob, features, maxResults);
     }
 
     @Override
-    public List<VisionResponse> execute(List<Blob> blobs, List<VisionFeature> features, int maxResults)
+    public List<VisionResponse> execute(List<Blob> blobs, List<String> features, int maxResults)
             throws IOException, GeneralSecurityException, IllegalStateException {
         return execute(config.getDefaultProviderName(), blobs, features, maxResults);
     }
 
     // @since 9.1
     @Override
-    public VisionResponse execute(String providerName, Blob blob, List<VisionFeature> features, int maxResults)
+    public VisionResponse execute(String providerName, Blob blob, List<String> features, int maxResults)
             throws IOException, GeneralSecurityException {
         if (blob == null) {
             throw new IllegalArgumentException("Input Blob cannot be null");
@@ -132,12 +133,13 @@ public class VisionImpl extends DefaultComponent implements Vision {
 
     // @since 9.1
     @Override
-    public List<VisionResponse> execute(String providerName, List<Blob> blobs, List<VisionFeature> features,
+    public List<VisionResponse> execute(String providerName, List<Blob> blobs, List<String> features,
             int maxResults) throws IOException, GeneralSecurityException {
         VisionProvider provider = providers.get(providerName);
 
-        if (provider == null)
+        if (provider == null) {
             throw new NuxeoException("Unknown provider: " + providerName);
+        }
 
         if (blobs == null || blobs.size() == 0) {
             throw new IllegalArgumentException("Input Blob list cannot be null or empty");

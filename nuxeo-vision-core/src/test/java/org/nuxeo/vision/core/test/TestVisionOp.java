@@ -18,6 +18,8 @@
  */
 package org.nuxeo.vision.core.test;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
@@ -48,6 +50,7 @@ import org.nuxeo.vision.core.image.TextEntity;
 import org.nuxeo.vision.core.operation.VisionOp;
 import org.nuxeo.vision.core.service.VisionFeature;
 import org.nuxeo.vision.core.service.VisionResponse;
+import org.nuxeo.vision.core.test.mock.MockVisionResponse;
 
 @RunWith(FeaturesRunner.class)
 @org.nuxeo.runtime.test.runner.Features(AutomationFeature.class)
@@ -82,8 +85,8 @@ public class TestVisionOp {
         VisionResponse result = resultList.get(0);
         List<TextEntity> labels = result.getClassificationLabels();
         Assert.assertNotNull(labels);
-        Assert.assertTrue(labels.size() > 0);
-        System.out.print(labels);
+        assertEquals(MockVisionResponse.MOCK_RESULT_SIZE, labels.size());
+        assertEquals(MockVisionResponse.MOCK_TEXT, labels.get(0).getText());
     }
 
     @Test

@@ -15,11 +15,11 @@
  *
  * Contributors:
  *     Michael Vachette
+ *     Thibaud Arguillere
  */
 package org.nuxeo.vision.core.test;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -36,9 +36,12 @@ import org.nuxeo.ecm.platform.test.PlatformFeature;
 import org.nuxeo.runtime.test.runner.Deploy;
 import org.nuxeo.runtime.test.runner.FeaturesRunner;
 import org.nuxeo.runtime.test.runner.LocalDeploy;
+import org.nuxeo.vision.core.image.TextEntity;
 import org.nuxeo.vision.core.service.Vision;
 import org.nuxeo.vision.core.service.VisionFeature;
 import org.nuxeo.vision.core.service.VisionResponse;
+import org.nuxeo.vision.core.test.mock.MockVisionProvider;
+import org.nuxeo.vision.core.test.mock.MockVisionResponse;
 
 import com.google.inject.Inject;
 
@@ -57,8 +60,12 @@ public class TestVisionService {
     public void testLabelFeature() throws IOException, GeneralSecurityException {
         File file = new File(getClass().getResource("/files/plane.jpg").getPath());
         Blob blob = new FileBlob(file);
-        VisionResponse result = vision.execute(blob, Arrays.asList(VisionFeature.LABEL_DETECTION), 5);
+        VisionResponse result = vision.execute(blob, Arrays.asList(VisionFeature.LABEL_DETECTION.toString()), 5);
         assertNotNull(result);
+
+        List<TextEntity> labels = result.getClassificationLabels();
+        assertEquals(MockVisionResponse.MOCK_RESULT_SIZE, labels.size());
+        assertEquals(MockVisionResponse.MOCK_TEXT, labels.get(0).getText());
     }
 
     @Test
@@ -69,8 +76,29 @@ public class TestVisionService {
         blobs.add(new FileBlob(new File(getClass().getResource("/files/text.png").getPath())));
 
         List<VisionResponse> results = vision.execute(blobs,
-                Arrays.asList(VisionFeature.TEXT_DETECTION, VisionFeature.LABEL_DETECTION), 5);
+                Arrays.asList(VisionFeature.TEXT_DETECTION.toString(), VisionFeature.LABEL_DETECTION.toString()), 5);
         assertTrue(results.size() == 2);
+
+        for (VisionResponse oneResponse : results) {
+            List<TextEntity> labels = oneResponse.getClassificationLabels();
+            assertEquals(MockVisionResponse.MOCK_RESULT_SIZE, labels.size());
+            assertEquals(MockVisionResponse.MOCK_TEXT, labels.get(0).getText());
+        }
+    }
+
+    @Test
+    public void shouldFailWithWrongFeature() {
+
+        File file = new File(getClass().getResource("/files/plane.jpg").getPath());
+        Blob blob = new FileBlob(file);
+        try {
+            @SuppressWarnings("unused")
+            VisionResponse result = vision.execute(blob, Arrays.asList("abc123"), 5);
+            assertFalse("Chould have failed with invalid label", true);
+        } catch (Exception e) {
+            assertEquals(MockVisionProvider.UNSUPPORTED_FEATURE, e.getMessage());
+        }
+
     }
 
 }

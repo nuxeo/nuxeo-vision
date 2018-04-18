@@ -15,12 +15,12 @@
  *
  * Contributors:
  *     Michael Vachette
+ *     Thibaud Arguillere
  */
 package org.nuxeo.vision.core.operation;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -37,7 +37,6 @@ import org.nuxeo.ecm.automation.core.util.BlobList;
 import org.nuxeo.ecm.automation.core.util.StringList;
 import org.nuxeo.ecm.core.api.Blob;
 import org.nuxeo.vision.core.service.Vision;
-import org.nuxeo.vision.core.service.VisionFeature;
 import org.nuxeo.vision.core.service.VisionResponse;
 
 /**
@@ -83,17 +82,11 @@ public class VisionOp {
     public BlobList run(BlobList blobs) throws OperationException {
         List<VisionResponse> results;
 
-        // Convert feature string to enum
-        List<VisionFeature> featureList = new ArrayList<>();
-        for (String feature : features) {
-            featureList.add(VisionFeature.valueOf(feature));
-        }
-
         try {
             if (StringUtils.isEmpty(provider)) {
-                results = visionService.execute(blobs, featureList, maxResults);
+                results = visionService.execute(blobs, features, maxResults);
             } else {
-                results = visionService.execute(provider, blobs, featureList, maxResults);
+                results = visionService.execute(provider, blobs, features, maxResults);
             }
             ctx.put(outputVariable, results);
         } catch (IOException | GeneralSecurityException e) {

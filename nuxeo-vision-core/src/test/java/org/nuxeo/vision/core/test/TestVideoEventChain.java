@@ -108,7 +108,7 @@ public class TestVideoEventChain {
         List<Tag> tags = tagService.getDocumentTags(session, video.getId(), session.getPrincipal().getName());
 
         Assert.assertTrue(tags.size() > 0);
-        System.out.print(tags);
+
     }
 
     @Test
