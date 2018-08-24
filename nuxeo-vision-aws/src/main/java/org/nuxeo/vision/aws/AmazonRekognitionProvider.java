@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.nuxeo.ecm.core.api.Blob;
+import org.nuxeo.vision.core.service.VisionFeature;
 import org.nuxeo.vision.core.service.VisionProvider;
 import org.nuxeo.vision.core.service.VisionResponse;
 
@@ -36,6 +37,7 @@ import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.rekognition.AmazonRekognition;
 import com.amazonaws.services.rekognition.AmazonRekognitionClientBuilder;
 import com.amazonaws.services.rekognition.model.DetectLabelsRequest;
+import com.amazonaws.services.rekognition.model.DetectModerationLabelsRequest;
 
 public class AmazonRekognitionProvider implements VisionProvider {
 
@@ -45,7 +47,7 @@ public class AmazonRekognitionProvider implements VisionProvider {
 
     public static final String SECRET_KEY_PARAM = "secretKey";
 
-    protected static final long BLOB_MAX_SIZE = 5*1024*1024;
+    protected static final long BLOB_MAX_SIZE = 5 * 1024 * 1024;
 
     protected static final List<String> SUPPORTED_FORMAT = Arrays.asList("image/jpeg", "image/png");
 
@@ -68,6 +70,13 @@ public class AmazonRekognitionProvider implements VisionProvider {
             result.add(new AmazonRekognitionResponse(getClient().detectLabels(
                     new DetectLabelsRequest().withImage(new com.amazonaws.services.rekognition.model.Image().withBytes(
                             ByteBuffer.wrap(blob.getByteArray()))).withMaxLabels(maxResults))));
+            // different API on AWS Rekognition for safe content detection
+            if (features.contains(VisionFeature.SAFE_SEARCH_DETECTION.toString())) {
+                result.add(new AmazonRekognitionResponse(
+                        getClient().detectModerationLabels(new DetectModerationLabelsRequest().withImage(
+                                new com.amazonaws.services.rekognition.model.Image().withBytes(
+                                        ByteBuffer.wrap(blob.getByteArray()))))));
+            }
         }
         return result;
     }
