@@ -25,18 +25,28 @@ import org.nuxeo.vision.core.image.ImageProperties;
 import org.nuxeo.vision.core.image.TextEntity;
 import org.nuxeo.vision.core.service.VisionResponse;
 
+import com.amazonaws.AmazonWebServiceResult;
 import com.amazonaws.services.rekognition.model.DetectLabelsResult;
+import com.amazonaws.services.rekognition.model.DetectModerationLabelsResult;
 import com.amazonaws.services.rekognition.model.Label;
+import com.amazonaws.services.rekognition.model.ModerationLabel;
 
 public class AmazonRekognitionResponse implements VisionResponse {
 
-    protected DetectLabelsResult response;
+    protected AmazonWebServiceResult<?> response;
 
     protected List<TextEntity> labels = new ArrayList<TextEntity>();
 
     public AmazonRekognitionResponse(DetectLabelsResult response) {
         this.response = response;
         for (Label label : response.getLabels()) {
+            labels.add(new TextEntity(label.getName(), label.getConfidence(), "en_US"));
+        }
+    }
+
+    public AmazonRekognitionResponse(DetectModerationLabelsResult response) {
+        this.response = response;
+        for (ModerationLabel label : response.getModerationLabels()) {
             labels.add(new TextEntity(label.getName(), label.getConfidence(), "en_US"));
         }
     }

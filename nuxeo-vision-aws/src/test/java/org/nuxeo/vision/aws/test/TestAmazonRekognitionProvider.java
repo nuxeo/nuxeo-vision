@@ -18,12 +18,18 @@
  */
 package org.nuxeo.vision.aws.test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -42,6 +48,8 @@ import org.nuxeo.vision.core.image.TextEntity;
 import org.nuxeo.vision.core.service.Vision;
 import org.nuxeo.vision.core.service.VisionFeature;
 import org.nuxeo.vision.core.service.VisionResponse;
+
+import com.amazonaws.services.rekognition.model.DetectModerationLabelsResult;
 
 @RunWith(FeaturesRunner.class)
 @org.nuxeo.runtime.test.runner.Features({ PlatformFeature.class })
@@ -92,6 +100,21 @@ public class TestAmazonRekognitionProvider {
         List<VisionResponse> results = getProvider().execute(blobs,
                 Arrays.asList(VisionFeature.LABEL_DETECTION.toString()), 5);
         assertTrue(results.size() == 2);
+    }
+
+    @Test
+    public void testSafeContent() throws IOException, GeneralSecurityException {
+
+        Assume.assumeTrue("Credentials not set", areCredentialsSet());
+
+        List<Blob> blobs = new ArrayList<>();
+        blobs.add(new FileBlob(new File(getClass().getResource("/files/text.png").getPath())));
+
+        List<VisionResponse> results = getProvider().execute(blobs,
+                Arrays.asList(VisionFeature.SAFE_SEARCH_DETECTION.toString()), 5);
+        assertTrue(results.size() == 2);
+        DetectModerationLabelsResult result = (DetectModerationLabelsResult) results.get(1).getNativeObject();
+        assertEquals(0, result.getModerationLabels().size());
     }
 
     protected AmazonRekognitionProvider getProvider() {
