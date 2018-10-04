@@ -56,12 +56,6 @@ import com.amazonaws.services.rekognition.model.DetectModerationLabelsResult;
 @Deploy({ "nuxeo-vision-core", "nuxeo-vision-aws" })
 public class TestAmazonRekognitionProvider {
 
-    public static final String AWS_KEY = "org.nuxeo.vision.aws.key";
-
-    public static final String AWS_SECRET = "org.nuxeo.vision.aws.secret";
-
-    public static final String AWS_REGION = "org.nuxeo.vision.aws.region";
-
     @Inject
     Vision visionService;
 
@@ -121,17 +115,11 @@ public class TestAmazonRekognitionProvider {
         if (provider != null) {
             return provider;
         }
-        Map<String, String> params = new HashMap<>();
-        params.put(AmazonRekognitionProvider.ACCESS_KEY_PARAM, System.getProperty(AWS_KEY));
-        params.put(AmazonRekognitionProvider.SECRET_KEY_PARAM, System.getProperty(AWS_SECRET));
-        params.put(AmazonRekognitionProvider.REGION_PARAM, System.getProperty(AWS_REGION));
-        provider = new AmazonRekognitionProvider(params);
+        provider = new AmazonRekognitionProvider(new HashMap<>());
         return provider;
     }
 
     protected boolean areCredentialsSet() {
-        return StringUtils.isNotBlank(System.getProperty(AWS_REGION))
-                && StringUtils.isNotBlank(System.getProperty(AWS_KEY))
-                && StringUtils.isNotBlank(System.getProperty(AWS_SECRET));
+        return getProvider().getNativeClient() != null;
     }
 }

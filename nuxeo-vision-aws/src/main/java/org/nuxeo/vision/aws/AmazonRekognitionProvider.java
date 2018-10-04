@@ -31,21 +31,14 @@ import org.nuxeo.ecm.core.api.Blob;
 import org.nuxeo.vision.core.service.VisionFeature;
 import org.nuxeo.vision.core.service.VisionProvider;
 import org.nuxeo.vision.core.service.VisionResponse;
-
-import com.amazonaws.auth.AWSStaticCredentialsProvider;
-import com.amazonaws.auth.BasicAWSCredentials;
+import org.nuxeo.runtime.aws.NuxeoAWSCredentialsProvider;
+import org.nuxeo.runtime.aws.NuxeoAWSRegionProvider;
 import com.amazonaws.services.rekognition.AmazonRekognition;
 import com.amazonaws.services.rekognition.AmazonRekognitionClientBuilder;
 import com.amazonaws.services.rekognition.model.DetectLabelsRequest;
 import com.amazonaws.services.rekognition.model.DetectModerationLabelsRequest;
 
 public class AmazonRekognitionProvider implements VisionProvider {
-
-    public static final String REGION_PARAM = "region";
-
-    public static final String ACCESS_KEY_PARAM = "accessKey";
-
-    public static final String SECRET_KEY_PARAM = "secretKey";
 
     protected static final long BLOB_MAX_SIZE = 5 * 1024 * 1024;
 
@@ -56,10 +49,8 @@ public class AmazonRekognitionProvider implements VisionProvider {
      */
     protected volatile AmazonRekognition client;
 
-    protected Map<String, String> parameters;
-
     public AmazonRekognitionProvider(Map<String, String> parameters) {
-        this.parameters = parameters;
+       // Params not used.
     }
 
     @Override
@@ -113,9 +104,8 @@ public class AmazonRekognitionProvider implements VisionProvider {
                 result = client;
                 if (result == null) {
                     AmazonRekognitionClientBuilder builder = AmazonRekognitionClientBuilder.standard();
-                    builder.withCredentials(new AWSStaticCredentialsProvider(new BasicAWSCredentials(
-                            parameters.get(ACCESS_KEY_PARAM), parameters.get(SECRET_KEY_PARAM))));
-                    builder.withRegion(parameters.get(REGION_PARAM));
+                    builder.withCredentials(NuxeoAWSCredentialsProvider.getInstance());
+                    builder.withRegion(NuxeoAWSRegionProvider.getInstance().getRegion());
                     result = client = builder.build();
                 }
             }

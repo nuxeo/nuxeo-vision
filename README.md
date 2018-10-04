@@ -59,14 +59,14 @@ org.nuxeo.vision.google.credential=PATH_TO_JSON_CREDENTIAL_FILE
 ```
 
 ###AWS Rekognition
-- Configure a key/secret pair in the [AWS console](http://docs.aws.amazon.com/general/latest/gr/managing-aws-access-keys.html)
+- Uses the credentials defined by the Nuxeo AWS service.
 - Check the [FAQ](https://aws.amazon.com/rekognition/faqs/) to see in which regions the API is available 
 - Edit nuxeo.conf
 ```
 org.nuxeo.vision.default.provider=aws
-org.nuxeo.vision.aws.region=
-org.nuxeo.vision.aws.key=
-org.nuxeo.vision.aws.secret=
+nuxeo.aws.accessKeyId=your_AWS_ACCESS_KEY_ID
+nuxeo.aws.secretKey=your_AWS_SECRET_ACCESS_KEY
+nuxeo.aws.region=your_AWS_REGION
 ```
  
 # Resources (Documentation and other links)
