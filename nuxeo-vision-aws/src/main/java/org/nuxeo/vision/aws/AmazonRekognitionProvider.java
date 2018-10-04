@@ -19,6 +19,8 @@
  */
 package org.nuxeo.vision.aws;
 
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.security.GeneralSecurityException;
@@ -34,6 +36,8 @@ import org.nuxeo.vision.core.service.VisionResponse;
 
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.auth.EnvironmentVariableCredentialsProvider;
+import com.amazonaws.regions.AwsEnvVarOverrideRegionProvider;
 import com.amazonaws.services.rekognition.AmazonRekognition;
 import com.amazonaws.services.rekognition.AmazonRekognitionClientBuilder;
 import com.amazonaws.services.rekognition.model.DetectLabelsRequest;
@@ -110,14 +114,23 @@ public class AmazonRekognitionProvider implements VisionProvider {
                 result = client;
                 if (result == null) {
                     AmazonRekognitionClientBuilder builder = AmazonRekognitionClientBuilder.standard();
-                    builder.withCredentials(new AWSStaticCredentialsProvider(new BasicAWSCredentials(
-                            parameters.get(ACCESS_KEY_PARAM), parameters.get(SECRET_KEY_PARAM))));
-                    builder.withRegion(parameters.get(REGION_PARAM));
+                    if (isNotBlank(parameters.get(ACCESS_KEY_PARAM)) && isNotBlank(parameters.get(SECRET_KEY_PARAM))) {
+                        builder.withCredentials(new AWSStaticCredentialsProvider(new BasicAWSCredentials(
+                                parameters.get(ACCESS_KEY_PARAM), parameters.get(SECRET_KEY_PARAM))));
+                    } else {
+                        // Fallback to env
+                        builder.withCredentials(new EnvironmentVariableCredentialsProvider());
+                    }
+                    if (isNotBlank(parameters.get(REGION_PARAM))) {
+                        builder.withRegion(parameters.get(REGION_PARAM));
+                    } else {
+                        // Fallback to env
+                        builder.withRegion(new AwsEnvVarOverrideRegionProvider().getRegion());
+                    }
                     result = client = builder.build();
                 }
             }
         }
         return result;
     }
-
 }
