@@ -33,7 +33,7 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
@@ -55,6 +55,8 @@ import com.amazonaws.services.rekognition.model.DetectModerationLabelsResult;
 @org.nuxeo.runtime.test.runner.Features({ PlatformFeature.class })
 @Deploy({ "nuxeo-vision-core", "nuxeo-vision-aws" })
 public class TestAmazonRekognitionProvider {
+
+    public static final String PROVIDES_AWS_CREDENTIALS = "provides.aws.credentials";
 
     @Inject
     Vision visionService;
@@ -120,6 +122,6 @@ public class TestAmazonRekognitionProvider {
     }
 
     protected boolean areCredentialsSet() {
-        return getProvider().getNativeClient() != null;
+        return Boolean.getBoolean(PROVIDES_AWS_CREDENTIALS);
     }
 }
