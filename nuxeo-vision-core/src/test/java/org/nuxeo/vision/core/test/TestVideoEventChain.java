@@ -20,6 +20,9 @@
 package org.nuxeo.vision.core.test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.nuxeo.vision.core.service.Vision.EVENT_IMAGE_HANDLED;
+import static org.nuxeo.vision.core.service.Vision.EVENT_VIDEO_HANDLED;
 
 import java.io.File;
 import java.io.IOException;
@@ -31,7 +34,6 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -44,7 +46,7 @@ import org.nuxeo.ecm.core.api.Blob;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.impl.blob.FileBlob;
-import org.nuxeo.ecm.core.storage.sql.listeners.DummyTestListener;
+import org.nuxeo.ecm.core.event.test.CapturingEventListener;
 import org.nuxeo.ecm.core.test.DefaultRepositoryInit;
 import org.nuxeo.ecm.core.test.annotations.Granularity;
 import org.nuxeo.ecm.core.test.annotations.RepositoryConfig;
@@ -57,7 +59,6 @@ import org.nuxeo.runtime.test.runner.Deploy;
 import org.nuxeo.runtime.test.runner.Features;
 import org.nuxeo.runtime.test.runner.FeaturesRunner;
 import org.nuxeo.runtime.test.runner.LocalDeploy;
-import org.nuxeo.vision.core.service.Vision;
 import org.nuxeo.vision.core.test.mock.MockWorkManager;
 import org.nuxeo.vision.core.worker.VideoVisionWorker;
 
@@ -67,7 +68,6 @@ import org.nuxeo.vision.core.worker.VideoVisionWorker;
 @Deploy({ "nuxeo-vision-core", "org.nuxeo.ecm.platform.video.core", "org.nuxeo.ecm.platform.tag",
         "org.nuxeo.ecm.automation.scripting" })
 @LocalDeploy({ "nuxeo-vision-core:OSGI-INF/mock-work-manager-contrib.xml",
-        "nuxeo-vision-core:OSGI-INF/dummy-listener-contrib.xml",
         "nuxeo-vision-core:OSGI-INF/mock-provider-contrib.xml" })
 public class TestVideoEventChain {
 
@@ -76,12 +76,6 @@ public class TestVideoEventChain {
 
     @Inject
     protected TagService tagService;
-
-    @After
-    public void cleanup() {
-
-        DummyTestListener.clear();
-    }
 
     @Test
     public void testVideoChain() throws IOException, OperationException {
@@ -113,34 +107,31 @@ public class TestVideoEventChain {
 
     @Test
     public void testVideoWorker() throws IOException, OperationException {
+        try (CapturingEventListener listener = new CapturingEventListener(EVENT_IMAGE_HANDLED, EVENT_VIDEO_HANDLED)) {
+            DocumentModel video = session.createDocumentModel("/", "Video", "Video");
+            video = session.createDocument(video);
 
-        DummyTestListener.clear();
+            File file = new File(getClass().getResource("/files/plane2.jpg").getPath());
+            Blob blob = new FileBlob(file);
+            Map<String, Serializable> storyboardItem = new HashMap<>();
+            storyboardItem.put("comment", "mytitle");
+            storyboardItem.put("content", (Serializable) blob);
+            List<Map<String, Serializable>> storyboard = new ArrayList<>();
+            storyboard.add(storyboardItem);
+            video.setPropertyValue(VideoConstants.STORYBOARD_PROPERTY, (Serializable) storyboard);
 
-        DocumentModel video = session.createDocumentModel("/", "Video", "Video");
-        video = session.createDocument(video);
+            MockWorkManager wm = (MockWorkManager) Framework.getService(WorkManager.class);
+            wm.isActive = false;
+            video = session.saveDocument(video);
 
-        File file = new File(getClass().getResource("/files/plane2.jpg").getPath());
-        Blob blob = new FileBlob(file);
-        Map<String, Serializable> storyboardItem = new HashMap<>();
-        storyboardItem.put("comment", "mytitle");
-        storyboardItem.put("content", (Serializable) blob);
-        List<Map<String, Serializable>> storyboard = new ArrayList<>();
-        storyboard.add(storyboardItem);
-        video.setPropertyValue(VideoConstants.STORYBOARD_PROPERTY, (Serializable) storyboard);
+            VideoVisionWorker work = new VideoVisionWorker(video.getRepositoryName(), video.getId());
+            work.work();
+            Assert.assertEquals("Done", work.getStatus());
+            work.cleanUp(true, null);
 
-        MockWorkManager wm = (MockWorkManager) Framework.getService(WorkManager.class);
-        wm.isActive = false;
-        video = session.saveDocument(video);
-
-        VideoVisionWorker work = new VideoVisionWorker(video.getRepositoryName(), video.getId());
-        work.work();
-        Assert.assertEquals("Done", work.getStatus());
-        work.cleanUp(true, null);
-
-        assertEquals(1, DummyTestListener.EVENTS_RECEIVED.size());
-        assertEquals(Vision.EVENT_VIDEO_HANDLED, DummyTestListener.EVENTS_RECEIVED.get(0).getName());
-        DummyTestListener.clear();
-
+            assertEquals(1, listener.getCapturedEventCount(EVENT_VIDEO_HANDLED));
+            assertFalse(listener.hasBeenFired(EVENT_IMAGE_HANDLED));
+        }
     }
 
     @Test
