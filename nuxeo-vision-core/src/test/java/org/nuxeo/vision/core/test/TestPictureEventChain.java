@@ -19,6 +19,9 @@
 package org.nuxeo.vision.core.test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.nuxeo.vision.core.service.Vision.EVENT_IMAGE_HANDLED;
+import static org.nuxeo.vision.core.service.Vision.EVENT_VIDEO_HANDLED;
 
 import java.io.File;
 import java.io.IOException;
@@ -27,7 +30,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -45,7 +47,7 @@ import org.nuxeo.ecm.core.event.EventBundle;
 import org.nuxeo.ecm.core.event.impl.DocumentEventContext;
 import org.nuxeo.ecm.core.event.impl.EventBundleImpl;
 import org.nuxeo.ecm.core.event.impl.EventContextImpl;
-import org.nuxeo.ecm.core.storage.sql.listeners.DummyTestListener;
+import org.nuxeo.ecm.core.event.test.CapturingEventListener;
 import org.nuxeo.ecm.core.test.DefaultRepositoryInit;
 import org.nuxeo.ecm.core.test.annotations.Granularity;
 import org.nuxeo.ecm.core.test.annotations.RepositoryConfig;
@@ -66,7 +68,6 @@ import org.nuxeo.vision.core.service.Vision;
         "org.nuxeo.ecm.automation.scripting" })
 @LocalDeploy({ "nuxeo-vision-core:OSGI-INF/mock-adapter-contrib.xml",
         "nuxeo-vision-core:OSGI-INF/disabled-listener-contrib.xml",
-        "nuxeo-vision-core:OSGI-INF/dummy-listener-contrib.xml",
         "nuxeo-vision-core:OSGI-INF/mock-provider-contrib.xml" })
 public class TestPictureEventChain {
 
@@ -78,11 +79,6 @@ public class TestPictureEventChain {
 
     @Inject
     protected TagService tagService;
-
-    @After
-    public void cleanup() {
-        DummyTestListener.clear();
-    }
 
     @Test
     public void testPictureChain() throws IOException, OperationException {
@@ -109,33 +105,30 @@ public class TestPictureEventChain {
 
     @Test
     public void testPictureListener() throws IOException, OperationException {
+        try (CapturingEventListener listener = new CapturingEventListener(EVENT_IMAGE_HANDLED, EVENT_VIDEO_HANDLED)) {
+            DocumentModel picture = session.createDocumentModel("/", "Picture", "Picture");
+            File file = new File(getClass().getResource("/files/plane.jpg").getPath());
+            Blob blob = new FileBlob(file);
+            picture.setPropertyValue("file:content", (Serializable) blob);
+            picture = session.createDocument(picture);
 
-        DummyTestListener.clear();
+            EventContextImpl evctx = new DocumentEventContext(session, session.getPrincipal(), picture);
+            Event event = evctx.newEvent("pictureViewsGenerationDone");
+            EventBundle bundle = new EventBundleImpl();
+            bundle.push(event);
 
-        DocumentModel picture = session.createDocumentModel("/", "Picture", "Picture");
-        File file = new File(getClass().getResource("/files/plane.jpg").getPath());
-        Blob blob = new FileBlob(file);
-        picture.setPropertyValue("file:content", (Serializable) blob);
-        picture = session.createDocument(picture);
+            PictureConversionChangedListener pictureListener = new PictureConversionChangedListener();
+            pictureListener.handleEvent(bundle);
 
-        EventContextImpl evctx = new DocumentEventContext(session, session.getPrincipal(), picture);
-        Event event = evctx.newEvent("pictureViewsGenerationDone");
-        EventBundle bundle = new EventBundleImpl();
-        bundle.push(event);
+            picture = session.getDocument(picture.getRef());
 
-        PictureConversionChangedListener listener = new PictureConversionChangedListener();
-        listener.handleEvent(bundle);
+            List<Tag> tags = tagService.getDocumentTags(session, picture.getId(), session.getPrincipal().getName());
 
-        picture = session.getDocument(picture.getRef());
+            Assert.assertTrue(tags.size() > 0);
 
-        List<Tag> tags = tagService.getDocumentTags(session, picture.getId(), session.getPrincipal().getName());
-
-        Assert.assertTrue(tags.size() > 0);
-
-        assertEquals(1, DummyTestListener.EVENTS_RECEIVED.size());
-        assertEquals(Vision.EVENT_IMAGE_HANDLED, DummyTestListener.EVENTS_RECEIVED.get(0).getName());
-        DummyTestListener.clear();
-
+            assertEquals(1, listener.getCapturedEventCount(EVENT_IMAGE_HANDLED));
+            assertFalse(listener.hasBeenFired(EVENT_VIDEO_HANDLED));
+        }
     }
 
 }
