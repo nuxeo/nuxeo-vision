@@ -18,13 +18,6 @@
       <type>zip</type>
       <scope>provided</scope>
     </dependency>
-    <dependency>
-      <groupId>org.nuxeo.marketplace.dam</groupId>
-      <artifactId>marketplace</artifactId>
-      <classifier>nxr-server</classifier>
-      <type>zip</type>
-      <scope>provided</scope>
-    </dependency>
 
     <!-- Additional bundles to be deployed by the MP -->
     <dependency>
