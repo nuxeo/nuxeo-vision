@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<component name="org.nuxeo.vision.google.crophint.chains">
+
+    <require>org.nuxeo.vision.core.chains</require>
+
+    <extension target="org.nuxeo.automation.scripting.internals.AutomationScriptingComponent" point="operation">
+        <scriptedOperation id="javascript.PictureVisionDefaultMapper">
+            <inputType>Blob</inputType>
+            <outputType>Blob</outputType>
+            <category>javascript</category>
+            <description></description>
+            <script><![CDATA[function run(input, params) {
+
+              var blob = input;
+
+              blob = VisionOp(blob, {
+                'features': ['CROP_HINTS'],
+                'maxResults': 5,
+                'params' : {
+                  'cropHintParams': [1.0, 1.5]
+                },
+                'outputVariable': 'annotations',
+                'provider': 'google'
+              });
+
+              var annotations = ctx.annotations;
+
+              if (annotations===undefined || annotations.length===0) return;
+
+              var annotation = annotations[0];
+
+              var cropHints = annotation.getCropHints();
+
+              if (cropHints.size < 2) {
+                throw "cropHints are missing";
+              }
+
+              return input;
+
+        }]]></script>
+        </scriptedOperation>
+        </extension>
+</component>

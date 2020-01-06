@@ -19,18 +19,6 @@
  */
 package org.nuxeo.vision.google.test;
 
-import static org.junit.Assert.*;
-import static org.junit.Assert.assertTrue;
-import static org.nuxeo.vision.google.GoogleVisionProvider.GOOGLE_VISION_CROP_HINTS_PARAMS;
-
-import java.io.File;
-import java.io.IOException;
-import java.security.GeneralSecurityException;
-import java.util.*;
-
-import javax.inject.Inject;
-
-import org.apache.commons.lang.StringUtils;
 import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
@@ -49,12 +37,30 @@ import org.nuxeo.vision.core.service.VisionResponse;
 import org.nuxeo.vision.google.GoogleVisionProvider;
 import org.nuxeo.vision.google.GoogleVisionResponse;
 
+import javax.inject.Inject;
+import java.io.File;
+import java.io.IOException;
+import java.security.GeneralSecurityException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.nuxeo.vision.google.GoogleVisionProvider.GOOGLE_VISION_CROP_HINTS_PARAMS;
+import static org.nuxeo.vision.google.test.GoogleCredentialHelper.CRED_PROP;
+import static org.nuxeo.vision.google.test.GoogleCredentialHelper.areCredentialsSet;
+
 @RunWith(FeaturesRunner.class)
 @Features({ PlatformFeature.class })
 @Deploy({ "nuxeo-vision-core", "nuxeo-vision-google" })
 public class TestGoogleVisionProvider {
 
-    public static final String CRED_PROP = "org.nuxeo.vision.test.credential.file";
+
 
     @Inject
     Vision visionService;
@@ -186,7 +192,7 @@ public class TestGoogleVisionProvider {
         Map<String,Object> params = new HashMap<>();
         params.put(GOOGLE_VISION_CROP_HINTS_PARAMS,new float[]{1.0f,1.5f});
         List<VisionResponse> results = getGoogleVisionProvider().execute(blobs,
-                Arrays.asList(VisionFeature.CROP_HINT.toString()),
+                Arrays.asList(VisionFeature.CROP_HINTS.toString()),
                 params,5);
         assertTrue(results.size() == 1);
         GoogleVisionResponse response = (GoogleVisionResponse) results.get(0);
@@ -220,8 +226,6 @@ public class TestGoogleVisionProvider {
         return googleVisionProvider;
     }
 
-    protected boolean areCredentialsSet() {
-        return StringUtils.isNotBlank(System.getProperty(CRED_PROP));
-    }
+
 
 }
