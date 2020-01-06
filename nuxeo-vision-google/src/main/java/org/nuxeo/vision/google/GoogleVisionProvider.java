@@ -21,32 +21,31 @@
 
 package org.nuxeo.vision.google;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.security.GeneralSecurityException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
+import com.google.api.gax.core.FixedCredentialsProvider;
+import com.google.auth.oauth2.ServiceAccountCredentials;
+import com.google.cloud.vision.v1.AnnotateImageRequest;
+import com.google.cloud.vision.v1.AnnotateImageResponse;
+import com.google.cloud.vision.v1.BatchAnnotateImagesResponse;
+import com.google.cloud.vision.v1.Feature;
+import com.google.cloud.vision.v1.Image;
+import com.google.cloud.vision.v1.ImageAnnotatorClient;
+import com.google.cloud.vision.v1.ImageAnnotatorSettings;
+import com.google.cloud.vision.v1.ImageContext;
+import com.google.protobuf.ByteString;
 import org.apache.commons.lang3.StringUtils;
 import org.nuxeo.ecm.core.api.Blob;
 import org.nuxeo.ecm.core.api.NuxeoException;
 import org.nuxeo.vision.core.service.VisionProvider;
 import org.nuxeo.vision.core.service.VisionResponse;
 
-import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
-import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
-import com.google.api.client.json.JsonFactory;
-import com.google.api.client.json.jackson2.JacksonFactory;
-import com.google.api.services.vision.v1.VisionScopes;
-import com.google.api.services.vision.v1.model.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public class GoogleVisionProvider implements VisionProvider {
-
-    public static final String APP_NAME_PARAM = "appName";
-
-    public static final String API_KEY_PARAM = "apiKey";
 
     public static final String CREDENTIAL_PATH_PARAM = "credentialFilePath";
 
@@ -65,28 +64,24 @@ public class GoogleVisionProvider implements VisionProvider {
     /**
      * volatile on purpose to allow for the double-checked locking idiom
      */
-    protected volatile com.google.api.services.vision.v1.Vision visionClient;
+    protected volatile ImageAnnotatorClient visionClient;
 
-    protected com.google.api.services.vision.v1.Vision getVisionClient() throws IOException, GeneralSecurityException {
+    protected ImageAnnotatorClient getVisionClient() throws IOException {
         // thread safe lazy initialization of the google vision client
         // see https://en.wikipedia.org/wiki/Double-checked_locking
-        com.google.api.services.vision.v1.Vision result = visionClient;
+        ImageAnnotatorClient result = visionClient;
         if (result == null) {
             synchronized (this) {
                 result = visionClient;
                 if (result == null) {
-                    GoogleCredential credential = null;
+                    File file = new File(getCredentialFilePath());
+                    ImageAnnotatorSettings.Builder settingsBuilder = ImageAnnotatorSettings.newBuilder();
                     if (usesServiceAccount()) {
-                        File file = new File(getCredentialFilePath());
-                        credential = GoogleCredential.fromStream(new FileInputStream(file))
-                                                     .createScoped(VisionScopes.all());
+                        settingsBuilder.setCredentialsProvider(
+                                FixedCredentialsProvider.create(ServiceAccountCredentials.
+                                        fromStream(new FileInputStream(file))));
                     }
-                    JsonFactory jsonFactory = JacksonFactory.getDefaultInstance();
-                    result = visionClient = new com.google.api.services.vision.v1.Vision.Builder(
-                            GoogleNetHttpTransport.newTrustedTransport(), jsonFactory, credential)
-                                                                                                  .setApplicationName(
-                                                                                                          getAppName())
-                                                                                                  .build();
+                    result = visionClient = ImageAnnotatorClient.create(settingsBuilder.build());
                 }
             }
         }
@@ -95,34 +90,21 @@ public class GoogleVisionProvider implements VisionProvider {
 
     @Override
     public List<VisionResponse> execute(List<Blob> blobs, List<String> features, int maxResults)
-            throws IOException, GeneralSecurityException, IllegalStateException {
+            throws IOException, IllegalStateException {
         // build list of requested features
         List<Feature> requestFeatures = buildFeatureList(features, maxResults);
 
         // build list of request
         List<AnnotateImageRequest> requests = buildRequestList(blobs, requestFeatures);
 
-        com.google.api.services.vision.v1.Vision.Images.Annotate annotate;
-        annotate = getVisionClient().images().annotate(new BatchAnnotateImagesRequest().setRequests(requests));
-
-        if (!usesServiceAccount() && usesApiKey()) {
-            annotate.setKey(getApiKey());
-        }
-
-        // Due to a bug: requests to Vision API containing large images fail
-        // when GZipped.
-        annotate.setDisableGZipContent(true);
-
-        // execute request
-        BatchAnnotateImagesResponse batchResponse;
-        batchResponse = annotate.execute();
+        BatchAnnotateImagesResponse batchResponse = getVisionClient().batchAnnotateImages(requests);
 
         // check response is not empty
-        if (batchResponse.getResponses() == null) {
+        if (batchResponse.getResponsesList() == null) {
             throw new IllegalStateException("Google Vision returned an empty response");
         }
 
-        List<AnnotateImageResponse> responses = batchResponse.getResponses();
+        List<AnnotateImageResponse> responses = batchResponse.getResponsesList();
         List<VisionResponse> output = new ArrayList<>();
         for (AnnotateImageResponse response : responses) {
             output.add(new GoogleVisionResponse(response));
@@ -153,10 +135,10 @@ public class GoogleVisionProvider implements VisionProvider {
     }
 
     @Override
-    public com.google.api.services.vision.v1.Vision getNativeClient() {
+    public ImageAnnotatorClient getNativeClient() {
         try {
             return getVisionClient();
-        } catch (IOException | GeneralSecurityException e) {
+        } catch (IOException e) {
             throw new NuxeoException(e);
         }
     }
@@ -165,29 +147,16 @@ public class GoogleVisionProvider implements VisionProvider {
         return params.get(CREDENTIAL_PATH_PARAM);
     }
 
-    protected String getApiKey() {
-        return params.get(API_KEY_PARAM);
-    }
-
-    protected String getAppName() {
-        return params.get(APP_NAME_PARAM);
-    }
-
     protected boolean usesServiceAccount() {
         String path = getCredentialFilePath();
         return StringUtils.isNotEmpty(path);
-    }
-
-    protected boolean usesApiKey() {
-        String key = getApiKey();
-        return StringUtils.isNotEmpty(key);
     }
 
     protected List<Feature> buildFeatureList(List<String> features, int maxResults) {
 
         List<Feature> requestFeatures = new ArrayList<>();
         for (String feature : features) {
-            requestFeatures.add(new Feature().setType(feature).setMaxResults(maxResults));
+            requestFeatures.add(Feature.newBuilder().setType(Feature.Type.valueOf(feature)).setMaxResults(maxResults).build());
         }
         return requestFeatures;
     }
@@ -196,8 +165,11 @@ public class GoogleVisionProvider implements VisionProvider {
 
         List<AnnotateImageRequest> requests = new ArrayList<>();
         for (Blob blob : blobs) {
-            AnnotateImageRequest request = new AnnotateImageRequest().setImage(
-                    new Image().encodeContent(blob.getByteArray())).setFeatures(features);
+            AnnotateImageRequest request = AnnotateImageRequest.newBuilder()
+                    .setImage(Image.newBuilder().setContent(ByteString.copyFrom(blob.getByteArray())))
+                    .addAllFeatures(features)
+                    .setImageContext(ImageContext.newBuilder().build())
+                    .build();
             requests.add(request);
         }
         return requests;

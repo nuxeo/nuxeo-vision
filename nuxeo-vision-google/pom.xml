@@ -24,13 +24,9 @@
       <artifactId>nuxeo-vision-core</artifactId>
     </dependency>
     <dependency>
-      <groupId>com.google.apis</groupId>
-      <artifactId>google-api-services-vision</artifactId>
+      <groupId>com.google.cloud</groupId>
+      <artifactId>google-cloud-vision</artifactId>
       <version>${google.vision.version}</version>
-    </dependency>
-     <dependency>
-      <groupId>com.google.api-client</groupId>
-      <artifactId>google-api-client</artifactId>
     </dependency>
 
     <dependency>
@@ -48,8 +44,7 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
           <systemPropertyVariables>
-            <org.nuxeo.vision.test.credential.key>${org.nuxeo.vision.test.credential.key}</org.nuxeo.vision.test.credential.key>
-            <org.nuxeo.vision.test.credential.file>${org.nuxeo.vision.test.credential.file}</org.nuxeo.vision.test.credential.file>
+            <org.nuxeo.vision.test.credential.file>C:/Users/michael/Documents/nuxeo-vision-f7ce46782a05.json</org.nuxeo.vision.test.credential.file>
           </systemPropertyVariables>
         </configuration>
       </plugin>

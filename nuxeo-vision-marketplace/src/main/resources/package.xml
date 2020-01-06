@@ -14,7 +14,7 @@ The Nuxeo Vision addon provides a wrapper for Computer Vision Services. Currentl
   <production-state>production_ready</production-state>
   <supported>true</supported>
   <platforms>
-    <platform>server-@DISTRIB_VERSION@</platform>
+    <platform>server-10.10</platform>
     <platform>server-@DISTRIB_VERSION@-*</platform>
   </platforms>
   <dependencies>

@@ -53,8 +53,6 @@ public class TestGoogleVisionProvider {
 
     public static final String CRED_PROP = "org.nuxeo.vision.test.credential.file";
 
-    public static final String KEY_PROP = "org.nuxeo.vision.test.credential.key";
-
     @Inject
     Vision visionService;
 
@@ -196,16 +194,13 @@ public class TestGoogleVisionProvider {
             return googleVisionProvider;
         }
         Map<String, String> params = new HashMap<>();
-        params.put(GoogleVisionProvider.APP_NAME_PARAM, "Nuxeo");
-        params.put(GoogleVisionProvider.API_KEY_PARAM, System.getProperty(KEY_PROP));
         params.put(GoogleVisionProvider.CREDENTIAL_PATH_PARAM, System.getProperty(CRED_PROP));
         googleVisionProvider = new GoogleVisionProvider(params);
         return googleVisionProvider;
     }
 
     protected boolean areCredentialsSet() {
-        return StringUtils.isNotBlank(System.getProperty(CRED_PROP))
-                || StringUtils.isNotBlank(System.getProperty(KEY_PROP));
+        return StringUtils.isNotBlank(System.getProperty(CRED_PROP));
 
     }
 

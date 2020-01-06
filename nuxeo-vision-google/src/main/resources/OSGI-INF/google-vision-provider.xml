@@ -4,9 +4,7 @@
   <extension point="provider" target="org.nuxeo.vision.core.service">
     <provider class="org.nuxeo.vision.google.GoogleVisionProvider" name="google">
       <parameters>
-        <parameter name="appName">Nuxeo</parameter>
         <parameter name="credentialFilePath">${org.nuxeo.vision.google.credential:=}</parameter>
-        <parameter name="apiKey">${org.nuxeo.vision.google.key:=}</parameter>
       </parameters>
     </provider>
   </extension>

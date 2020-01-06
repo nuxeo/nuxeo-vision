@@ -19,18 +19,16 @@
 
 package org.nuxeo.vision.google;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import com.google.cloud.vision.v1.AnnotateImageResponse;
+import com.google.cloud.vision.v1.DominantColorsAnnotation;
+import com.google.cloud.vision.v1.EntityAnnotation;
 import org.nuxeo.vision.core.image.ColorInfo;
 import org.nuxeo.vision.core.image.ImageProperties;
 import org.nuxeo.vision.core.image.TextEntity;
 import org.nuxeo.vision.core.service.VisionResponse;
 
-import com.google.api.services.vision.v1.model.AnnotateImageResponse;
-import com.google.api.services.vision.v1.model.Color;
-import com.google.api.services.vision.v1.model.DominantColorsAnnotation;
-import com.google.api.services.vision.v1.model.EntityAnnotation;
+import java.util.ArrayList;
+import java.util.List;
 
 public class GoogleVisionResponse implements VisionResponse {
 
@@ -43,28 +41,28 @@ public class GoogleVisionResponse implements VisionResponse {
     @Override
     public List<TextEntity> getClassificationLabels() {
         List<TextEntity> results = new ArrayList<>();
-        if (response.getLabelAnnotations() != null) {
-            results.addAll(processEntityAnnotationList(response.getLabelAnnotations()));
+        if (response.getLabelAnnotationsList() != null) {
+            results.addAll(processEntityAnnotationList(response.getLabelAnnotationsList()));
         }
-        if (response.getLandmarkAnnotations() != null) {
-            results.addAll(processEntityAnnotationList(response.getLandmarkAnnotations()));
+        if (response.getLandmarkAnnotationsList() != null) {
+            results.addAll(processEntityAnnotationList(response.getLandmarkAnnotationsList()));
         }
-        if (response.getLogoAnnotations() != null) {
-            results.addAll(processEntityAnnotationList(response.getLogoAnnotations()));
+        if (response.getLogoAnnotationsList() != null) {
+            results.addAll(processEntityAnnotationList(response.getLogoAnnotationsList()));
         }
         return results;
     }
 
     @Override
     public List<TextEntity> getOcrText() {
-        List<EntityAnnotation> labels = response.getTextAnnotations();
+        List<EntityAnnotation> labels = response.getTextAnnotationsList();
         return processEntityAnnotationList(labels);
     }
 
     @Override
     public ImageProperties getImageProperties() {
         List<ColorInfo> results = new ArrayList<>();
-        com.google.api.services.vision.v1.model.ImageProperties properties = response.getImagePropertiesAnnotation();
+        com.google.cloud.vision.v1.ImageProperties properties = response.getImagePropertiesAnnotation();
         if (properties == null) {
             return new ImageProperties(results);
         }
@@ -72,20 +70,17 @@ public class GoogleVisionResponse implements VisionResponse {
         if (annotation == null) {
             return new ImageProperties(results);
         }
-        List<com.google.api.services.vision.v1.model.ColorInfo> colors = annotation.getColors();
+        List<com.google.cloud.vision.v1.ColorInfo> colors = annotation.getColorsList();
         if (colors == null) {
             return new ImageProperties(results);
         }
 
-        for (com.google.api.services.vision.v1.model.ColorInfo colorInfo : colors) {
-            Color color = colorInfo.getColor();
-
-            float red = color.getRed() != null ? color.getRed() / 255 : 0;
-            float blue = color.getBlue() != null ? color.getBlue() / 255 : 0;
-            float green = color.getGreen() != null ? color.getGreen() / 255 : 0;
-
+        for (com.google.cloud.vision.v1.ColorInfo colorInfo : colors) {
+            com.google.type.Color color = colorInfo.getColor();
+            float red = color.getRed() / 255f;
+            float blue = color.getBlue() / 255f;
+            float green = color.getGreen() / 255f;
             java.awt.Color resultColor = new java.awt.Color(red, green, blue);
-
             results.add(new ColorInfo(resultColor, colorInfo.getPixelFraction(), colorInfo.getScore()));
         }
         return new ImageProperties(results);
@@ -102,8 +97,7 @@ public class GoogleVisionResponse implements VisionResponse {
             return result;
         }
         for (EntityAnnotation annotation : annotations) {
-            result.add(new TextEntity(annotation.getDescription(),
-                    annotation.getScore() != null ? annotation.getScore() : 0, annotation.getLocale()));
+            result.add(new TextEntity(annotation.getDescription(), annotation.getScore(), annotation.getLocale()));
         }
         return result;
     }
