@@ -20,6 +20,8 @@
 package org.nuxeo.vision.google.test;
 
 import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
+import static org.nuxeo.vision.google.GoogleVisionProvider.GOOGLE_VISION_CROP_HINTS_PARAMS;
 
 import java.io.File;
 import java.io.IOException;
@@ -45,6 +47,7 @@ import org.nuxeo.vision.core.service.Vision;
 import org.nuxeo.vision.core.service.VisionFeature;
 import org.nuxeo.vision.core.service.VisionResponse;
 import org.nuxeo.vision.google.GoogleVisionProvider;
+import org.nuxeo.vision.google.GoogleVisionResponse;
 
 @RunWith(FeaturesRunner.class)
 @Features({ PlatformFeature.class })
@@ -174,8 +177,24 @@ public class TestGoogleVisionProvider {
     }
 
     @Test
-    public void shouldFailWithWrongFeature() throws Exception {
+    public void testCropHints() throws IOException {
+        Assume.assumeTrue("Credentials not set", areCredentialsSet());
 
+        List<Blob> blobs = new ArrayList<>();
+        blobs.add(new FileBlob(new File(getClass().getResource("/files/plane.jpg").getPath())));
+
+        Map<String,Object> params = new HashMap<>();
+        params.put(GOOGLE_VISION_CROP_HINTS_PARAMS,new float[]{1.0f,1.5f});
+        List<VisionResponse> results = getGoogleVisionProvider().execute(blobs,
+                Arrays.asList(VisionFeature.CROP_HINT.toString()),
+                params,5);
+        assertTrue(results.size() == 1);
+        GoogleVisionResponse response = (GoogleVisionResponse) results.get(0);
+        assertEquals(2,response.getCropHints().size());
+    }
+
+    @Test
+    public void shouldFailWithWrongFeature() throws Exception {
         File file = new File(getClass().getResource("/files/plane.jpg").getPath());
         Blob blob = new FileBlob(file);
         try {
@@ -203,7 +222,6 @@ public class TestGoogleVisionProvider {
 
     protected boolean areCredentialsSet() {
         return StringUtils.isNotBlank(System.getProperty(CRED_PROP));
-
     }
 
 }

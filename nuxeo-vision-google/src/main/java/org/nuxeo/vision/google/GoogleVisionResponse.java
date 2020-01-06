@@ -20,6 +20,7 @@
 package org.nuxeo.vision.google;
 
 import com.google.cloud.vision.v1.AnnotateImageResponse;
+import com.google.cloud.vision.v1.CropHint;
 import com.google.cloud.vision.v1.DominantColorsAnnotation;
 import com.google.cloud.vision.v1.EntityAnnotation;
 import org.nuxeo.vision.core.image.ColorInfo;
@@ -84,6 +85,12 @@ public class GoogleVisionResponse implements VisionResponse {
             results.add(new ColorInfo(resultColor, colorInfo.getPixelFraction(), colorInfo.getScore()));
         }
         return new ImageProperties(results);
+    }
+
+    public List<CropHint> getCropHints() {
+        return response.hasCropHintsAnnotation() ?
+                response.getCropHintsAnnotation().getCropHintsList() :
+                new ArrayList<>();
     }
 
     @Override

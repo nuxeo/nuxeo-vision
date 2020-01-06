@@ -26,6 +26,7 @@ import com.google.auth.oauth2.ServiceAccountCredentials;
 import com.google.cloud.vision.v1.AnnotateImageRequest;
 import com.google.cloud.vision.v1.AnnotateImageResponse;
 import com.google.cloud.vision.v1.BatchAnnotateImagesResponse;
+import com.google.cloud.vision.v1.CropHintsParams;
 import com.google.cloud.vision.v1.Feature;
 import com.google.cloud.vision.v1.Image;
 import com.google.cloud.vision.v1.ImageAnnotatorClient;
@@ -54,6 +55,8 @@ public class GoogleVisionProvider implements VisionProvider {
     protected static final long REQUEST_MAX_SIZE = 8 * 1024 * 1024;
 
     protected static final int MAX_BLOB_PER_REQUEST = 16;
+
+    public static final String GOOGLE_VISION_CROP_HINTS_PARAMS = "cropHints";
 
     protected Map<String, String> params;
 
@@ -95,7 +98,7 @@ public class GoogleVisionProvider implements VisionProvider {
         List<Feature> requestFeatures = buildFeatureList(features, maxResults);
 
         // build list of request
-        List<AnnotateImageRequest> requests = buildRequestList(blobs, requestFeatures);
+        List<AnnotateImageRequest> requests = buildRequestList(blobs, requestFeatures, params);
 
         BatchAnnotateImagesResponse batchResponse = getVisionClient().batchAnnotateImages(requests);
 
@@ -153,7 +156,6 @@ public class GoogleVisionProvider implements VisionProvider {
     }
 
     protected List<Feature> buildFeatureList(List<String> features, int maxResults) {
-
         List<Feature> requestFeatures = new ArrayList<>();
         for (String feature : features) {
             requestFeatures.add(Feature.newBuilder().setType(Feature.Type.valueOf(feature)).setMaxResults(maxResults).build());
@@ -161,18 +163,31 @@ public class GoogleVisionProvider implements VisionProvider {
         return requestFeatures;
     }
 
-    protected List<AnnotateImageRequest> buildRequestList(List<Blob> blobs, List<Feature> features) throws IOException {
-
+    protected List<AnnotateImageRequest> buildRequestList(List<Blob> blobs, List<Feature> features, Map<String,Object> params) throws IOException {
         List<AnnotateImageRequest> requests = new ArrayList<>();
         for (Blob blob : blobs) {
-            AnnotateImageRequest request = AnnotateImageRequest.newBuilder()
+            AnnotateImageRequest.Builder requestBuilder = AnnotateImageRequest.newBuilder()
                     .setImage(Image.newBuilder().setContent(ByteString.copyFrom(blob.getByteArray())))
-                    .addAllFeatures(features)
-                    .setImageContext(ImageContext.newBuilder().build())
-                    .build();
-            requests.add(request);
+                    .addAllFeatures(features);
+
+            ImageContext.Builder contextBuilder = ImageContext.newBuilder();
+            if (params.containsKey(GOOGLE_VISION_CROP_HINTS_PARAMS)) {
+                CropHintsParams cropHintsParams = getCropHintParams((float[]) params.get(GOOGLE_VISION_CROP_HINTS_PARAMS));
+                contextBuilder.setCropHintsParams(cropHintsParams);
+            }
+            requestBuilder.setImageContext(contextBuilder.build());
+
+            requests.add(requestBuilder.build());
         }
         return requests;
+    }
+
+    public static CropHintsParams getCropHintParams(float[] crops) {
+        CropHintsParams.Builder builder = CropHintsParams.newBuilder();
+        for (float crop : crops) {
+            builder.addAspectRatios(crop);
+        }
+        return builder.build();
     }
 
 }
