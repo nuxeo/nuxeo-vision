@@ -71,7 +71,7 @@ public class TestGoogleVisionProvider {
         File file = new File(getClass().getResource("/files/plane.jpg").getPath());
         Blob blob = new FileBlob(file);
         List<VisionResponse> results = getGoogleVisionProvider().execute(Arrays.asList(blob),
-                Arrays.asList(VisionFeature.LABEL_DETECTION.toString()), 5);
+                Arrays.asList(VisionFeature.LABEL_DETECTION.toString()),new HashMap<>(), 5);
         assertEquals(1, results.size());
         List<TextEntity> labels = results.get(0).getClassificationLabels();
         assertNotNull(labels);
@@ -87,7 +87,7 @@ public class TestGoogleVisionProvider {
         File file = new File(getClass().getResource("/files/text.png").getPath());
         Blob blob = new FileBlob(file);
         List<VisionResponse> results = getGoogleVisionProvider().execute(Arrays.asList(blob),
-                Arrays.asList(VisionFeature.TEXT_DETECTION.toString()), 5);
+                Arrays.asList(VisionFeature.TEXT_DETECTION.toString()), new HashMap<>(), 5);
         assertEquals(1, results.size());
         List<TextEntity> texts = results.get(0).getOcrText();
         assertNotNull(texts);
@@ -103,7 +103,7 @@ public class TestGoogleVisionProvider {
         File file = new File(getClass().getResource("/files/plane.jpg").getPath());
         Blob blob = new FileBlob(file);
         List<VisionResponse> results = getGoogleVisionProvider().execute(Arrays.asList(blob),
-                Arrays.asList(VisionFeature.IMAGE_PROPERTIES.toString()), 5);
+                Arrays.asList(VisionFeature.IMAGE_PROPERTIES.toString()), new HashMap<>(), 5);
         assertEquals(1, results.size());
         List<ColorInfo> colors = results.get(0).getImageProperties().getColors();
         assertNotNull(colors);
@@ -119,7 +119,8 @@ public class TestGoogleVisionProvider {
         File file = new File(getClass().getResource("/files/plane.jpg").getPath());
         Blob blob = new FileBlob(file);
         List<VisionResponse> results = getGoogleVisionProvider().execute(Arrays.asList(blob),
-                Arrays.asList(VisionFeature.TEXT_DETECTION.toString(), VisionFeature.LABEL_DETECTION.toString()), 5);
+                Arrays.asList(VisionFeature.TEXT_DETECTION.toString(), VisionFeature.LABEL_DETECTION.toString()),
+                new HashMap<>(), 5);
         assertEquals(1, results.size());
         List<TextEntity> labels = results.get(0).getClassificationLabels();
         assertNotNull(labels);
@@ -143,7 +144,7 @@ public class TestGoogleVisionProvider {
                         VisionFeature.IMAGE_PROPERTIES.toString(), VisionFeature.FACE_DETECTION.toString(),
                         VisionFeature.LOGO_DETECTION.toString(), VisionFeature.LANDMARK_DETECTION.toString(),
                         VisionFeature.SAFE_SEARCH_DETECTION.toString()),
-                5);
+                new HashMap<>(), 5);
         assertEquals(1, results.size());
         VisionResponse result = results.get(0);
         List<TextEntity> labels = result.getClassificationLabels();
@@ -167,7 +168,8 @@ public class TestGoogleVisionProvider {
         blobs.add(new FileBlob(new File(getClass().getResource("/files/text.png").getPath())));
 
         List<VisionResponse> results = getGoogleVisionProvider().execute(blobs,
-                Arrays.asList(VisionFeature.TEXT_DETECTION.toString(), VisionFeature.LABEL_DETECTION.toString()), 5);
+                Arrays.asList(VisionFeature.TEXT_DETECTION.toString(), VisionFeature.LABEL_DETECTION.toString()),
+                new HashMap<>(),5);
         assertTrue(results.size() == 2);
     }
 
@@ -179,7 +181,7 @@ public class TestGoogleVisionProvider {
         try {
             @SuppressWarnings("unused")
             List<VisionResponse> ignored = getGoogleVisionProvider().execute(Arrays.asList(blob),
-                    Arrays.asList(UUID.randomUUID().toString()), 5);
+                    Arrays.asList(UUID.randomUUID().toString()), new HashMap<>(), 5);
             assertTrue("The call should have failed", false);
         } catch (Exception e) {
             // In api v1, Google returns a GoogleJsonResponseException with a return code

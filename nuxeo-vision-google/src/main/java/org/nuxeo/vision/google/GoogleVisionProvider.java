@@ -89,7 +89,7 @@ public class GoogleVisionProvider implements VisionProvider {
     }
 
     @Override
-    public List<VisionResponse> execute(List<Blob> blobs, List<String> features, int maxResults)
+    public List<VisionResponse> execute(List<Blob> blobs, List<String> features, Map<String, Object> params, int maxResults)
             throws IOException, IllegalStateException {
         // build list of requested features
         List<Feature> requestFeatures = buildFeatureList(features, maxResults);

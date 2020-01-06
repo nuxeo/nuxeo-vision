@@ -38,10 +38,11 @@ public interface Vision {
     /**
      * @param blob the image blob
      * @param features the feature to request from the service
+     * @param params parameters to pass to the service
      * @param maxResults the maximum number of results per feature
      * @return a {@link VisionResponse} object
      */
-    VisionResponse execute(Blob blob, List<String> features, int maxResults)
+    VisionResponse execute(Blob blob, List<String> features, Map<String,Object> params, int maxResults)
             throws IOException, GeneralSecurityException;
 
     /**
@@ -49,11 +50,12 @@ public interface Vision {
      * @param provider the provider to use
      * @param blob the image blob
      * @param features the feature(s) to request from the service
+     * @param params parameters to pass to the service
      * @param maxResults the maximum number of results per feature
      * @return a {@link VisionResponse} object
      * @since 9.1
      */
-    VisionResponse execute(String provider, Blob blob, List<String> features, int maxResults)
+    VisionResponse execute(String provider, Blob blob, List<String> features, Map<String, Object> params, int maxResults)
             throws IOException, GeneralSecurityException;
 
     /**
@@ -61,20 +63,22 @@ public interface Vision {
      * @param provider the provider to use
      * @param blobs A list of image blobs
      * @param features the feature(s) to request from the service
+     * @param params parameters to pass to the service
      * @param maxResults the maximum number of results per feature
      * @return a list of {@link VisionResponse} object
      * @since 9.1
      */
-    List<VisionResponse> execute(String provider, List<Blob> blobs, List<String> features, int maxResults)
+    List<VisionResponse> execute(String provider, List<Blob> blobs, List<String> features, Map<String, Object> params, int maxResults)
             throws IOException, GeneralSecurityException;
 
     /**
      * @param blobs A list of image blobs
      * @param features the feature(s) to request from the service
+     * @param params parameters to pass to the service
      * @param maxResults the maximum number of results per feature
      * @return a list of {@link VisionResponse} object
      */
-    List<VisionResponse> execute(List<Blob> blobs, List<String> features, int maxResults)
+    List<VisionResponse> execute(List<Blob> blobs, List<String> features, Map<String, Object> params, int maxResults)
             throws IOException, GeneralSecurityException;
 
     /**

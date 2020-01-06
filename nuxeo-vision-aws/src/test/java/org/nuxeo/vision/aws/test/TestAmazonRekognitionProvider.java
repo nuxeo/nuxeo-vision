@@ -76,7 +76,7 @@ public class TestAmazonRekognitionProvider {
         File file = new File(getClass().getResource("/files/plane.jpg").getPath());
         Blob blob = new FileBlob(file);
         List<VisionResponse> results = getProvider().execute(Arrays.asList(blob),
-                Arrays.asList(VisionFeature.LABEL_DETECTION.toString()), 5);
+                Arrays.asList(VisionFeature.LABEL_DETECTION.toString()), new HashMap<>(), 5);
         assertEquals(1, results.size());
         List<TextEntity> labels = results.get(0).getClassificationLabels();
         assertNotNull(labels);
@@ -94,7 +94,7 @@ public class TestAmazonRekognitionProvider {
         blobs.add(new FileBlob(new File(getClass().getResource("/files/text.png").getPath())));
 
         List<VisionResponse> results = getProvider().execute(blobs,
-                Arrays.asList(VisionFeature.LABEL_DETECTION.toString()), 5);
+                Arrays.asList(VisionFeature.LABEL_DETECTION.toString()), new HashMap<>(), 5);
         assertTrue(results.size() == 2);
     }
 
@@ -107,7 +107,7 @@ public class TestAmazonRekognitionProvider {
         blobs.add(new FileBlob(new File(getClass().getResource("/files/text.png").getPath())));
 
         List<VisionResponse> results = getProvider().execute(blobs,
-                Arrays.asList(VisionFeature.SAFE_SEARCH_DETECTION.toString()), 5);
+                Arrays.asList(VisionFeature.SAFE_SEARCH_DETECTION.toString()), new HashMap<>(), 5);
         assertTrue(results.size() == 2);
         DetectModerationLabelsResult result = (DetectModerationLabelsResult) results.get(1).getNativeObject();
         assertEquals(0, result.getModerationLabels().size());

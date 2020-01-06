@@ -21,7 +21,9 @@ package org.nuxeo.vision.core.operation;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
@@ -34,6 +36,7 @@ import org.nuxeo.ecm.automation.core.annotations.Operation;
 import org.nuxeo.ecm.automation.core.annotations.OperationMethod;
 import org.nuxeo.ecm.automation.core.annotations.Param;
 import org.nuxeo.ecm.automation.core.util.BlobList;
+import org.nuxeo.ecm.automation.core.util.Properties;
 import org.nuxeo.ecm.automation.core.util.StringList;
 import org.nuxeo.ecm.core.api.Blob;
 import org.nuxeo.vision.core.service.Vision;
@@ -61,6 +64,9 @@ public class VisionOp {
     @Param(name = "features", description = "A StringList of features to request from the API", required = true)
     protected StringList features;
 
+    @Param(name = "params", description = "Params to pass to the provider", required = false)
+    protected Map<String, Object> params;
+
     @Param(name = "outputVariable", description = "The key of the context output variable. "
             + "The output variable is a list of VisionResponse objects. ", required = true)
     protected String outputVariable;
@@ -82,11 +88,15 @@ public class VisionOp {
     public BlobList run(BlobList blobs) throws OperationException {
         List<VisionResponse> results;
 
+        if (params == null) {
+            params = new HashMap<>();
+        }
+
         try {
             if (StringUtils.isEmpty(provider)) {
-                results = visionService.execute(blobs, features, maxResults);
+                results = visionService.execute(blobs, features, params, maxResults);
             } else {
-                results = visionService.execute(provider, blobs, features, maxResults);
+                results = visionService.execute(provider, blobs, features, params, maxResults);
             }
             ctx.put(outputVariable, results);
         } catch (IOException | GeneralSecurityException e) {

@@ -41,7 +41,7 @@ public class MockVisionProvider implements VisionProvider {
     }
 
     @Override
-    public List<VisionResponse> execute(List<Blob> blobs, List<String> features, int maxResults)
+    public List<VisionResponse> execute(List<Blob> blobs, List<String> features, Map<String,Object> params, int maxResults)
             throws IOException, GeneralSecurityException, IllegalStateException {
 
         if(!featuresAreSupported(features)) {

@@ -101,20 +101,20 @@ public class VisionImpl extends DefaultComponent implements Vision {
     }
 
     @Override
-    public VisionResponse execute(Blob blob, List<String> features, int maxResults)
+    public VisionResponse execute(Blob blob, List<String> features, Map<String, Object> params, int maxResults)
             throws IOException, GeneralSecurityException, IllegalStateException {
-        return execute(config.getDefaultProviderName(), blob, features, maxResults);
+        return execute(config.getDefaultProviderName(), blob, features, params, maxResults);
     }
 
     @Override
-    public List<VisionResponse> execute(List<Blob> blobs, List<String> features, int maxResults)
+    public List<VisionResponse> execute(List<Blob> blobs, List<String> features, Map<String, Object> params, int maxResults)
             throws IOException, GeneralSecurityException, IllegalStateException {
-        return execute(config.getDefaultProviderName(), blobs, features, maxResults);
+        return execute(config.getDefaultProviderName(), blobs, features, params, maxResults);
     }
 
     // @since 9.1
     @Override
-    public VisionResponse execute(String providerName, Blob blob, List<String> features, int maxResults)
+    public VisionResponse execute(String providerName, Blob blob, List<String> features, Map<String, Object> params, int maxResults)
             throws IOException, GeneralSecurityException {
         if (blob == null) {
             throw new IllegalArgumentException("Input Blob cannot be null");
@@ -122,7 +122,7 @@ public class VisionImpl extends DefaultComponent implements Vision {
             throw new IllegalArgumentException("The feature list cannot be empty or null");
         }
 
-        List<VisionResponse> results = execute(providerName, Arrays.asList(blob), features, maxResults);
+        List<VisionResponse> results = execute(providerName, Arrays.asList(blob), features, params, maxResults);
         if (results.size() > 0) {
             return results.get(0);
         } else {
@@ -134,7 +134,7 @@ public class VisionImpl extends DefaultComponent implements Vision {
     // @since 9.1
     @Override
     public List<VisionResponse> execute(String providerName, List<Blob> blobs, List<String> features,
-            int maxResults) throws IOException, GeneralSecurityException {
+                                        Map<String, Object> params, int maxResults) throws IOException, GeneralSecurityException {
         VisionProvider provider = providers.get(providerName);
 
         if (provider == null) {
@@ -148,7 +148,7 @@ public class VisionImpl extends DefaultComponent implements Vision {
         } else if (features == null || features.size() == 0) {
             throw new IllegalArgumentException("The feature list cannot be empty or null");
         }
-        return provider.execute(blobs, features, maxResults);
+        return provider.execute(blobs, features, params, maxResults);
     }
 
     @Override

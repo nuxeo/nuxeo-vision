@@ -24,6 +24,7 @@ package org.nuxeo.vision.core.service;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.List;
+import java.util.Map;
 
 import org.nuxeo.ecm.core.api.Blob;
 
@@ -36,10 +37,11 @@ public interface VisionProvider {
     /**
      * @param blobs the blobs to pass to the API
      * @param features the feature to request from the provider
+     * @param params parameters to pass to the provider
      * @param maxResults the maximum number of results per feature
      * @return a {@link VisionResponse} object
      */
-    List<VisionResponse> execute(List<Blob> blobs, List<String> features, int maxResults)
+    List<VisionResponse> execute(List<Blob> blobs, List<String> features, Map<String, Object> params, int maxResults)
             throws IOException, GeneralSecurityException, IllegalStateException;
 
     /**

@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 import org.junit.Test;
@@ -60,7 +61,7 @@ public class TestVisionService {
     public void testLabelFeature() throws IOException, GeneralSecurityException {
         File file = new File(getClass().getResource("/files/plane.jpg").getPath());
         Blob blob = new FileBlob(file);
-        VisionResponse result = vision.execute(blob, Arrays.asList(VisionFeature.LABEL_DETECTION.toString()), 5);
+        VisionResponse result = vision.execute(blob, Arrays.asList(VisionFeature.LABEL_DETECTION.toString()), new HashMap<>(), 5);
         assertNotNull(result);
 
         List<TextEntity> labels = result.getClassificationLabels();
@@ -76,7 +77,7 @@ public class TestVisionService {
         blobs.add(new FileBlob(new File(getClass().getResource("/files/text.png").getPath())));
 
         List<VisionResponse> results = vision.execute(blobs,
-                Arrays.asList(VisionFeature.TEXT_DETECTION.toString(), VisionFeature.LABEL_DETECTION.toString()), 5);
+                Arrays.asList(VisionFeature.TEXT_DETECTION.toString(), VisionFeature.LABEL_DETECTION.toString()), new HashMap<>(), 5);
         assertTrue(results.size() == 2);
 
         for (VisionResponse oneResponse : results) {
@@ -93,7 +94,7 @@ public class TestVisionService {
         Blob blob = new FileBlob(file);
         try {
             @SuppressWarnings("unused")
-            VisionResponse result = vision.execute(blob, Arrays.asList("abc123"), 5);
+            VisionResponse result = vision.execute(blob, Arrays.asList("abc123"), new HashMap<>(),5);
             assertFalse("Chould have failed with invalid label", true);
         } catch (Exception e) {
             assertEquals(MockVisionProvider.UNSUPPORTED_FEATURE, e.getMessage());
