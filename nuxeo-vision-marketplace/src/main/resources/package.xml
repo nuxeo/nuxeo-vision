@@ -17,9 +17,6 @@ The Nuxeo Vision addon provides a wrapper for Computer Vision Services. Currentl
     <platform>server-@DISTRIB_VERSION@</platform>
     <platform>server-@DISTRIB_VERSION@-*</platform>
   </platforms>
-  <dependencies>
-    <package>nuxeo-dam</package>
-  </dependencies>
   <license>Apache License, Version 2.0</license>
   <license-url>http://www.apache.org/licenses/LICENSE-2.0</license-url>
   <visibility>MARKETPLACE</visibility>
