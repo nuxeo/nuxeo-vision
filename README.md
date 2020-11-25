@@ -8,8 +8,9 @@ This plugin provides a wrapper for Computer Vision Services. Currently it suppor
 - Upload the JSON key file on your instance
 - Edit nuxeo.conf
 ```
-org.nuxeo.vision.google.credential=PATH_TO_JSON_CREDENTIAL_FILE
+org.nuxeo.vision.google.credential=<path to service account credential file>
 ```
+Use alternatively `org.nuxeo.vision.google.key` to provide an API key instead.
 
 ## AWS Rekognition
 - Configure a key/secret pair in the [AWS console](http://docs.aws.amazon.com/general/latest/gr/managing-aws-access-keys.html)
@@ -17,9 +18,9 @@ org.nuxeo.vision.google.credential=PATH_TO_JSON_CREDENTIAL_FILE
 - Edit nuxeo.conf
 ```
 org.nuxeo.vision.default.provider=aws
-org.nuxeo.vision.aws.region=
-org.nuxeo.vision.aws.key=
-org.nuxeo.vision.aws.secret=
+nuxeo.aws.accessKeyId=
+nuxeo.aws.secretKey=
+nuxeo.aws.region=
 ```
 
 ##Plugin
@@ -55,8 +56,9 @@ mvn clean install
 - Upload the JSON key file on your instance
 - Edit nuxeo.conf
 ```
-org.nuxeo.vision.google.credential=PATH_TO_JSON_CREDENTIAL_FILE
+org.nuxeo.vision.google.credential=<path to service account credential file>
 ```
+Use alternatively `org.nuxeo.vision.google.key` to provide an API key instead.
 
 ###AWS Rekognition
 - Uses the credentials defined by the Nuxeo AWS service.

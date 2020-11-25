@@ -65,7 +65,7 @@ import org.nuxeo.vision.core.worker.VideoVisionWorker;
 @RunWith(FeaturesRunner.class)
 @Features(AutomationFeature.class)
 @RepositoryConfig(init = DefaultRepositoryInit.class, cleanup = Granularity.METHOD)
-@Deploy({ "nuxeo-vision-core", "org.nuxeo.ecm.platform.video.core", "org.nuxeo.ecm.platform.tag",
+@Deploy({ "nuxeo-vision-core", "org.nuxeo.ecm.platform.video", "org.nuxeo.ecm.platform.tag",
         "org.nuxeo.ecm.automation.scripting" })
 @LocalDeploy({ "nuxeo-vision-core:OSGI-INF/mock-work-manager-contrib.xml",
         "nuxeo-vision-core:OSGI-INF/mock-provider-contrib.xml" })
