@@ -1,0 +1,37 @@
+spec:
+  template:
+    spec:
+      nodeSelector:
+        team: ai
+      tolerations:
+        - effect: NoSchedule
+          key: team
+          operator: Equal
+          value: ai
+      containers:
+      - name: nuxeo
+        volumeMounts:
+          - mountPath: /etc/nuxeo/conf.d/
+            name: nuxeoconf
+          - mountPath: /var/lib/nuxeo/binaries
+            name: binaries
+          - mountPath: /var/log/nuxeo
+            name: log
+          - name: google-vision
+            mountPath: "/etc/nuxeo/google-vision"
+            readOnly: true
+      volumes:
+        - configMap:
+            defaultMode: 420
+            name: preview-conf
+          name: nuxeoconf
+        - emptyDir: {}
+          name: binaries
+        - emptyDir: {}
+          name: log
+        - name: google-vision
+          secret:
+            secretName: google-vision
+            items:
+            - key: data
+              path: nuxeo-vision.json
