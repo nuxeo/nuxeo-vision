@@ -2,13 +2,7 @@
 <component name="org.nuxeo.vision.aws.provider" version="1.0">
 
   <extension point="provider" target="org.nuxeo.vision.core.service">
-    <provider class="org.nuxeo.vision.aws.AmazonRekognitionProvider" name="aws">
-      <parameters>
-        <parameter name="region">${org.nuxeo.vision.aws.region:=}</parameter>
-        <parameter name="accessKey">${org.nuxeo.vision.aws.key:=}</parameter>
-        <parameter name="secretKey">${org.nuxeo.vision.aws.secret:=}</parameter>
-      </parameters>
-    </provider>
+    <provider class="org.nuxeo.vision.aws.AmazonRekognitionProvider" name="aws" />
   </extension>
 
 </component>
