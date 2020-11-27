@@ -190,11 +190,6 @@ reg rm "${DOCKER_REGISTRY}/${ORG}/${APP_NAME}:${VERSION}" || true
             steps {
                 container('platform11') {
                     sh "cp nuxeo-vision-marketplace/target/nuxeo-vision-marketplace-*.zip docker/"
-                    withCredentials([usernameColonPassword(credentialsId: 'connect-preprod', variable: 'CONNECT_CREDS_PREPROD')]) {
-                        sh '''
-curl -fsSL -u "$CONNECT_CREDS_PREPROD" "$MARKETPLACE_URL_PREPROD/package/nuxeo-web-ui/download" -o docker/nuxeo-web-ui.zip
-'''
-                    }
                     withEnv(["PLATFORM_VERSION=${PLATFORM_VERSION}"]) {
                         dir('docker') {
                             echo "Build preview image"

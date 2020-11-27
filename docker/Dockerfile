@@ -25,5 +25,4 @@ LABEL org.opencontainers.image.vendor="Nuxeo"
 LABEL org.opencontainers.image.licenses=" Apache-2.0"
 
 COPY nuxeo-vision-marketplace-*.zip /tmp/nuxeo-vision-marketplace.zip
-COPY nuxeo-web-ui.zip /tmp/nuxeo-web-ui.zip
-RUN /install-packages.sh /tmp/nuxeo-vision-marketplace.zip /tmp/nuxeo-web-ui.zip
+RUN /install-packages.sh /tmp/nuxeo-vision-marketplace.zip
