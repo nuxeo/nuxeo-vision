@@ -74,7 +74,7 @@ def void waitForNuxeo(String name, String url) {
     script {
         try {
             sh "kubectl -n ${PREVIEW_NAMESPACE} rollout status deployment $name"
-            sh "kubectl -n ${PREVIEW_NAMESPACE} wait --for=condition=ready pod -l app=$name --timeout=-0"
+            sh "kubectl -n ${PREVIEW_NAMESPACE} wait --for=condition=ready pod -l app=$name --timeout=-0 || true"
             sh "curl --retry 10 -fsSL $url/nuxeo/runningstatus"
         } catch (e) {
             sh "kubectl -n ${PREVIEW_NAMESPACE} get all,configmaps,endpoints,ingresses"
