@@ -45,6 +45,7 @@ nuxeo:
     packages: "nuxeo-web-ui" # nuxeo-vision would replace the local SNAPSHOT with a wrong remote
     customParams: |-
       nuxeo.url=${PREVIEW_URL}/nuxeo
+      org.nuxeo.connect.url=${MARKETPLACE_URL_PREPROD}
       nuxeo.aws.accessKeyId=${AWS_ACCESS_KEY_ID}
       nuxeo.aws.secretKey=${AWS_SECRET_ACCESS_KEY}
       nuxeo.aws.region=${AWS_REGION}
@@ -55,7 +56,7 @@ nuxeo:
       - name: NUXEO_CLID
         valueFrom:
           secretKeyRef:
-            name: instance-clid
+            name: instance-clid-preprod
             key: instance.clid
     livenessProbe:
       initialDelaySeconds: 120
