@@ -106,8 +106,8 @@ pipeline {
         PREVIEW_NAMESPACE = normalizeNS("$APP_NAME-$BRANCH_NAME")
         PREVIEW_URL = "https://preview-${PREVIEW_NAMESPACE}.ai.dev.nuxeo.com"
         VERSION = "${getVersion()}"
-        MARKETPLACE_URL = 'https://connect.nuxeo.com/nuxeo/site/marketplace'
-        MARKETPLACE_URL_PREPROD = 'https://nos-preprod-connect.nuxeocloud.com/nuxeo/site/marketplace'
+        MARKETPLACE_URL = 'https://connect.nuxeo.com/nuxeo/site/'
+        MARKETPLACE_URL_PREPROD = 'https://nos-preprod-connect.nuxeocloud.com/nuxeo/site/'
     }
     stages {
         stage('Init') {
@@ -117,7 +117,7 @@ pipeline {
                 setGitHubBuildStatus('build/docker')
                 script {
                     if (env.BRANCH_NAME == 'master' || env.BRANCH_NAME ==~ 'sprint-.*' || env.CHANGE_BRANCH
-                            || env.BRANCH_NAME == 'feat-NXP-29881-preview') {
+                            || env.BRANCH_NAME == '2021') {
                         setGitHubBuildStatus('charts/preview')
                     }
                     if (env.BRANCH_NAME == 'master' || env.BRANCH_NAME ==~ 'sprint-.*' || env.TAG_NAME) {
@@ -214,6 +214,7 @@ skaffold build -f skaffold.yaml~gen
                 anyOf {
                     branch 'master'
                     branch 'sprint-*'
+                    branch '2021'
                     allOf {
                         changeRequest()
                     }
@@ -272,8 +273,8 @@ kubectl -n ${PREVIEW_NAMESPACE} patch deployments preview --patch "\$(cat patch-
                         sh '''
 PACKAGES="\$(ls $PACKAGE_PATTERN)"
 for file in \$PACKAGES ; do
-    curl --fail -u "$CONNECT_CREDS_PREPROD" -F package=@\$file "$MARKETPLACE_URL_PREPROD/upload?batch=true" || true
-    curl --fail -u "$CONNECT_CREDS" -F package=@\$file "$MARKETPLACE_URL/upload?batch=true"
+    curl --fail -u "$CONNECT_CREDS_PREPROD" -F package=@\$file "$MARKETPLACE_URL_PREPROD/marketplace/upload?batch=true" || true
+    curl --fail -u "$CONNECT_CREDS" -F package=@\$file "$MARKETPLACE_URL/marketplace/upload?batch=true"
 done
 '''
                     }
