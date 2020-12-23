@@ -106,8 +106,8 @@ pipeline {
         PREVIEW_NAMESPACE = normalizeNS("$APP_NAME-$BRANCH_NAME")
         PREVIEW_URL = "https://preview-${PREVIEW_NAMESPACE}.ai.dev.nuxeo.com"
         VERSION = "${getVersion()}"
-        MARKETPLACE_URL = 'https://connect.nuxeo.com/nuxeo/site/'
-        MARKETPLACE_URL_PREPROD = 'https://nos-preprod-connect.nuxeocloud.com/nuxeo/site/'
+        MARKETPLACE_URL = 'https://connect.nuxeo.com/nuxeo/site'
+        MARKETPLACE_URL_PREPROD = 'https://nos-preprod-connect.nuxeocloud.com/nuxeo/site'
     }
     stages {
         stage('Init') {
