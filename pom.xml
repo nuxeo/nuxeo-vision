@@ -8,7 +8,7 @@
 
   <groupId>org.nuxeo</groupId>
   <artifactId>nuxeo-vision-parent</artifactId>
-  <version>1.4.0-SNAPSHOT</version>
+  <version>1.5.0-SNAPSHOT</version>
   <name>Nuxeo Vision Parent</name>
   <description></description>
   <packaging>pom</packaging>
