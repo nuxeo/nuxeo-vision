@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.nuxeo</groupId>
@@ -10,7 +11,12 @@
   <artifactId>nuxeo-vision-parent</artifactId>
   <version>1.5.0-SNAPSHOT</version>
   <name>Nuxeo Vision Parent</name>
-  <description></description>
+  <description>DEPRECATED
+    The addon Google Vision is now deprecated and the corresponding feature was integrated inside the generic AI addon
+    nuxeo-ai via the ai-gcp plugin.
+    Source: https://github.com/nuxeo/nuxeo-ai/tree/master/addons/nuxeo-ai-gcp-core
+    Package: https://connect.nuxeo.com/nuxeo/site/marketplace/package/nuxeo-ai-gcp
+  </description>
   <packaging>pom</packaging>
 
   <properties>
