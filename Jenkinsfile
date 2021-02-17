@@ -1,5 +1,5 @@
 /*
- * (C) Copyright 2020 Nuxeo (http://nuxeo.com/).
+ * (C) Copyright 2020-2021 Nuxeo (http://nuxeo.com/).
  * This is unpublished proprietary source code of Nuxeo SA. All rights reserved.
  * Notice of copyright on this source code does not indicate publication.
  *
@@ -70,16 +70,20 @@ String getVersion() {
  * @param name Nuxeo app name
  * @param url Nuxeo URL
  */
-def void waitForNuxeo(String name, String url) {
+def void waitForNuxeo(String name, String url, Closure body = null) {
     script {
         try {
+            body?.call()
+            echo "Check deployment and running status for $name at $url ..."
             sh "kubectl -n ${PREVIEW_NAMESPACE} rollout status deployment $name"
-            sh "kubectl -n ${PREVIEW_NAMESPACE} wait --for=condition=ready pod -l app=$name --timeout=-0 || true"
+            sh "kubectl -n ${PREVIEW_NAMESPACE} wait --for=condition=ready pod -l app=$name --timeout=-0"
             sh "curl --retry 10 -fsSL $url/nuxeo/runningstatus"
         } catch (e) {
-            sh "kubectl -n ${PREVIEW_NAMESPACE} get all,configmaps,endpoints,ingresses"
-            sh "kubectl -n ${PREVIEW_NAMESPACE} describe pod --selector=app=$name"
-            sh "kubectl -n ${PREVIEW_NAMESPACE} logs --selector=app=$name --all-containers --tail=1000"
+            sh "jx get preview  -o json |jq '.items|map(select(.spec.namespace==\"${PREVIEW_NAMESPACE}\"))' 2>&1 |tee debug-${name}.log"
+            sh "kubectl -n ${PREVIEW_NAMESPACE} get all,configmaps,endpoints,ingresses 2>&1 |tee -a debug-${name}.log"
+            sh "kubectl -n ${PREVIEW_NAMESPACE} describe pod --selector=app=$name 2>&1 |tee -a debug-${name}.log"
+            sh "kubectl -n ${PREVIEW_NAMESPACE} logs --selector=app=$name --all-containers --tail=-1 2>&1 |tee -a debug-${name}.log"
+            echo "See debug info in debug-${name}.log"
             throw e
         }
     }
@@ -101,11 +105,12 @@ pipeline {
     environment {
         ORG = 'nuxeo'
         APP_NAME = 'nuxeo-vision'
+        WEBUI_VERSION = readMavenPom().getProperties().getProperty('nuxeo.webui.version')
         PLATFORM_VERSION = ''
-        SCM_REF = "${sh(script: 'git show -s --pretty=format:\'%h%d\'', returnStdout: true).trim();}"
+        SCM_REF = "${sh(script: 'git show -s --pretty=format:\'%H%d\'', returnStdout: true).trim();}"
         PREVIEW_NAMESPACE = normalizeNS("$APP_NAME-$BRANCH_NAME")
         PREVIEW_URL = "https://preview-${PREVIEW_NAMESPACE}.ai.dev.nuxeo.com"
-        VERSION = "${getVersion()}"
+        VERSION = getVersion()
         MARKETPLACE_URL = 'https://connect.nuxeo.com/nuxeo/site/marketplace'
         MARKETPLACE_URL_PREPROD = 'https://nos-preprod-connect.nuxeocloud.com/nuxeo/site/marketplace'
     }
@@ -113,12 +118,11 @@ pipeline {
         stage('Init') {
             steps {
                 setGitHubBuildStatus('init')
-                setGitHubBuildStatus('build/maven')
-                setGitHubBuildStatus('build/docker')
+                setGitHubBuildStatus('maven/build')
+                setGitHubBuildStatus('docker/build')
                 script {
-                    if (env.BRANCH_NAME == 'master' || env.BRANCH_NAME ==~ 'sprint-.*' || env.CHANGE_BRANCH
-                            || env.BRANCH_NAME == 'feat-NXP-29881-preview') {
-                        setGitHubBuildStatus('charts/preview')
+                    if (env.BRANCH_NAME == 'master' || env.BRANCH_NAME ==~ 'sprint-.*' || env.CHANGE_BRANCH) {
+                        setGitHubBuildStatus('preview')
                     }
                     if (env.BRANCH_NAME == 'master' || env.BRANCH_NAME ==~ 'sprint-.*' || env.TAG_NAME) {
                         setGitHubBuildStatus('package/push')
@@ -149,6 +153,8 @@ reg rm "${DOCKER_REGISTRY}/${ORG}/${APP_NAME}:${VERSION}" || true
 """
                         }
                     }
+                    echo "PLATFORM_VERSION: $PLATFORM_VERSION"
+                    echo "VERSION: $VERSION"
                 }
             }
             post {
@@ -169,20 +175,18 @@ reg rm "${DOCKER_REGISTRY}/${ORG}/${APP_NAME}:${VERSION}" || true
                     withCredentials([[$class       : 'AmazonWebServicesCredentialsBinding',
                                       credentialsId: 'aws-762822024843-jenkins-nuxeo-ai'],
                                      file(credentialsId: 'google-vision', variable: 'NUXEO_VISION_JSON')]) {
-                        withMaven() {
-                            sh 'mvn ${MAVEN_ARGS} -Dorg.nuxeo.vision.test.credential.file=${NUXEO_VISION_JSON}'
-                            sh "find . -name '*-reports' -type d"
-                        }
+                        sh 'mvn ${MAVEN_ARGS} -Dorg.nuxeo.vision.test.credential.file=${NUXEO_VISION_JSON}'
                     }
                 }
             }
             post {
                 always {
+                    junit allowEmptyResults: true, testResults: '**/target/*-reports/*.xml'
                     archiveArtifacts artifacts: '**/log/*.log, **/nxserver/config/distribution.properties, ' +
                             '**/target/*-reports/*, **/target/results/*.html, **/target/*.png, **/target/*.html' +
                             'nuxeo-vision-marketplace/target/nuxeo-vision-marketplace-*.zip',
                             allowEmptyArchive: true
-                    setGitHubBuildStatus('build/maven')
+                    setGitHubBuildStatus('maven/build')
                 }
             }
         }
@@ -190,12 +194,13 @@ reg rm "${DOCKER_REGISTRY}/${ORG}/${APP_NAME}:${VERSION}" || true
             steps {
                 container('platform11') {
                     sh "cp nuxeo-vision-marketplace/target/nuxeo-vision-marketplace-*.zip docker/"
-                    withCredentials([usernameColonPassword(credentialsId: 'connect-preprod', variable: 'CONNECT_CREDS_PREPROD')]) {
-                        sh '''
-curl -fsSL -u "$CONNECT_CREDS_PREPROD" "$MARKETPLACE_URL_PREPROD/package/nuxeo-web-ui/download" -o docker/nuxeo-web-ui.zip
-'''
-                    }
                     withEnv(["PLATFORM_VERSION=${PLATFORM_VERSION}"]) {
+                        withCredentials([usernameColonPassword(credentialsId: 'connect-nuxeo-ai-jx-bot', variable: 'CONNECT_CREDS_PROD'),
+                                         usernameColonPassword(credentialsId: 'connect-preprod', variable: 'CONNECT_CREDS_PREPROD')]) {
+                            sh '''
+curl -fsSL -u "$CONNECT_CREDS_PREPROD" "$MARKETPLACE_URL_PREPROD/package/nuxeo-web-ui/download?version=$WEBUI_VERSION" -o docker/nuxeo-web-ui.zip --retry 10 --retry-max-time 600
+'''
+                        }
                         dir('docker') {
                             echo "Build preview image"
                             sh 'printenv|sort|grep VERSION'
@@ -210,42 +215,49 @@ skaffold build -f skaffold.yaml~gen
             post {
                 always {
                     archiveArtifacts artifacts: 'docker/skaffold.yaml~gen'
-                    setGitHubBuildStatus('build/docker')
+                    setGitHubBuildStatus('docker/build')
                 }
             }
         }
         stage('Deploy Preview') {
             when {
                 anyOf {
-                    branch 'master'
+                    branch 'master*'
                     branch 'sprint-*'
-                    allOf {
-                        changeRequest()
-                    }
+                    changeRequest()
                 }
+            }
+            options {
+                timeout(time: 30, unit: 'MINUTES')
             }
             environment {
                 AWS_REGION = "eu-west-1"
                 JX_NO_COMMENT = "${env.CHANGE_TARGET ? 'false' : 'true'}"
             }
             steps {
-                container('platform11') {
-                    echo "Deploying ${PREVIEW_URL}/nuxeo ..."
-                    withCredentials([[$class       : 'AmazonWebServicesCredentialsBinding',
-                                      credentialsId: 'aws-762822024843-jenkins-nuxeo-ai']]) {
-                        withEnv(["PREVIEW_VERSION=$VERSION", "BRANCH_NAME=${normalizeLabel(BRANCH_NAME)}",
-                                 "PROVIDER=${params.PROVIDER}"]) {
-                            dir('charts/preview') {
-                                sh """#!/bin/bash -xe
+                catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
+                    container('platform11') {
+                        withCredentials([[$class       : 'AmazonWebServicesCredentialsBinding',
+                                          credentialsId: 'aws-762822024843-jenkins-nuxeo-ai']]) {
+                            withEnv(["PREVIEW_VERSION=$VERSION", "BRANCH_NAME=${normalizeLabel(BRANCH_NAME)}",
+                                     "PROVIDER=${params.PROVIDER}"]) {
+                                waitForNuxeo("preview", PREVIEW_URL) {
+                                    dir('charts/preview') {
+                                        sh """#!/bin/bash -xe
 kubectl delete ns ${PREVIEW_NAMESPACE} --ignore-not-found=true
 kubectl create ns ${PREVIEW_NAMESPACE}
 make preview
-jx preview --namespace ${PREVIEW_NAMESPACE} --verbose --source-url=$GIT_URL --preview-health-timeout 15m --alias nuxeo --no-comment=$JX_NO_COMMENT
+
+# detach process that would never succeed to patch the deployment, then reattach
+jx preview --namespace ${PREVIEW_NAMESPACE} --verbose --source-url=$GIT_URL --preview-health-timeout 15m --alias nuxeo --no-comment=$JX_NO_COMMENT &
+until (kubectl -n ${PREVIEW_NAMESPACE} get deploy preview 2>/dev/null); do sleep 5; done
+kubectl -n ${PREVIEW_NAMESPACE} scale deployment --replicas=0 preview
 kubectl -n ${PREVIEW_NAMESPACE} patch deployments preview --patch "\$(cat patch-preview.yaml)"
+kubectl -n ${PREVIEW_NAMESPACE} scale deployment --replicas=1 preview
+wait
 """
-                                echo "Check deployment and running status..."
-                                sh "jx get preview  -o json |jq '.items|map(select(.spec.namespace==\"${PREVIEW_NAMESPACE}\"))'"
-                                waitForNuxeo("preview", PREVIEW_URL)
+                                    }
+                                }
                             }
                         }
                     }
@@ -254,8 +266,8 @@ kubectl -n ${PREVIEW_NAMESPACE} patch deployments preview --patch "\$(cat patch-
             post {
                 always {
                     archiveArtifacts artifacts: 'charts/preview/values.yaml, charts/preview/extraValues.yaml, ' +
-                            'charts/preview/requirements.lock'
-                    setGitHubBuildStatus('charts/preview')
+                            'charts/preview/requirements.lock, charts/preview/.previewUrl, debug-preview.log'
+                    setGitHubBuildStatus('preview')
                 }
             }
         }
@@ -263,7 +275,7 @@ kubectl -n ${PREVIEW_NAMESPACE} patch deployments preview --patch "\$(cat patch-
             when {
                 anyOf {
                     tag '*'
-                    branch 'master'
+                    branch 'master*'
                     branch 'sprint-*'
                 }
             }
@@ -291,11 +303,25 @@ done
                 }
             }
         }
+        stage('Upgrade version stream') {
+            when {
+                tag '*'
+            }
+            steps {
+                catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+                    container('platform11') {
+                        sh """#!/bin/bash -xe
+jx step create pr regex --regex 'version: (.*)' --version $VERSION --files packages/nuxeo-vision.yml -r https://github.com/nuxeo/jx-ai-versions
+"""
+                    }
+                }
+            }
+        }
     }
     post {
         always {
             script {
-                if (env.BRANCH_NAME == 'master' || env.TAG_NAME || env.BRANCH_NAME ==~ 'sprint-.*') {
+                if (env.BRANCH_NAME ==~ 'master.*' || env.TAG_NAME || env.BRANCH_NAME ==~ 'sprint-.*') {
                     step([$class: 'JiraIssueUpdater', issueSelector: [$class: 'DefaultIssueSelector'], scm: scm])
                 }
             }
