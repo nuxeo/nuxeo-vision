@@ -1,4 +1,20 @@
 # About / Synopsis
+**DEPRECATED**
+
+The addon Google Vision is now deprecated and the corresponding feature was integrated inside the generic AI addon
+nuxeo-ai via the ai-gcp plugin.
+
+Source: https://github.com/nuxeo/nuxeo-ai/tree/master/addons/nuxeo-ai-gcp-core
+
+Package: https://connect.nuxeo.com/nuxeo/site/marketplace/package/nuxeo-ai-gcp
+
+---
+
+The Nuxeo Vision addon provides a wrapper for Computer Vision Services. Currently, it supports the Google Vision API
+and the AWS Rekognition service. It allows retrieving relevant tags on images and videos. It also provides
+automation operations for customized re-use. The usages can easily be extended to a wide range of features including
+face recognition, auto-classification, OCR and more.
+
 This plugin provides a wrapper for Computer Vision Services. Currently it supports the [Google Vision API](https://cloud.google.com/vision/) and the [AWS Rekognition API](https://aws.amazon.com/rekognition/).
   
 # Installation
