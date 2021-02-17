@@ -1,11 +1,10 @@
 ARG PLATFORM_VERSION
 FROM docker-private.packages.nuxeo.com/nuxeo/nuxeo:${PLATFORM_VERSION}
 
-# FFmpeg
 USER 0
-RUN yum -y localinstall --nogpgcheck https://mirrors.rpmfusion.org/free/el/rpmfusion-free-release-7.noarch.rpm && \
-    yum -y install ffmpeg
-USER 900
+RUN yum -y localinstall --nogpgcheck https://mirrors.rpmfusion.org/free/el/rpmfusion-free-release-7.noarch.rpm
+RUN yum -y install ffmpeg
+USER $NUXEO_USER
 
 ARG PLATFORM_VERSION
 ARG VERSION

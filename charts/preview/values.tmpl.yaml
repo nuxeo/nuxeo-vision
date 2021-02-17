@@ -19,6 +19,13 @@ cleanup:
 
 nuxeo:
   fullnameOverride: preview
+  tolerations:
+    - key: team
+      operator: Equal
+      value: ai
+      effect: NoSchedule
+  nodeSelector:
+    team: ai
   nuxeo:
     podAnnotations:
       preview/scm.ref: ${SCM_REF}
