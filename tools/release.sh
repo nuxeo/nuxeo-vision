@@ -2,7 +2,7 @@
 #
 # Helper script to update the versions a release tag and source branch
 #
-# (C) Copyright 2020 Nuxeo (http://nuxeo.com/).
+# (C) Copyright 2020-2021 Nuxeo (http://nuxeo.com/).
 # This is unpublished proprietary source code of Nuxeo SA. All rights reserved.
 # Notice of copyright on this source code does not indicate publication.
 #
@@ -28,11 +28,11 @@
 jx step git credentials
 git config credential.helper store
 
-RELEASE_VERSION=${VERSION:-$(jx-release-version)}
+RELEASE_VERSION=${VERSION:-$(jx-release-version -same-release)}
 INCREMENT=${INCREMENT:-patch}
 NEXT_VERSION=$(semver bump "$INCREMENT" "$RELEASE_VERSION")
 
-printf "Releasing %s\n\tVersion:\t%s\n\tNext version:\t%s\n" $(git remote get-url origin) "$RELEASE_VERSION" "$NEXT_VERSION"
+printf "Releasing %s\n\tVersion:\t%s\n\tNext version:\t%s\n" "$(git remote get-url origin)" "$RELEASE_VERSION" "$NEXT_VERSION"
 echo "RELEASE_VERSION=$RELEASE_VERSION" > release.properties
 echo "INCREMENT=$INCREMENT" >> release.properties
 echo "NEXT_VERSION=$NEXT_VERSION" >> release.properties
@@ -46,6 +46,9 @@ else
     jx step next-version --version="$RELEASE_VERSION" -t
     jx step changelog -v "v$RELEASE_VERSION"
 fi
+
+# Not including the release tag in master history
+git reset --hard "origin/$BRANCH"
 
 mvn -B versions:set -DnewVersion="${NEXT_VERSION}-SNAPSHOT" -DgenerateBackupPoms=false
 jx step next-version --version="$NEXT_VERSION"
