@@ -21,7 +21,7 @@
 
   <properties>
     <google.vision.version>v1-rev2-1.21.0</google.vision.version>
-    <nuxeo.webui.version>3.1.0-rc.22</nuxeo.webui.version>
+    <nuxeo.webui.version>3.1.0-rc.064</nuxeo.webui.version>
   </properties>
 
   <modules>
